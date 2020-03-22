@@ -6,4 +6,5 @@
     <string name="tab_text_1">Beta Kits        </string>
     <string name="tab_text_2">Internal Reagents</string>
     <string name="tab_text_3">Purchased Parts</string>
+    <string name="thumbnail">thumbnail</string>
 </resources>
