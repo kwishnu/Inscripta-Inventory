@@ -41,10 +41,10 @@ class MainActivity : AppCompatActivity() {
             if (result.contents != null) {
                 scannedResult = result.contents
 //                    txtValue.text = scannedResult
-                Log.d(scannedResult, "InsInv")
+                Log.d("InsInv", scannedResult.toString())
             } else {
 //                    txtValue.text = "scan failed"
-                Log.d(scannedResult, "InsInv")
+                Log.d("InsInv", scannedResult.toString())
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data)
