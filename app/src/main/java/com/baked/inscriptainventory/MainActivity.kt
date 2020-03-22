@@ -1,16 +1,20 @@
 package com.baked.inscriptainventory
 
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.*
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import androidx.viewpager.widget.ViewPager
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
+import com.google.zxing.integration.android.IntentIntegrator
+import com.google.zxing.integration.android.IntentResult
+import kotlinx.android.synthetic.main.activity_main.*
+import android.util.Log
 
 var InventoryItems: ArrayList<String> = ArrayList()
 
 class MainActivity : AppCompatActivity() {
+    private var scannedResult: String? = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,14 +24,32 @@ class MainActivity : AppCompatActivity() {
         viewPager.adapter = sectionsPagerAdapter
         val tabs: TabLayout = findViewById(R.id.tabs)
         tabs.setupWithViewPager(viewPager)
-        val scanBtn: FloatingActionButton = findViewById(R.id.scan)
 
-        scanBtn.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+        scan.setOnClickListener {
+            run {
+                IntentIntegrator(this@MainActivity).initiateScan()
+            }
+        }
+        catalog.setOnClickListener {
+            //todo
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        val result: IntentResult? = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+        if (result != null) {
+            if (result.contents != null) {
+                scannedResult = result.contents
+//                    txtValue.text = scannedResult
+                Log.d(scannedResult, "InsInv")
+            } else {
+//                    txtValue.text = "scan failed"
+                Log.d(scannedResult, "InsInv")
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data)
+        }
+    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -45,9 +67,6 @@ class MainActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
-
-
-
 }
 
 
