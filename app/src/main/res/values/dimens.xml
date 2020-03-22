@@ -1,0 +1,13 @@
+<resources>
+    <dimen name="fab_margin">16dp</dimen>
+<!--    <dimen name="spacer_large">20dp</dimen>-->
+<!--    <dimen name="spacer_small">5dp</dimen>-->
+<!--    <dimen name="halfPageMargin">16dp</dimen>&lt;!&ndash; half of distance between pages &ndash;&gt;-->
+<!--    <dimen name="peekOffset">50dp</dimen>&lt;!&ndash; how much of adjacent pages is shown &ndash;&gt;-->
+
+<!--    <dimen name="activity_horizontal_margin">16dp</dimen>-->
+<!--    <dimen name="activity_vertical_margin">16dp</dimen>-->
+    <dimen name="appbar_padding">16dp</dimen>
+    <dimen name="appbar_padding_top">8dp</dimen>
+
+</resources>

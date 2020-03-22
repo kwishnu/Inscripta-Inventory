@@ -1,0 +1,2 @@
+rootProject.name='Inscripta Inventory'
+include ':app'
