@@ -9,15 +9,14 @@ import android.widget.Toast
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import android.util.Log
 
-class FirstFragment(private val items: ArrayList<String>) : Fragment() {
+class FirstFragment(private val items: MutableList<MutableList<String>>) : Fragment() {
     lateinit var rootView: View
     private lateinit var recyclerView: RecyclerView
     private var InventoryItems: ArrayList<String> = ArrayList()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        addItems()
+//        addItems()
 //        Log.d("InsInv", items.toString())
         rootView = inflater.inflate(R.layout.fragment_first, container, false)
         recyclerView = rootView.findViewById(R.id.bk_rv)
@@ -27,10 +26,10 @@ class FirstFragment(private val items: ArrayList<String>) : Fragment() {
 //            intent.putExtra("Item",  InventoryItems[position])
 //            startActivity(intent)
 
-            Toast.makeText(activity, position.toString() + " is clicked..." + "which is " + InventoryItems[position], Toast.LENGTH_LONG).show()
+            Toast.makeText(activity, position.toString() + " is clicked..." + "which is " + items[position][1], Toast.LENGTH_LONG).show()
         }
         val listener = { i: Int -> fragClickListener(i) }
-        recyclerView.adapter = activity?.applicationContext?.let { InventoryAdapter( InventoryItems, it,  listener) }
+        recyclerView.adapter = activity?.applicationContext?.let { InventoryAdapter( items, it,  listener) }
         recyclerView.addItemDecoration(DividerItemDecoration(activity?.applicationContext, DividerItemDecoration.VERTICAL))
 
         return rootView

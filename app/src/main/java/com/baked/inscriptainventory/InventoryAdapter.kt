@@ -6,11 +6,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.list_item.view.*
 
-//removed: , val clickListener: (Int) -> Unit
-class InventoryAdapter(private val items: ArrayList<String>, val context : Context, val clickListener: (Int) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+private val IMAGE_URI = arrayOf(
+    "strip_tube_1",
+    "strip_tube_4",
+    "strip_tube_6",
+    "tubes_w_caps",
+    "cell_tube",
+    "rotary_growth_vial",
+    "blank"
+    )
+class InventoryAdapter(private val items: MutableList<MutableList<String>>, private val context: Context, val clickListener: (Int) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun getItemCount(): Int {
         return items.size
     }
@@ -20,10 +29,10 @@ class InventoryAdapter(private val items: ArrayList<String>, val context : Conte
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder as ViewHolder).clickableView?.text = items[holder.adapterPosition]
+        (holder as ViewHolder).clickableView.list_item.text = items[holder.adapterPosition][1]
 //        var uri: Uri = Uri.parse("R.drawable.strip_tube_4")
         val uri =
-            Uri.parse("android.resource://com.baked.inscriptainventory/drawable/strip_tube_4")
+            Uri.parse("android.resource://com.baked.inscriptainventory/drawable/" + IMAGE_URI[(items[holder.adapterPosition][0]).toInt()] )
         holder.image.setImageURI(uri)
 
         holder.clickableView.setOnClickListener {
@@ -33,7 +42,6 @@ class InventoryAdapter(private val items: ArrayList<String>, val context : Conte
 }
 
 class ViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
-    // Holds the TextView
-    val clickableView = itemView.list_item
+    val clickableView : RelativeLayout = itemView.list_element
     val image: ImageView = itemView.list_thumbnail
 }

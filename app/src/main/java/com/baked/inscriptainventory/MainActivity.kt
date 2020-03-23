@@ -13,8 +13,8 @@ import okhttp3.*
 import kotlinx.android.synthetic.main.activity_main.*
 import android.util.Log
 
-
-class MainActivity(private var InventoryItems: ArrayList<String> = ArrayList()) : AppCompatActivity() {
+//val seqList: MutableList<MutableList<Int>> = ArrayList()
+class MainActivity(private var InventoryItems: MutableList<MutableList<String>> = ArrayList()) : AppCompatActivity() {
     private var ipAddressStr = ""
     private val client = OkHttpClient()
     private var scannedResult: String? = ""
@@ -35,14 +35,13 @@ class MainActivity(private var InventoryItems: ArrayList<String> = ArrayList()) 
             }
         }
         catalog.setOnClickListener {
-
             run()
 
             //todo
         }
     }
 
-    fun run(){
+    private fun run(){
         ipAddressStr = "10.0.0.225"//ip_input.text.toString()
         val urlStr = "http://$ipAddressStr:80/index.php"
         val request = Request.Builder()
@@ -109,38 +108,38 @@ Log.d("InscriptaInventory", resp)
     }
 
     private fun addItems() {
-        InventoryItems.add("dog")
-        InventoryItems.add("cat")
-        InventoryItems.add("owl")
-        InventoryItems.add("cheetah")
-        InventoryItems.add("raccoon")
-        InventoryItems.add("bird")
-        InventoryItems.add("snake")
-        InventoryItems.add("lizard")
-        InventoryItems.add("hamster")
-        InventoryItems.add("bear")
-        InventoryItems.add("lion")
-        InventoryItems.add("tiger")
-        InventoryItems.add("horse")
-        InventoryItems.add("frog")
-        InventoryItems.add("fish")
-        InventoryItems.add("shark")
-        InventoryItems.add("turtle")
-        InventoryItems.add("elephant")
-        InventoryItems.add("cow")
-        InventoryItems.add("beaver")
-        InventoryItems.add("bison")
-        InventoryItems.add("porcupine")
-        InventoryItems.add("rat")
-        InventoryItems.add("mouse")
-        InventoryItems.add("goose")
-        InventoryItems.add("deer")
-        InventoryItems.add("fox")
-        InventoryItems.add("moose")
-        InventoryItems.add("buffalo")
-        InventoryItems.add("monkey")
-        InventoryItems.add("penguin")
-        InventoryItems.add("parrot")
+        InventoryItems.add(mutableListOf("0", "dog"))
+        InventoryItems.add(mutableListOf("1","cat"))
+        InventoryItems.add(mutableListOf("1","owl"))
+        InventoryItems.add(mutableListOf("2","cheetah"))
+        InventoryItems.add(mutableListOf("3","raccoon"))
+        InventoryItems.add(mutableListOf("4","bird"))
+        InventoryItems.add(mutableListOf("5","snake"))
+        InventoryItems.add(mutableListOf("6","lizard"))
+        InventoryItems.add(mutableListOf("0","hamster"))
+        InventoryItems.add(mutableListOf("0","bear"))
+        InventoryItems.add(mutableListOf("0","lion"))
+        InventoryItems.add(mutableListOf("0","tiger"))
+        InventoryItems.add(mutableListOf("0","horse"))
+        InventoryItems.add(mutableListOf("0","frog"))
+        InventoryItems.add(mutableListOf("0","fish"))
+        InventoryItems.add(mutableListOf("0","shark"))
+        InventoryItems.add(mutableListOf("0","turtle"))
+        InventoryItems.add(mutableListOf("0","elephant"))
+        InventoryItems.add(mutableListOf("0","cow"))
+        InventoryItems.add(mutableListOf("0","beaver"))
+        InventoryItems.add(mutableListOf("0","bison"))
+        InventoryItems.add(mutableListOf("0","porcupine"))
+        InventoryItems.add(mutableListOf("0","rat"))
+        InventoryItems.add(mutableListOf("0","mouse"))
+        InventoryItems.add(mutableListOf("0","goose"))
+        InventoryItems.add(mutableListOf("0","deer"))
+        InventoryItems.add(mutableListOf("0","fox"))
+        InventoryItems.add(mutableListOf("0","moose"))
+        InventoryItems.add(mutableListOf("0","buffalo"))
+        InventoryItems.add(mutableListOf("0","monkey"))
+        InventoryItems.add(mutableListOf("0","penguin"))
+        InventoryItems.add(mutableListOf("0","parrot"))
 
 //    recyclerView.adapter?.notifyDataSetChanged()
 

@@ -1,7 +1,6 @@
 package com.baked.inscriptainventory
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,13 +10,13 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class ThirdFragment(private val items: ArrayList<String>) : Fragment() {
+class ThirdFragment(private val items: MutableList<MutableList<String>>) : Fragment() {
     lateinit var rootView: View
     private lateinit var recyclerView: RecyclerView
     private var InventoryItems: ArrayList<String> = ArrayList()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        addItems()
+//        addItems()
         rootView = inflater.inflate(R.layout.fragment_third, container, false)
         recyclerView = rootView.findViewById(R.id.pp_rv)
         recyclerView.layoutManager = LinearLayoutManager(activity)
@@ -26,10 +25,10 @@ class ThirdFragment(private val items: ArrayList<String>) : Fragment() {
 //            intent.putExtra("Item",  InventoryItems[position])
 //            startActivity(intent)
 
-            Toast.makeText(activity, position.toString() + " is clicked..." + "which is " + InventoryItems[position], Toast.LENGTH_LONG).show()
+            Toast.makeText(activity, position.toString() + " is clicked..." + "which is " + items[position], Toast.LENGTH_LONG).show()
         }
         val listener = { i: Int -> fragClickListener(i) }
-        recyclerView.adapter = activity?.applicationContext?.let { InventoryAdapter( InventoryItems, it,  listener) }
+        recyclerView.adapter = activity?.applicationContext?.let { InventoryAdapter( items, it,  listener) }
         recyclerView.addItemDecoration(DividerItemDecoration(activity?.applicationContext, DividerItemDecoration.VERTICAL))
 
         return rootView
