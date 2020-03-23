@@ -11,14 +11,14 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class SecondFragment : Fragment() {
+class SecondFragment(private val items: ArrayList<String>) : Fragment() {
     lateinit var rootView: View
     private lateinit var recyclerView: RecyclerView
     private var InventoryItems: ArrayList<String> = ArrayList()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         addItems()
-        rootView = inflater.inflate(R.layout.fragment_second, container, false);
+        rootView = inflater.inflate(R.layout.fragment_second, container, false)
         recyclerView = rootView.findViewById(R.id.ir_rv)
         recyclerView.layoutManager = LinearLayoutManager(activity)
         fun fragClickListener(position: Int) {

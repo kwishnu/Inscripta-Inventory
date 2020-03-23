@@ -1,7 +1,6 @@
 package com.baked.inscriptainventory
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,15 +9,17 @@ import android.widget.Toast
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import android.util.Log
 
-class FirstFragment : Fragment() {
+class FirstFragment(private val items: ArrayList<String>) : Fragment() {
     lateinit var rootView: View
     private lateinit var recyclerView: RecyclerView
     private var InventoryItems: ArrayList<String> = ArrayList()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         addItems()
-        rootView = inflater.inflate(R.layout.fragment_first, container, false);
+//        Log.d("InsInv", items.toString())
+        rootView = inflater.inflate(R.layout.fragment_first, container, false)
         recyclerView = rootView.findViewById(R.id.bk_rv)
         recyclerView.layoutManager = LinearLayoutManager(activity)
         fun fragClickListener(position: Int) {
