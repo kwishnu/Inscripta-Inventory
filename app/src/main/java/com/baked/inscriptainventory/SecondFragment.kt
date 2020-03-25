@@ -16,7 +16,6 @@ class SecondFragment(private val items: MutableList<MutableList<String>>) : Frag
     private var InventoryItems: ArrayList<String> = ArrayList()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-//        addItems()
         rootView = inflater.inflate(R.layout.fragment_second, container, false)
         recyclerView = rootView.findViewById(R.id.ir_rv)
         recyclerView.layoutManager = LinearLayoutManager(activity)
@@ -32,43 +31,5 @@ class SecondFragment(private val items: MutableList<MutableList<String>>) : Frag
         recyclerView.addItemDecoration(DividerItemDecoration(activity?.applicationContext, DividerItemDecoration.VERTICAL))
 
         return rootView
-    }
-
-    private fun addItems() {
-        InventoryItems.add("buzzard")
-        InventoryItems.add("wombat")
-        InventoryItems.add("civet")
-        InventoryItems.add("pangolin")
-        InventoryItems.add("raccoon")
-        InventoryItems.add("bird")
-        InventoryItems.add("snake")
-        InventoryItems.add("lizard")
-        InventoryItems.add("hamster")
-        InventoryItems.add("bear")
-        InventoryItems.add("lion")
-        InventoryItems.add("tiger")
-        InventoryItems.add("horse")
-        InventoryItems.add("frog")
-        InventoryItems.add("fish")
-        InventoryItems.add("shark")
-        InventoryItems.add("turtle")
-        InventoryItems.add("elephant")
-        InventoryItems.add("cow")
-        InventoryItems.add("beaver")
-        InventoryItems.add("bison")
-        InventoryItems.add("porcupine")
-        InventoryItems.add("rat")
-        InventoryItems.add("mouse")
-        InventoryItems.add("goose")
-        InventoryItems.add("deer")
-        InventoryItems.add("fox")
-        InventoryItems.add("moose")
-        InventoryItems.add("buffalo")
-        InventoryItems.add("monkey")
-        InventoryItems.add("penguin")
-        InventoryItems.add("parrot")
-
-//    recyclerView.adapter?.notifyDataSetChanged()
-
     }
 }

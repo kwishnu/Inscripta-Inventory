@@ -30,11 +30,12 @@ class InventoryAdapter(private val items: MutableList<MutableList<String>>, priv
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         (holder as ViewHolder).clickableView.list_item.text = items[holder.adapterPosition][1]
+        holder.clickableView.list_subtitle.text = items[holder.adapterPosition][2]
+        holder.clickableView.list_detail.text = items[holder.adapterPosition][3]
 //        var uri: Uri = Uri.parse("R.drawable.strip_tube_4")
         val uri =
             Uri.parse("android.resource://com.baked.inscriptainventory/drawable/" + IMAGE_URI[(items[holder.adapterPosition][0]).toInt()] )
         holder.image.setImageURI(uri)
-
         holder.clickableView.setOnClickListener {
             clickListener(position)
         }

@@ -1,17 +1,20 @@
 package com.baked.inscriptainventory
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.view.*
 import android.content.Intent
+import android.os.Bundle
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import com.google.zxing.integration.android.IntentIntegrator
 import com.google.zxing.integration.android.IntentResult
-import java.io.IOException
-import okhttp3.*
 import kotlinx.android.synthetic.main.activity_main.*
-import android.util.Log
+import okhttp3.*
+import org.json.JSONObject
+import java.io.IOException
+
 
 //val seqList: MutableList<MutableList<Int>> = ArrayList()
 class MainActivity(private var InventoryItems: MutableList<MutableList<String>> = ArrayList()) : AppCompatActivity() {
@@ -23,11 +26,12 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         addItems()
-        val sectionsPagerAdapter = SectionsPagerAdapter(InventoryItems, this, supportFragmentManager)
-        val viewPager: ViewPager = findViewById(R.id.view_pager)
-        viewPager.adapter = sectionsPagerAdapter
-        val tabs: TabLayout = findViewById(R.id.tabs)
-        tabs.setupWithViewPager(viewPager)
+        run()
+//        val sectionsPagerAdapter = SectionsPagerAdapter(InventoryItems, this, supportFragmentManager)
+//        val viewPager: ViewPager = findViewById(R.id.view_pager)
+//        viewPager.adapter = sectionsPagerAdapter
+//        val tabs: TabLayout = findViewById(R.id.tabs)
+//        tabs.setupWithViewPager(viewPager)
 
         scan.setOnClickListener {
             run {
@@ -65,8 +69,25 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
 //                    println(response.body!!.string())
 //                    textView?.text ="test" //resp
                     this@MainActivity.runOnUiThread(Runnable {
+                        val parts = resp.split("~|~")
 //                        txtValue.text = resp
-Log.d("InscriptaInventory", resp)
+//                        Log.d("InscriptaInventory", parts[0])
+//                        val responseData = resp.body().string()
+                        val sheet1 = JSONObject(parts[0])
+                        val sheet2 = JSONObject(parts[1])
+                        val sheet3 = JSONObject(parts[2])
+                        val headingsSheet1 = sheet1.getString("2")
+                        val headingsSheet2 = sheet2.getString("2")
+                        val headingsSheet3 = sheet3.getString("2")
+                        Log.d("InscriptaInventory", headingsSheet1)
+                        Log.d("InscriptaInventory", headingsSheet2)
+                        Log.d("InscriptaInventory", headingsSheet3)
+
+                        val sectionsPagerAdapter = SectionsPagerAdapter(InventoryItems, this@MainActivity, supportFragmentManager)
+                        val viewPager: ViewPager = findViewById(R.id.view_pager)
+                        viewPager.adapter = sectionsPagerAdapter
+                        val tabs: TabLayout = findViewById(R.id.tabs)
+                        tabs.setupWithViewPager(viewPager)
 
                     })
                 }
@@ -108,40 +129,25 @@ Log.d("InscriptaInventory", resp)
     }
 
     private fun addItems() {
-        InventoryItems.add(mutableListOf("0", "dog"))
-        InventoryItems.add(mutableListOf("1","cat"))
-        InventoryItems.add(mutableListOf("1","owl"))
-        InventoryItems.add(mutableListOf("2","cheetah"))
-        InventoryItems.add(mutableListOf("3","raccoon"))
-        InventoryItems.add(mutableListOf("4","bird"))
-        InventoryItems.add(mutableListOf("5","snake"))
-        InventoryItems.add(mutableListOf("6","lizard"))
-        InventoryItems.add(mutableListOf("0","hamster"))
-        InventoryItems.add(mutableListOf("0","bear"))
-        InventoryItems.add(mutableListOf("0","lion"))
-        InventoryItems.add(mutableListOf("0","tiger"))
-        InventoryItems.add(mutableListOf("0","horse"))
-        InventoryItems.add(mutableListOf("0","frog"))
-        InventoryItems.add(mutableListOf("0","fish"))
-        InventoryItems.add(mutableListOf("0","shark"))
-        InventoryItems.add(mutableListOf("0","turtle"))
-        InventoryItems.add(mutableListOf("0","elephant"))
-        InventoryItems.add(mutableListOf("0","cow"))
-        InventoryItems.add(mutableListOf("0","beaver"))
-        InventoryItems.add(mutableListOf("0","bison"))
-        InventoryItems.add(mutableListOf("0","porcupine"))
-        InventoryItems.add(mutableListOf("0","rat"))
-        InventoryItems.add(mutableListOf("0","mouse"))
-        InventoryItems.add(mutableListOf("0","goose"))
-        InventoryItems.add(mutableListOf("0","deer"))
-        InventoryItems.add(mutableListOf("0","fox"))
-        InventoryItems.add(mutableListOf("0","moose"))
-        InventoryItems.add(mutableListOf("0","buffalo"))
-        InventoryItems.add(mutableListOf("0","monkey"))
-        InventoryItems.add(mutableListOf("0","penguin"))
-        InventoryItems.add(mutableListOf("0","parrot"))
+        InventoryItems.add(mutableListOf("0", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
+        InventoryItems.add(mutableListOf("1", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
+        InventoryItems.add(mutableListOf("1", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
+        InventoryItems.add(mutableListOf("2", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
+        InventoryItems.add(mutableListOf("3", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
+        InventoryItems.add(mutableListOf("4", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
+        InventoryItems.add(mutableListOf("5", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
+        InventoryItems.add(mutableListOf("6", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
+        InventoryItems.add(mutableListOf("0", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
+        InventoryItems.add(mutableListOf("0", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
+        InventoryItems.add(mutableListOf("0", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
+        InventoryItems.add(mutableListOf("0", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
+        InventoryItems.add(mutableListOf("0", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
+        InventoryItems.add(mutableListOf("0", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
+        InventoryItems.add(mutableListOf("0", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
+        InventoryItems.add(mutableListOf("0", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
+        InventoryItems.add(mutableListOf("0", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
 
-//    recyclerView.adapter?.notifyDataSetChanged()
+//        viewPager.adapter?.notifyDataSetChanged()
 
     }
 
