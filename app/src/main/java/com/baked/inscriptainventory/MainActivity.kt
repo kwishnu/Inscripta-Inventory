@@ -1,37 +1,52 @@
 package com.baked.inscriptainventory
 
-import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
+import android.preference.PreferenceManager
 import android.view.Menu
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
-import androidx.viewpager.widget.ViewPager
+import android.view.View
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
+import androidx.viewpager.widget.ViewPager
+import okhttp3.*
 import com.google.zxing.integration.android.IntentIntegrator
 import com.google.zxing.integration.android.IntentResult
-import kotlinx.android.synthetic.main.activity_main.*
-import okhttp3.*
+import me.weishu.reflection.Reflection
 import org.json.JSONObject
 import java.io.IOException
+import kotlinx.android.synthetic.main.activity_main.*
+import android.util.Log
+import com.google.gson.Gson
 
-
-//val seqList: MutableList<MutableList<Int>> = ArrayList()
 class MainActivity(private var InventoryItems: MutableList<MutableList<String>> = ArrayList()) : AppCompatActivity() {
     private var ipAddressStr = ""
+    private var scannedResult = ""
     private val client = OkHttpClient()
-    private var scannedResult: String? = ""
+    private var sharedPrefs: SharedPreferences? = null//getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE)
+    private val prefsFilename = "SharedPreferences"
+    private val initialStateName = "InitialState"
+    private val startedAppName = "StartedAppOnce"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sharedPrefs = this.getSharedPreferences(prefsFilename, 0)
+        val editor = sharedPrefs!!.edit()
+
+        if (!sharedPrefs!!.getBoolean(startedAppName, false)) {
+            val jsonStrFile = "json_string.txt"
+            val jsonString = application.assets.open(jsonStrFile).bufferedReader().use{
+                it.readText()
+            }
+            editor.putString(initialStateName, jsonString)
+            editor.putBoolean("StartedAppOnce", true)
+            editor.apply()
+        }
         setContentView(R.layout.activity_main)
-        addItems()
-        run()
-//        val sectionsPagerAdapter = SectionsPagerAdapter(InventoryItems, this, supportFragmentManager)
-//        val viewPager: ViewPager = findViewById(R.id.view_pager)
-//        viewPager.adapter = sectionsPagerAdapter
-//        val tabs: TabLayout = findViewById(R.id.tabs)
-//        tabs.setupWithViewPager(viewPager)
+        callServer(view_pager)
 
         scan.setOnClickListener {
             run {
@@ -39,13 +54,11 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
             }
         }
         catalog.setOnClickListener {
-            run()
-
             //todo
         }
     }
 
-    private fun run(){
+    private fun callServer(view: View){
         ipAddressStr = "10.0.0.225"//ip_input.text.toString()
         val urlStr = "http://$ipAddressStr:80/index.php"
         val request = Request.Builder()
@@ -54,6 +67,13 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
+                Snackbar.make(view, "Server is down: functionality will be limited", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show()
+                val stateStr = sharedPrefs!!.getString(initialStateName, String.toString())
+                this@MainActivity.runOnUiThread(Runnable {
+                    parseJsonStr(stateStr.toString())
+                    setTabs()
+                })
                 e.printStackTrace()
             }
 
@@ -61,50 +81,24 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 response.use {
                     if (!response.isSuccessful) throw IOException("Unexpected code $response")
                     val resp = response.body!!.string()
-//                    for ((name, value) in response.headers) {
-//                        println("$name: $value")
-//                    }
-//                    resp = response.body!!.string()
-//                    println(resp)
-//                    println(response.body!!.string())
-//                    textView?.text ="test" //resp
                     this@MainActivity.runOnUiThread(Runnable {
-                        val parts = resp.split("~|~")
-//                        txtValue.text = resp
-//                        Log.d("InscriptaInventory", parts[0])
-//                        val responseData = resp.body().string()
-                        val sheet1 = JSONObject(parts[0])
-                        val sheet2 = JSONObject(parts[1])
-                        val sheet3 = JSONObject(parts[2])
-                        val headingsSheet1 = sheet1.getString("2")
-                        val headingsSheet2 = sheet2.getString("2")
-                        val headingsSheet3 = sheet3.getString("2")
-                        Log.d("InscriptaInventory", headingsSheet1)
-                        Log.d("InscriptaInventory", headingsSheet2)
-                        Log.d("InscriptaInventory", headingsSheet3)
-
-                        val sectionsPagerAdapter = SectionsPagerAdapter(InventoryItems, this@MainActivity, supportFragmentManager)
-                        val viewPager: ViewPager = findViewById(R.id.view_pager)
-                        viewPager.adapter = sectionsPagerAdapter
-                        val tabs: TabLayout = findViewById(R.id.tabs)
-                        tabs.setupWithViewPager(viewPager)
-
+                        parseJsonStr(resp)
+                        setTabs()
                     })
                 }
             }
         })
     }
 
+            //QR Code
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val result: IntentResult? = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
         if (result != null) {
             if (result.contents != null) {
                 scannedResult = result.contents
 //                    txtValue.text = scannedResult
-                Log.d("InsInv", scannedResult.toString())
             } else {
 //                    txtValue.text = "scan failed"
-                Log.d("InsInv", scannedResult.toString())
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data)
@@ -112,45 +106,65 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
         super.onCreateOptionsMenu(menu)
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
     }
 
-    private fun addItems() {
-        InventoryItems.add(mutableListOf("0", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
-        InventoryItems.add(mutableListOf("1", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
-        InventoryItems.add(mutableListOf("1", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
-        InventoryItems.add(mutableListOf("2", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
-        InventoryItems.add(mutableListOf("3", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
-        InventoryItems.add(mutableListOf("4", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
-        InventoryItems.add(mutableListOf("5", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
-        InventoryItems.add(mutableListOf("6", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
-        InventoryItems.add(mutableListOf("0", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
-        InventoryItems.add(mutableListOf("0", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
-        InventoryItems.add(mutableListOf("0", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
-        InventoryItems.add(mutableListOf("0", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
-        InventoryItems.add(mutableListOf("0", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
-        InventoryItems.add(mutableListOf("0", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
-        InventoryItems.add(mutableListOf("0", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
-        InventoryItems.add(mutableListOf("0", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
-        InventoryItems.add(mutableListOf("0", "TB.STRIP02_1X90ML_YEB_Beta", "SubHeading", "X"))
-
-//        viewPager.adapter?.notifyDataSetChanged()
-
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+        Reflection.unseal(base)
     }
 
+    private fun setTabs(){
+        val sectionsPagerAdapter = SectionsPagerAdapter(InventoryItems, this@MainActivity, supportFragmentManager)
+        val viewPager: ViewPager = findViewById(R.id.view_pager)
+        viewPager.adapter = sectionsPagerAdapter
+        val tabs: TabLayout = findViewById(R.id.tabs)
+        tabs.setupWithViewPager(viewPager)
+    }
+    //Parse Excel Json object returned from server:
+    private fun parseJsonStr(responseStr: String) {
+        val respObj = JSONObject(responseStr)
+        val sheet1 = JSONObject(respObj["0"].toString())
+        val sheet2 = JSONObject(respObj["1"].toString())
+        val sheet3 = JSONObject(respObj["2"].toString())
+
+        for (i in 2 until sheet1.length() + 1){
+            val str1 = JSONObject(sheet1[i.toString()].toString())["A"].toString()
+            val str2 = JSONObject(sheet1[i.toString()].toString())["B"].toString()
+            val str3 = JSONObject(sheet1[i.toString()].toString())["C"].toString()
+            val str4 = JSONObject(sheet1[i.toString()].toString())["D"].toString()
+            val str5 = JSONObject(sheet1[i.toString()].toString())["E"].toString()
+            val str6 = JSONObject(sheet1[i.toString()].toString())["F"].toString()
+            InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))
+        }
+        for (i in 2 until sheet2.length() + 1){
+            val str1 = JSONObject(sheet2[i.toString()].toString())["A"].toString()
+            val str2 = JSONObject(sheet2[i.toString()].toString())["B"].toString()
+            val str3 = JSONObject(sheet2[i.toString()].toString())["C"].toString()
+            val str4 = JSONObject(sheet2[i.toString()].toString())["D"].toString()
+            val str5 = JSONObject(sheet2[i.toString()].toString())["E"].toString()
+            val str6 = JSONObject(sheet2[i.toString()].toString())["F"].toString()
+            InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))
+        }
+        for (i in 2 until sheet3.length() + 1){
+            val str1 = JSONObject(sheet3[i.toString()].toString())["A"].toString()
+            val str2 = JSONObject(sheet3[i.toString()].toString())["B"].toString()
+            val str3 = JSONObject(sheet3[i.toString()].toString())["C"].toString()
+            val str4 = JSONObject(sheet3[i.toString()].toString())["D"].toString()
+            val str5 = JSONObject(sheet3[i.toString()].toString())["E"].toString()
+            val str6 = JSONObject(sheet3[i.toString()].toString())["F"].toString()
+            InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))
+        }
+    }
 }
 
 
