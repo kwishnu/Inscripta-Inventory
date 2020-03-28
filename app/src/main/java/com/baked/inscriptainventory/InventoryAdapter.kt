@@ -10,16 +10,8 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.list_item.view.*
+private const val TAG = "InscriptaInventory"
 
-private val IMAGE_URI = arrayOf(
-    "blank",
-    "strip_tube_1",
-    "strip_tube_4",
-    "strip_tube_6",
-    "tubes_w_caps",
-    "cell_tube",
-    "rotary_growth_vial"
-    )
 class InventoryAdapter(private val items: MutableList<MutableList<String>>, private val context: Context, val clickListener: (Int) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun getItemCount(): Int {
         return items.size
@@ -36,9 +28,8 @@ class InventoryAdapter(private val items: MutableList<MutableList<String>>, priv
         holder.clickableView.list_subtitle.text = "Part No.: $partNumberStr"
         val numInStockStr =  if (items[holder.adapterPosition][5] == "null") ("") else (items[holder.adapterPosition][5])
         holder.clickableView.list_detail.text = numInStockStr
-//        var uri: Uri = Uri.parse("R.drawable.strip_tube_4")
-        val uri =
-            Uri.parse("android.resource://com.baked.inscriptainventory/drawable/" + IMAGE_URI[(items[holder.adapterPosition][1]).toInt()] )
+        val itemImageStr = ImagesArray().IMAGE_URI[(items[holder.adapterPosition][1]).toInt()]
+        val uri = Uri.parse("android.resource://com.baked.inscriptainventory/drawable/$itemImageStr")
         holder.image.setImageURI(uri)
         holder.clickableView.setOnClickListener {
             clickListener(position)

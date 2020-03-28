@@ -23,7 +23,10 @@ class SectionsPagerAdapter(private val invItems: MutableList<MutableList<String>
             if (!loaded) {
                 for (i in 0 until invItems.size) {
                     when (invItems[i][0]) {
-                        "1" -> InventoryTab1.add(invItems[i])
+                        "1" -> {
+//                            Log.d("Inventory", invItems.toString())
+                            InventoryTab1.add(invItems[i])
+                        }
                         "2" -> InventoryTab2.add(invItems[i])
                         else -> InventoryTab3.add(invItems[i])
                     }

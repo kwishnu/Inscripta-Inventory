@@ -1,30 +1,32 @@
 package com.baked.inscriptainventory
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+private const val TAG = "InscriptaInventory"
 
 class SecondFragment(private val items: MutableList<MutableList<String>>) : Fragment() {
-    lateinit var rootView: View
+    private lateinit var rootView: View
     private lateinit var recyclerView: RecyclerView
-    private var InventoryItems: ArrayList<String> = ArrayList()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.fragment_second, container, false)
         recyclerView = rootView.findViewById(R.id.ir_rv)
         recyclerView.layoutManager = LinearLayoutManager(activity)
         fun fragClickListener(position: Int) {
-//            val intent = Intent(activity, List::class.java)
-//            intent.putExtra("Item",  InventoryItems[position])
-//            startActivity(intent)
-
-            Toast.makeText(activity, position.toString() + " is clicked..." + "which is " + items[position], Toast.LENGTH_LONG).show()
+            val intent = Intent(activity, ItemActionActivity::class.java)
+            intent.putExtra("Image",  items[position][1])
+            intent.putExtra("PartNum",  items[position][2])
+            intent.putExtra("Item",  items[position][3])
+            intent.putExtra("MinStockLevel",  items[position][4])
+            intent.putExtra("InStock",  items[position][5])
+            startActivity(intent)
         }
         val listener = { i: Int -> fragClickListener(i) }
         recyclerView.adapter = activity?.applicationContext?.let { InventoryAdapter( items, it,  listener) }

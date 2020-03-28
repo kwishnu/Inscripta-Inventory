@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.preference.PreferenceManager
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -20,7 +19,7 @@ import org.json.JSONObject
 import java.io.IOException
 import kotlinx.android.synthetic.main.activity_main.*
 import android.util.Log
-import com.google.gson.Gson
+private const val TAG = "InscriptaInventory"
 
 class MainActivity(private var InventoryItems: MutableList<MutableList<String>> = ArrayList()) : AppCompatActivity() {
     private var ipAddressStr = ""
@@ -67,7 +66,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                Snackbar.make(view, "Server is down: functionality will be limited", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "No server response: functionality will be limited", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
                 val stateStr = sharedPrefs!!.getString(initialStateName, String.toString())
                 this@MainActivity.runOnUiThread(Runnable {
@@ -116,6 +115,10 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onBackPressed() {
+        this.finishAffinity()
     }
 
     override fun attachBaseContext(base: Context?) {

@@ -5,4 +5,11 @@
     <string name="tab_text_2">Internal Reagents</string>
     <string name="tab_text_3">Purchased Parts</string>
     <string name="thumbnail">thumbnail</string>
+    <string name="detail_title">Part No.</string>
+    <string name="_1">1</string>
+    <string name="remove_from_inventory">Remove</string>
+    <string name="add_to_inventory">Add</string>
+    <string name="submit">SUBMIT</string>
+    <string name="sent">SENT</string>
+    <string name="item_image">item_image</string>
 </resources>
