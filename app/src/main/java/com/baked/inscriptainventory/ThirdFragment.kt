@@ -25,7 +25,10 @@ class ThirdFragment(private val items: MutableList<MutableList<String>>) : Fragm
             intent.putExtra("PartNum",  items[position][2])
             intent.putExtra("Item",  items[position][3])
             intent.putExtra("MinStockLevel",  items[position][4])
-            intent.putExtra("InStock",  items[position][5])
+            intent.putExtra("InStock", items[position][5])
+            intent.putExtra("Sheet", "3")
+            intent.putExtra("Row", (position + 2).toString())
+
             startActivity(intent)
         }
         val listener = { i: Int -> fragClickListener(i) }

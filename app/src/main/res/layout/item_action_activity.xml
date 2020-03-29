@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/coordinatorLayout"
+    android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="30dp"
         android:paddingLeft="20sp"
         android:paddingRight="20sp"
         android:textSize="18sp"
@@ -37,17 +37,14 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:gravity="center"
-            android:text="Left" />
+            android:gravity="center"/>
 
         <TextView
-            android:id="@+id/minStockLevel"
+            android:id="@+id/minStockLevelNum"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
             android:layout_weight="0.5"
-            android:gravity="center"
-            android:text="Right" />
+            android:gravity="center"/>
     </LinearLayout>
 
     <ImageView
@@ -63,6 +60,7 @@
 
     <EditText
         android:id="@+id/numberToSubmitTxt"
+        android:cursorVisible="false"
         android:importantForAutofill="no"
         android:layout_width="100dp"
         android:layout_height="60dp"

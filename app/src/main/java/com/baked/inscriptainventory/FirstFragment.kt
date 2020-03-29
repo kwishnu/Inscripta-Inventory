@@ -22,12 +22,14 @@ class FirstFragment(private val items: MutableList<MutableList<String>>) : Fragm
         recyclerView.layoutManager = LinearLayoutManager(activity)
         fun fragClickListener(position: Int) {
             val intent = Intent(activity, ItemActionActivity::class.java)
-            intent.putExtra("Image",  items[position][1])
-            intent.putExtra("PartNum",  items[position][2])
-            intent.putExtra("Item",  items[position][3])
-            intent.putExtra("MinStockLevel",  items[position][4])
-            intent.putExtra("InStock",  items[position][5])
-            Log.d(TAG, items[position][1])
+            intent.putExtra("Image", items[position][1])
+            intent.putExtra("PartNum", items[position][2])
+            intent.putExtra("Item", items[position][3])
+            intent.putExtra("MinStockLevel", items[position][4])
+            intent.putExtra("InStock", items[position][5])
+            intent.putExtra("Sheet", "1")
+            intent.putExtra("Row", (position + 2).toString())
+
             startActivity(intent)
         }
         val listener = { i: Int -> fragClickListener(i) }

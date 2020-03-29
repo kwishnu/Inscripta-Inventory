@@ -135,6 +135,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
     }
     //Parse Excel Json object returned from server:
     private fun parseJsonStr(responseStr: String) {
+//        Log.d(TAG, responseStr)
         val respObj = JSONObject(responseStr)
         val sheet1 = JSONObject(respObj["0"].toString())
         val sheet2 = JSONObject(respObj["1"].toString())

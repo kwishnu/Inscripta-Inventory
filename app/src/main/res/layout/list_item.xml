@@ -29,7 +29,7 @@ android:id="@+id/list_element">
         android:paddingEnd="4dp"
         android:paddingStart="4dp"
         android:textColor="#000000"
-        android:textSize="12sp"
+        android:textSize="16sp"
         tools:text="Detail" />
 
     <RelativeLayout
