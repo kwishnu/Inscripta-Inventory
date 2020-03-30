@@ -67,7 +67,7 @@ class ItemActionActivity : AppCompatActivity(){
                 dialogBuilder
                     .setMessage("Number exceeds stated number in stock. Please adjust accordingly")
                     .setPositiveButton("OK", DialogInterface.OnClickListener {
-                            dialog, id -> dialog.cancel()
+                            dialog, _ -> dialog.cancel()
                     })
 
                 val alert = dialogBuilder.create()
@@ -75,6 +75,9 @@ class ItemActionActivity : AppCompatActivity(){
                 alert.show()
 
             } else {
+                val newQuantity = if (radio0.isChecked) (inStock.toInt() - quantityStr.toInt()) else (inStock.toInt() + quantityStr.toInt())
+                val sendWarning = if (newQuantity <= minStockLevel.toInt()) "true" else "false"
+
                 submitted = true
                 submitButton.text = getString(R.string.sent)
                 submitButton.isEnabled = false
@@ -82,13 +85,11 @@ class ItemActionActivity : AppCompatActivity(){
 
                 callServer(
                     constraintLayout,
-                    addOrRemoveStr,
-                    quantityStr,
+                    newQuantity.toString(),
                     itemPartNum,
-                    minStockLevel!!,
-                    inStock,
                     sheetNum!!,
-                    rowNum!!
+                    rowNum!!,
+                    sendWarning
                 )
             }
         }
@@ -113,23 +114,22 @@ class ItemActionActivity : AppCompatActivity(){
 
 private fun callServer(
         view: View,
-        addOrRemove: String,
-        quantity: String,
+        newCount: String,
         partNum: String?,
-        minStockLevel: String,
-        inStock: String?,
         sheetNum: String,
-        rowNum: String
+        rowNum: String,
+        sendWarning: String
     ) {
         ipAddressStr = "10.0.0.225"//ip_input.text.toString()
-        val urlStr = "http://$ipAddressStr:80/index.php?AddOrRemove=$addOrRemove&Number=$quantity" +
-                "&PartNumber=$partNum&MinStockLevel=$minStockLevel&InStock=$inStock&Sheet=$sheetNum&RowNum=$rowNum"
+        val urlStr = "http://$ipAddressStr:80/index.php?NewCount=$newCount" +
+                "&PartNumber=$partNum&Sheet=$sheetNum&RowNum=$rowNum&SendWarning=$sendWarning"
         val request = Request.Builder()
             .url(urlStr)
             .build()
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                Snackbar.make(view, "No server response: enter changes manually", Snackbar.LENGTH_LONG).setAction("Action", null).show()
+                Snackbar.make(view, "No server response: enter changes manually",
+                Snackbar.LENGTH_LONG).setAction("Action", null).show()
                 e.printStackTrace()
             }
             override fun onResponse(call: Call, response: Response){
@@ -140,9 +140,11 @@ private fun callServer(
                         Log.d(TAG, resp)
 
                         if (resp == "Success") {
-                            Snackbar.make(view,"Success\nInventory adjustment made", Snackbar.LENGTH_LONG).setAction("Action", null).show()
+                            Snackbar.make(view,"Success\nInventory adjustment made",
+                            Snackbar.LENGTH_LONG).setAction("Action", null).show()
                         } else {
-                            Snackbar.make(view,"Unexpected error\nEnter changes manually", Snackbar.LENGTH_LONG).setAction("Action", null).show()
+                            Snackbar.make(view,"Unexpected error\nEnter changes manually",
+                            Snackbar.LENGTH_LONG).setAction("Action", null).show()
                         }
                     })
                 }
