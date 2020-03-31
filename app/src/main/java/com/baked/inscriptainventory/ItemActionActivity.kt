@@ -2,22 +2,23 @@ package com.baked.inscriptainventory
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.view.View
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.net.Uri
-import java.io.IOException
+import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.item_action_activity.*
 import okhttp3.*
+import java.io.IOException
 
-private const val TAG = "InscriptaInventory"
+private const val TAG = "InscriptaInventory_IAA"
 
 class ItemActionActivity : AppCompatActivity(){
     private val client = OkHttpClient()
@@ -76,7 +77,8 @@ class ItemActionActivity : AppCompatActivity(){
 
             } else {
                 val newQuantity = if (radio0.isChecked) (inStock.toInt() - quantityStr.toInt()) else (inStock.toInt() + quantityStr.toInt())
-                val sendWarning = if (newQuantity <= minStockLevel.toInt()) "true" else "false"
+                val sendWarning = if (newQuantity <= minStockLevel!!.toInt()) "true" else "false"
+                numInInventory.text = "Inventory Count: $newQuantity"
 
                 submitted = true
                 submitButton.text = getString(R.string.sent)
@@ -99,7 +101,8 @@ class ItemActionActivity : AppCompatActivity(){
             val heightDiff: Int = constraintLayout.rootView.height - constraintLayout.height
             if (heightDiff > 100 && flag2) {
                 Log.d(TAG, submitted.toString())
-                onBackPressed()
+                startMainActivity()
+                //onBackPressed()
             }
             if (heightDiff > 100 && flag) {
                 flag2 = true
@@ -142,6 +145,7 @@ private fun callServer(
                         if (resp == "Success") {
                             Snackbar.make(view,"Success\nInventory adjustment made",
                             Snackbar.LENGTH_LONG).setAction("Action", null).show()
+
                         } else {
                             Snackbar.make(view,"Unexpected error\nEnter changes manually",
                             Snackbar.LENGTH_LONG).setAction("Action", null).show()
@@ -152,8 +156,17 @@ private fun callServer(
         })
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
+    private fun startMainActivity() {
+        val intent = Intent(this, MainActivity::class.java)
+//        intent.putExtra("CallServer", "Call")
+
+        startActivity(intent)
+    }
+
+        override fun onSupportNavigateUp(): Boolean {
+            startMainActivity()
+
+//            onBackPressed()
         return true
     }
 }

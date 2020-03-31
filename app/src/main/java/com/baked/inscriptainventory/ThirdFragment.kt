@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-private const val TAG = "InscriptaInventory"
+private const val TAG = "InscriptaInventory_TF"
 
 class ThirdFragment(private val items: MutableList<MutableList<String>>) : Fragment() {
     private lateinit var rootView: View
