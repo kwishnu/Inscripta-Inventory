@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.PagerAdapter
-
 private const val TAG = "InscriptaInventory_SPA"
 
 private val TAB_TITLES = arrayOf(

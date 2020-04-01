@@ -95,14 +95,6 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
         })
     }
 
-    private fun setTabs(){
-        val sectionsPagerAdapter = SectionsPagerAdapter(InventoryItems, this@MainActivity, supportFragmentManager)
-        val viewPager: ViewPager = findViewById(R.id.view_pager)
-        viewPager.adapter = sectionsPagerAdapter
-        val tabs: TabLayout = findViewById(R.id.tabs)
-        tabs.setupWithViewPager(viewPager)
-    }
-
             //QR Code
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val result: IntentResult? = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
@@ -152,6 +144,14 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
         Reflection.unseal(base)
+    }
+
+    private fun setTabs(){
+        val sectionsPagerAdapter = SectionsPagerAdapter(InventoryItems, this@MainActivity, supportFragmentManager)
+        val viewPager: ViewPager = findViewById(R.id.view_pager)
+        viewPager.adapter = sectionsPagerAdapter
+        val tabs: TabLayout = findViewById(R.id.tabs)
+        tabs.setupWithViewPager(viewPager)
     }
 
     //Parse Excel Json object returned from server:
