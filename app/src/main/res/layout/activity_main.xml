@@ -17,6 +17,7 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             app:title="@string/app_name"
             app:menu="@menu/menu_main"
             android:layout_width="match_parent"

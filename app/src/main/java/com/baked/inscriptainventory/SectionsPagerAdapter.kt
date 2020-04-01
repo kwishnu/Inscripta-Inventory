@@ -1,12 +1,10 @@
 package com.baked.inscriptainventory
 
 import android.content.Context
-import android.database.DataSetObserver
-import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
 import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.viewpager.widget.PagerAdapter
 
 private const val TAG = "InscriptaInventory_SPA"
 
@@ -37,7 +35,6 @@ class SectionsPagerAdapter(
                 }
                 loaded = true
             }
-//            Log.d(TAG, InventoryTab1.toString())
 
             return when (position) {
             0 -> FirstFragment(InventoryTab1)
@@ -47,8 +44,9 @@ class SectionsPagerAdapter(
     }
 
     override fun getItemPosition(`object`: Any): Int {
-        return POSITION_NONE
+        return PagerAdapter.POSITION_NONE
     }
+
     override fun getPageTitle(position: Int): CharSequence? {
         return context.resources.getString(TAB_TITLES[position])
     }

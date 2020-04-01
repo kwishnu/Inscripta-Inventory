@@ -7,9 +7,14 @@
     <string name="thumbnail">thumbnail</string>
     <string name="detail_title">Part No.</string>
     <string name="_1">1</string>
+    <string name="home_ip_address">10.0.0.225</string>
     <string name="remove_from_inventory">Remove</string>
     <string name="add_to_inventory">Add</string>
     <string name="submit">SUBMIT</string>
     <string name="sent">SENT</string>
     <string name="item_image">item_image</string>
+    <string name="save_ip">Save IP</string>
+    <string name="ip_address">IP Address</string>
+    <string name="clear">Clear</string>
+    <string name="exit_to_restart">Exit to Restart</string>
 </resources>

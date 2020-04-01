@@ -1,5 +1,6 @@
 package com.baked.inscriptainventory
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -29,12 +30,24 @@ class ThirdFragment(private val items: MutableList<MutableList<String>>) : Fragm
             intent.putExtra("Sheet", "3")
             intent.putExtra("Row", (position + 2).toString())
 
-            startActivity(intent)
+            startActivityForResult(intent, 1)
         }
         val listener = { i: Int -> fragClickListener(i) }
         recyclerView.adapter = activity?.applicationContext?.let { InventoryAdapter( items, it,  listener) }
         recyclerView.addItemDecoration(DividerItemDecoration(activity?.applicationContext, DividerItemDecoration.VERTICAL))
 
         return rootView
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 1) {
+            if (resultCode == Activity.RESULT_OK) {
+                val indexStr = data?.getStringExtra("index")
+                val valueStr = data?.getStringExtra("newValue")
+                items[indexStr!!.toInt()][5] = valueStr.toString()
+                recyclerView.adapter?.notifyDataSetChanged()
+            }
+        }
     }
 }

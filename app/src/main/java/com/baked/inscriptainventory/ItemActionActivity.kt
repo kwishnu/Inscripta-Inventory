@@ -1,6 +1,7 @@
 package com.baked.inscriptainventory
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
@@ -17,7 +18,6 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.item_action_activity.*
 import okhttp3.*
 import java.io.IOException
-
 private const val TAG = "InscriptaInventory_IAA"
 
 class ItemActionActivity : AppCompatActivity(){
@@ -84,15 +84,21 @@ class ItemActionActivity : AppCompatActivity(){
                 submitButton.text = getString(R.string.sent)
                 submitButton.isEnabled = false
                 submitButton.setBackgroundColor(ContextCompat.getColor(this, R.color.disabledGray))
+                val newValueStr = newQuantity.toString()
 
                 callServer(
                     constraintLayout,
-                    newQuantity.toString(),
+                    newValueStr,
                     itemPartNum,
                     sheetNum!!,
                     rowNum!!,
                     sendWarning
                 )
+
+                val intent = Intent()
+                intent.putExtra("index", (rowNum.toInt() - 2).toString())
+                intent.putExtra("newValue", newValueStr)
+                setResult(Activity.RESULT_OK, intent)
             }
         }
 
@@ -157,15 +163,13 @@ private fun callServer(
     }
 
     private fun startMainActivity() {
-        val intent = Intent(this, MainActivity::class.java)
-//        intent.putExtra("CallServer", "Call")
-
-        startActivity(intent)
+//        val intent = Intent(this, MainActivity::class.java)
+//        startActivity(intent)
+        finish()
     }
 
-        override fun onSupportNavigateUp(): Boolean {
-            startMainActivity()
-
+    override fun onSupportNavigateUp(): Boolean {
+        startMainActivity()
 //            onBackPressed()
         return true
     }
