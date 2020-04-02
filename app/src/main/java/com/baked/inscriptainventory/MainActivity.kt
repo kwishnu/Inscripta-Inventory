@@ -19,6 +19,7 @@ import me.weishu.reflection.Reflection
 import okhttp3.*
 import org.json.JSONObject
 import java.io.IOException
+
 private const val TAG = "InscriptaInventory_MA"
 
 class MainActivity(private var InventoryItems: MutableList<MutableList<String>> = ArrayList()) : AppCompatActivity() {
@@ -101,14 +102,75 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
         if (result != null) {
             if (result.contents != null) {
                 scannedResult = result.contents
-//                    txtValue.text = scannedResult
+                if (scannedResult.indexOf("_") > 0) {
+                    var codePieces = scannedResult.split("_")
+                    Log.d(TAG, codePieces[1])
+                    var sheet = "Not found"
+                    var image = "Not found"
+                    var partNumber = "Not found"
+                    var description = "Not found"
+                    var minStockLevel = "Not found"
+                    var onHandNum = "Not found"
+                    var row = "Not found"
+
+                for (e in InventoryItems){
+                    if (codePieces[1] == e[2]){
+                        sheet = e[0]
+                        image = e[1]
+                        partNumber = e[2]
+                        description = e[3]
+                        minStockLevel = e[4]
+                        onHandNum = e[5]
+                        row = e[6]
+                        break
+                    }
+                }
+                    if (sheet == "Not found"){
+                        Snackbar.make(coordinator_layout, "Product not found. Check InventoryXls.xlsx", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null)
+                            .show()
+                    }
+
+//                    for ((index, value) in InventoryItems.withIndex()) {
+//
+//                    }
+                    val intent = Intent(this, ItemActionActivity::class.java)
+                    intent.putExtra("Sheet", sheet)
+                    intent.putExtra("Image", image)
+                    intent.putExtra("PartNum", partNumber)
+                    intent.putExtra("Item", description)
+                    intent.putExtra("MinStockLevel", minStockLevel)
+                    intent.putExtra("InStock", onHandNum)
+                    intent.putExtra("Row", row)
+
+                    this.startActivity(intent)
+
+//                    startActivityForResult(intent, 1)
+//                    val tabLayout = tabs as TabLayout
+//                    val tab = tabLayout.getTabAt(sheet.toInt() - 1)
+//                    tab?.select()
+                } else {
+                    Snackbar.make(coordinator_layout, "Not a recognized product code", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null)
+                        .show()
+                }
+
+
+
+
+//                2_1001228_001007880075_2003 code format
+//                2_1001148_001007180039_2006 code format
+
             } else {
-//                    txtValue.text = "scan failed"
+                Snackbar.make(coordinator_layout, "Scan failed", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null)
+                    .show()
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
@@ -161,13 +223,15 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
         val sheet3 = JSONObject(respObj["2"].toString())
 
         for (i in 2 until sheet1.length() + 1){
+//            Log.d(TAG, i.toString())
             val str1 = JSONObject(sheet1[i.toString()].toString())["A"].toString()//Column A: Sheet
             val str2 = JSONObject(sheet1[i.toString()].toString())["B"].toString()//Column B: Image
             val str3 = JSONObject(sheet1[i.toString()].toString())["C"].toString()//Column C: Part Number
             val str4 = JSONObject(sheet1[i.toString()].toString())["D"].toString()//Column D: Description
             val str5 = JSONObject(sheet1[i.toString()].toString())["E"].toString()//Column E: Min Stock Level
             val str6 = JSONObject(sheet1[i.toString()].toString())["F"].toString()//Column F: Quantity on Hand
-            InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))
+            val str7 = i.toString()//Row in Excel sheet
+            InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
         }
         for (i in 2 until sheet2.length() + 1){
             val str1 = JSONObject(sheet2[i.toString()].toString())["A"].toString()
@@ -176,7 +240,8 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
             val str4 = JSONObject(sheet2[i.toString()].toString())["D"].toString()
             val str5 = JSONObject(sheet2[i.toString()].toString())["E"].toString()
             val str6 = JSONObject(sheet2[i.toString()].toString())["F"].toString()
-            InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))
+            val str7 = i.toString()
+            InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
         }
         for (i in 2 until sheet3.length() + 1){
             val str1 = JSONObject(sheet3[i.toString()].toString())["A"].toString()
@@ -185,9 +250,11 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
             val str4 = JSONObject(sheet3[i.toString()].toString())["D"].toString()
             val str5 = JSONObject(sheet3[i.toString()].toString())["E"].toString()
             val str6 = JSONObject(sheet3[i.toString()].toString())["F"].toString()
-            InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))
+            val str7 = i.toString()
+            InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
         }
     }
 }
+
 
 

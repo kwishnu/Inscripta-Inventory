@@ -26,6 +26,8 @@ class ItemActionActivity : AppCompatActivity(){
     private var submitted = false
     private var flag = false
     private var flag2 = false
+    private var newQuantity = 0
+    private var newValueStr = ""
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,15 +78,14 @@ class ItemActionActivity : AppCompatActivity(){
                 alert.show()
 
             } else {
-                val newQuantity = if (radio0.isChecked) (inStock.toInt() - quantityStr.toInt()) else (inStock.toInt() + quantityStr.toInt())
+                newQuantity = if (radio0.isChecked) (inStock.toInt() - quantityStr.toInt()) else (inStock.toInt() + quantityStr.toInt())
                 val sendWarning = if (newQuantity <= minStockLevel!!.toInt()) "true" else "false"
-                numInInventory.text = "Inventory Count: $newQuantity"
 
                 submitted = true
                 submitButton.text = getString(R.string.sent)
                 submitButton.isEnabled = false
                 submitButton.setBackgroundColor(ContextCompat.getColor(this, R.color.disabledGray))
-                val newValueStr = newQuantity.toString()
+                newValueStr = newQuantity.toString()
 
                 callServer(
                     constraintLayout,
@@ -94,11 +95,6 @@ class ItemActionActivity : AppCompatActivity(){
                     rowNum!!,
                     sendWarning
                 )
-
-                val intent = Intent()
-                intent.putExtra("index", (rowNum.toInt() - 2).toString())
-                intent.putExtra("newValue", newValueStr)
-                setResult(Activity.RESULT_OK, intent)
             }
         }
 
@@ -141,6 +137,7 @@ private fun callServer(
                 Snackbar.LENGTH_LONG).setAction("Action", null).show()
                 e.printStackTrace()
             }
+            @SuppressLint("SetTextI18n")
             override fun onResponse(call: Call, response: Response){
                 response.use {
                     if (!response.isSuccessful) throw IOException("Unexpected code $response")
@@ -148,13 +145,25 @@ private fun callServer(
                     this@ItemActionActivity.runOnUiThread(Runnable {
                         Log.d(TAG, resp)
 
+
+                        val intent = Intent()
+
+
+
                         if (resp == "Success") {
                             Snackbar.make(view,"Success\nInventory adjustment made",
                             Snackbar.LENGTH_LONG).setAction("Action", null).show()
+                            numInInventory.text = "Inventory Count: $newQuantity"
+                            intent.putExtra("index", (rowNum.toInt() - 2).toString())
+                            intent.putExtra("newValue", newValueStr)
+                            setResult(Activity.RESULT_OK, intent)
+                            val ff: FirstFragment
+                            FirstFragment.SetAdapterFromActivity()
 
                         } else {
                             Snackbar.make(view,"Unexpected error\nEnter changes manually",
                             Snackbar.LENGTH_LONG).setAction("Action", null).show()
+                            setResult(Activity.RESULT_CANCELED, intent)
                         }
                     })
                 }
