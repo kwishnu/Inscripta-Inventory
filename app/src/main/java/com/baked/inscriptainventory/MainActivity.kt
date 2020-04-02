@@ -111,8 +111,6 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        Log.d(TAG, "yep")
-        menu.add("Test2")
         val inflater = menuInflater
         inflater.inflate(R.menu.menu_main, menu)
         return true
