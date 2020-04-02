@@ -10,11 +10,22 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+
 private const val TAG = "InscriptaInventory_TF"
+private lateinit var recyclerView: RecyclerView
+private lateinit var itemsContainer: MutableList<MutableList<String>>
 
 class ThirdFragment(private val items: MutableList<MutableList<String>>) : Fragment() {
     private lateinit var rootView: View
-    private lateinit var recyclerView: RecyclerView
+    object SetAdapterFromActivity {
+        operator fun invoke(index: String, value: String) {
+            itemsContainer[index.toInt()][5] = value
+            recyclerView.adapter?.notifyDataSetChanged()
+        }
+    }
+    init{
+        itemsContainer = items
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(R.layout.fragment_third, container, false)
@@ -22,18 +33,19 @@ class ThirdFragment(private val items: MutableList<MutableList<String>>) : Fragm
         recyclerView.layoutManager = LinearLayoutManager(activity)
         fun fragClickListener(position: Int) {
             val intent = Intent(activity, ItemActionActivity::class.java)
-            intent.putExtra("Image",  items[position][1])
-            intent.putExtra("PartNum",  items[position][2])
-            intent.putExtra("Item",  items[position][3])
-            intent.putExtra("MinStockLevel",  items[position][4])
-            intent.putExtra("InStock", items[position][5])
+            intent.putExtra("Image",  itemsContainer[position][1])
+            intent.putExtra("PartNum",  itemsContainer[position][2])
+            intent.putExtra("Item",  itemsContainer[position][3])
+            intent.putExtra("MinStockLevel",  itemsContainer[position][4])
+            intent.putExtra("InStock", itemsContainer[position][5])
             intent.putExtra("Sheet", "3")
             intent.putExtra("Row", (position + 2).toString())
+            intent.putExtra("FromActivity", "Fragment")
 
             startActivityForResult(intent, 1)
         }
         val listener = { i: Int -> fragClickListener(i) }
-        recyclerView.adapter = activity?.applicationContext?.let { InventoryAdapter( items, it,  listener) }
+        recyclerView.adapter = activity?.applicationContext?.let { InventoryAdapter( itemsContainer, it,  listener) }
         recyclerView.addItemDecoration(DividerItemDecoration(activity?.applicationContext, DividerItemDecoration.VERTICAL))
 
         return rootView
@@ -45,7 +57,7 @@ class ThirdFragment(private val items: MutableList<MutableList<String>>) : Fragm
             if (resultCode == Activity.RESULT_OK) {
                 val indexStr = data?.getStringExtra("index")
                 val valueStr = data?.getStringExtra("newValue")
-                items[indexStr!!.toInt()][5] = valueStr.toString()
+                itemsContainer[indexStr!!.toInt()][5] = valueStr.toString()
                 recyclerView.adapter?.notifyDataSetChanged()
             }
         }

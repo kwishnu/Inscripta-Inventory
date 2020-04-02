@@ -98,7 +98,9 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
 
             //QR Code
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        val result: IntentResult? = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+//                2_1001228_001007880075_2003 product code format
+//                2_1001148_001007180039_2006 product code format
+                val result: IntentResult? = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
         if (result != null) {
             if (result.contents != null) {
                 scannedResult = result.contents
@@ -114,7 +116,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                     var row = "Not found"
 
                 for (e in InventoryItems){
-                    if (codePieces[1] == e[2]){
+                    if (codePieces[1] == e[2]){//check if part number matches given row in Excel spreadsheet data returned in server call
                         sheet = e[0]
                         image = e[1]
                         partNumber = e[2]
@@ -131,9 +133,12 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                             .show()
                     }
 
-//                    for ((index, value) in InventoryItems.withIndex()) {
-//
-//                    }
+                    var whichTabStr = ""
+                    when (sheet){
+                        "1" -> whichTabStr = "MainActivity1"
+                        "2" -> whichTabStr = "MainActivity2"
+                        "3" -> whichTabStr = "MainActivity3"
+                    }
                     val intent = Intent(this, ItemActionActivity::class.java)
                     intent.putExtra("Sheet", sheet)
                     intent.putExtra("Image", image)
@@ -142,25 +147,18 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                     intent.putExtra("MinStockLevel", minStockLevel)
                     intent.putExtra("InStock", onHandNum)
                     intent.putExtra("Row", row)
+                    intent.putExtra("FromActivity", whichTabStr)
 
                     this.startActivity(intent)
 
-//                    startActivityForResult(intent, 1)
-//                    val tabLayout = tabs as TabLayout
-//                    val tab = tabLayout.getTabAt(sheet.toInt() - 1)
-//                    tab?.select()
+                    val tabLayout = tabs as TabLayout
+                    val tab = tabLayout.getTabAt(sheet.toInt() - 1)
+                    tab?.select()
                 } else {
                     Snackbar.make(coordinator_layout, "Not a recognized product code", Snackbar.LENGTH_LONG)
                         .setAction("Action", null)
                         .show()
                 }
-
-
-
-
-//                2_1001228_001007880075_2003 code format
-//                2_1001148_001007180039_2006 code format
-
             } else {
                 Snackbar.make(coordinator_layout, "Scan failed", Snackbar.LENGTH_LONG)
                     .setAction("Action", null)
@@ -171,7 +169,6 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
         }
     }
 
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.menu_main, menu)
@@ -181,7 +178,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_settings -> {
-        Log.d(TAG, "here")//This does nothing, use settingsClicked()
+        Log.d(TAG, "here")//This does nothing, use settingsClicked(), etc
             true
         }
         else ->  super.onOptionsItemSelected(item)
@@ -216,14 +213,12 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
 
     //Parse Excel Json object returned from server:
     private fun parseJsonStr(responseStr: String) {
-//        Log.d(TAG, responseStr)
         val respObj = JSONObject(responseStr)
         val sheet1 = JSONObject(respObj["0"].toString())
         val sheet2 = JSONObject(respObj["1"].toString())
         val sheet3 = JSONObject(respObj["2"].toString())
 
         for (i in 2 until sheet1.length() + 1){
-//            Log.d(TAG, i.toString())
             val str1 = JSONObject(sheet1[i.toString()].toString())["A"].toString()//Column A: Sheet
             val str2 = JSONObject(sheet1[i.toString()].toString())["B"].toString()//Column B: Image
             val str3 = JSONObject(sheet1[i.toString()].toString())["C"].toString()//Column C: Part Number
@@ -255,6 +250,4 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
         }
     }
 }
-
-
 

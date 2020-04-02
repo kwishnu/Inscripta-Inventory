@@ -28,6 +28,7 @@ class ItemActionActivity : AppCompatActivity(){
     private var flag2 = false
     private var newQuantity = 0
     private var newValueStr = ""
+    private var fromActivity = "Unknown"
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,6 +53,7 @@ class ItemActionActivity : AppCompatActivity(){
         val inStock = intent.getStringExtra("InStock")
         val sheetNum = intent.getStringExtra("Sheet")
         val rowNum = intent.getStringExtra("Row")
+        fromActivity = intent.getStringExtra("FromActivity")!!.toString()
 
         supportActionBar!!.title = getString(R.string.detail_title) + " " + itemPartNum
         inventoryItemName.text = itemName
@@ -143,23 +145,21 @@ private fun callServer(
                     if (!response.isSuccessful) throw IOException("Unexpected code $response")
                     val resp = response.body!!.string()
                     this@ItemActionActivity.runOnUiThread(Runnable {
-                        Log.d(TAG, resp)
-
-
+//                        Log.d(TAG, resp)
                         val intent = Intent()
-
-
-
                         if (resp == "Success") {
                             Snackbar.make(view,"Success\nInventory adjustment made",
                             Snackbar.LENGTH_LONG).setAction("Action", null).show()
                             numInInventory.text = "Inventory Count: $newQuantity"
-                            intent.putExtra("index", (rowNum.toInt() - 2).toString())
+                            val index = (rowNum.toInt() - 2).toString()
+                            intent.putExtra("index", index)
                             intent.putExtra("newValue", newValueStr)
                             setResult(Activity.RESULT_OK, intent)
-                            val ff: FirstFragment
-                            FirstFragment.SetAdapterFromActivity()
-
+                            when (fromActivity){
+                                "MainActivity1" -> FirstFragment.SetAdapterFromActivity(index, newValueStr)
+                                "MainActivity2" -> SecondFragment.SetAdapterFromActivity(index, newValueStr)
+                                "MainActivity3" -> ThirdFragment.SetAdapterFromActivity(index, newValueStr)
+                            }
                         } else {
                             Snackbar.make(view,"Unexpected error\nEnter changes manually",
                             Snackbar.LENGTH_LONG).setAction("Action", null).show()
@@ -172,9 +172,9 @@ private fun callServer(
     }
 
     private fun startMainActivity() {
+        finish()
 //        val intent = Intent(this, MainActivity::class.java)
 //        startActivity(intent)
-        finish()
     }
 
     override fun onSupportNavigateUp(): Boolean {
