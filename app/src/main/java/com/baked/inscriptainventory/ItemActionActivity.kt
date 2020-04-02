@@ -24,8 +24,8 @@ class ItemActionActivity : AppCompatActivity(){
     private val client = OkHttpClient()
     private var ipAddressStr = ""
     private var submitted = false
-    private var flag = false
-    private var flag2 = false
+    private var shouldClose = 2
+    private var seenActivity = false
     private var newQuantity = 0
     private var newValueStr = ""
     private var fromActivity = "Unknown"
@@ -40,10 +40,26 @@ class ItemActionActivity : AppCompatActivity(){
         setContentView(R.layout.item_action_activity)
 
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        //show keyboard after delay
         numberToSubmitTxt.postDelayed(Runnable {
             numberToSubmitTxt.requestFocus()
             imm.showSoftInput(numberToSubmitTxt, 0)
         }, 100)
+        numberToSubmitTxt.postDelayed(Runnable {
+            seenActivity = true
+        }, 1000)
+
+        //Close activity on retract keyboard:
+        constraintLayout.viewTreeObserver.addOnGlobalLayoutListener(ViewTreeObserver.OnGlobalLayoutListener {
+            val heightDiff: Int = constraintLayout.rootView.height - constraintLayout.height
+            if (heightDiff > 100) {
+                if ((shouldClose > 1) && seenActivity){
+                    startMainActivity()
+                } else {
+                    shouldClose++
+                }
+            }
+        })
 
         radio0.isSelected = true
         val itemName = intent.getStringExtra("Item")
@@ -83,7 +99,7 @@ class ItemActionActivity : AppCompatActivity(){
                 newQuantity = if (radio0.isChecked) (inStock.toInt() - quantityStr.toInt()) else (inStock.toInt() + quantityStr.toInt())
                 val sendWarning = if (newQuantity <= minStockLevel!!.toInt()) "true" else "false"
 
-                submitted = true
+                shouldClose = 0
                 submitButton.text = getString(R.string.sent)
                 submitButton.isEnabled = false
                 submitButton.setBackgroundColor(ContextCompat.getColor(this, R.color.disabledGray))
@@ -100,23 +116,6 @@ class ItemActionActivity : AppCompatActivity(){
             }
         }
 
-        //Close activity on retract keyboard:
-        constraintLayout.viewTreeObserver.addOnGlobalLayoutListener(ViewTreeObserver.OnGlobalLayoutListener {
-            val heightDiff: Int = constraintLayout.rootView.height - constraintLayout.height
-            if (heightDiff > 100 && flag2) {
-                Log.d(TAG, submitted.toString())
-                startMainActivity()
-                //onBackPressed()
-            }
-            if (heightDiff > 100 && flag) {
-                flag2 = true
-                Log.d(TAG, flag2.toString())
-            }
-            if (heightDiff > 100 && submitted) {
-                flag = true
-                Log.d(TAG, flag.toString())
-            }
-        })
     }
 
 private fun callServer(
@@ -145,7 +144,6 @@ private fun callServer(
                     if (!response.isSuccessful) throw IOException("Unexpected code $response")
                     val resp = response.body!!.string()
                     this@ItemActionActivity.runOnUiThread(Runnable {
-//                        Log.d(TAG, resp)
                         val intent = Intent()
                         if (resp == "Success") {
                             Snackbar.make(view,"Success\nInventory adjustment made",
@@ -173,8 +171,6 @@ private fun callServer(
 
     private fun startMainActivity() {
         finish()
-//        val intent = Intent(this, MainActivity::class.java)
-//        startActivity(intent)
     }
 
     override fun onSupportNavigateUp(): Boolean {
