@@ -8,6 +8,7 @@ class ImagesArray(
         "strip_tube_6",
         "tubes_w_caps",
         "cell_tube",
-        "rotary_growth_vial"
+        "rotary_growth_vial",
+        "bottle"
     )
 )
