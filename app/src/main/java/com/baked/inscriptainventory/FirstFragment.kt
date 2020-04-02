@@ -54,8 +54,6 @@ class FirstFragment(private val items: MutableList<MutableList<String>>) : Fragm
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        Log.d(TAG, "here")
-
         if (requestCode == 1) {
             if (resultCode == Activity.RESULT_OK) {
                 val indexStr = data?.getStringExtra("index")
