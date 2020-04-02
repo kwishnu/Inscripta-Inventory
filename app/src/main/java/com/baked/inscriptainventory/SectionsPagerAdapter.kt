@@ -16,7 +16,7 @@ private var InventoryTab1: MutableList<MutableList<String>> = ArrayList()
 private var InventoryTab2: MutableList<MutableList<String>> = ArrayList()
 private var InventoryTab3: MutableList<MutableList<String>> = ArrayList()
 private var loaded: Boolean = false
-//removeAt(index: Int)
+
 class SectionsPagerAdapter(
     private val invItems: MutableList<MutableList<String>>,
     private val context: Context,
