@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.list_item.view.*
 private const val TAG = "InscriptaInventory_IA"
@@ -26,8 +27,22 @@ class InventoryAdapter(private val items: MutableList<MutableList<String>>, priv
         (holder as ViewHolder).clickableView.list_item.text = items[holder.adapterPosition][3]
         val partNumberStr = items[holder.adapterPosition][2]
         holder.clickableView.list_subtitle.text = "Part No.: $partNumberStr"
-        val numInStockStr =  if (items[holder.adapterPosition][5] == "null") ("") else (items[holder.adapterPosition][5])
+        val numInStockStr =  if (items[holder.adapterPosition][5] == "null") ("0") else (items[holder.adapterPosition][5])
+        val lowQuantityAlarm = numInStockStr.toInt() <= (items[holder.adapterPosition][4]).toInt()//true if count is less than or equal to Min Stock Level
         holder.clickableView.list_detail.text = numInStockStr
+        if (lowQuantityAlarm) {
+            holder.clickableView.list_detail.background =
+                ContextCompat.getDrawable(
+                    context,
+                    R.drawable.details_rect_red
+                )
+        } else {
+            holder.clickableView.list_detail.background =
+                ContextCompat.getDrawable(
+                    context,
+                    R.drawable.details_rect_green
+                )
+        }
         val itemImageStr = ImagesArray().IMAGE_URI[(items[holder.adapterPosition][1]).toInt()]
         val uri = Uri.parse("android.resource://com.baked.inscriptainventory/drawable/$itemImageStr")
         holder.image.setImageURI(uri)

@@ -94,7 +94,6 @@ class ItemActionActivity : AppCompatActivity(){
                 val alert = dialogBuilder.create()
                 alert.setTitle("Adjust Quantities")
                 alert.show()
-
             } else {
                 newQuantity = if (radio0.isChecked) (inStock.toInt() - quantityStr.toInt()) else (inStock.toInt() + quantityStr.toInt())
                 val sendWarning = if (newQuantity <= minStockLevel!!.toInt()) "true" else "false"
