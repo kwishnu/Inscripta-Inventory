@@ -17,4 +17,7 @@
     <string name="ip_address">IP Address</string>
     <string name="clear">Clear</string>
     <string name="exit_to_restart">Exit to Restart</string>
+    <string name="title_activity_add_item">Add Item</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
 </resources>
