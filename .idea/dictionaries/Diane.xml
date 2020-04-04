@@ -2,8 +2,10 @@
   <dictionary name="Diane">
     <words>
       <w>edittext</w>
+      <w>fabs</w>
       <w>inscripta</w>
       <w>inscriptainventory</w>
+      <w>snackbar</w>
       <w>xlsx</w>
     </words>
   </dictionary>

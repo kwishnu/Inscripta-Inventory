@@ -1,6 +1,8 @@
 package com.baked.inscriptainventory
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -39,6 +41,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
         sharedPrefs = this.getSharedPreferences(prefsFilename, 0)
         val editor = sharedPrefs!!.edit()
 
+        //Shared preferences for first launch of app
         if (!sharedPrefs!!.getBoolean(startedAppName, false)) {
             val jsonStrFile = "json_string.txt"
             val jsonString = application.assets.open(jsonStrFile).bufferedReader().use{
@@ -51,20 +54,20 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
         }
 
         setContentView(R.layout.activity_main)
-        callServer(view_pager)
+        callServer()//Load array with Excel data
 
-        scan.setOnClickListener {
+        scan.setOnClickListener {//QR Code Floating Action Button
             run {
                 IntentIntegrator(this@MainActivity).initiateScan()
             }
         }
-        catalog.setOnClickListener {
-            //todo
+        add.setOnClickListener {//Add inventory item Floating Action Button
+            val intent = Intent(this, AddItemActivity::class.java)
+            startActivity(intent)
         }
     }
 
-    private fun callServer(view: View){
-//        ipAddressStr = "10.0.0.225"
+    private fun callServer(){// ipAddressStr = "10.0.0.225"
         val stateStr = sharedPrefs!!.getString(initialStateName, String.toString())
         ipAddressStr = sharedPrefs!!.getString(ipAddressName, String.toString()).toString()
         val urlStr = "http://$ipAddressStr:80/index.php"
@@ -74,7 +77,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                Snackbar.make(view, "No server response: functionality will be limited", Snackbar.LENGTH_LONG)
+                Snackbar.make(coordinator_layout, "No server response: functionality will be limited", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
                 this@MainActivity.runOnUiThread(Runnable {
                     parseJsonStr(stateStr.toString())
@@ -96,17 +99,16 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
         })
     }
 
-            //QR Code
+//QR Code
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 //                2_1001228_001007880075_2003 product code format
 //                2_1001148_001007180039_2006 product code format
-                val result: IntentResult? = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+        val result: IntentResult? = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
         if (result != null) {
             if (result.contents != null) {
                 scannedResult = result.contents
                 if (scannedResult.indexOf("_") > 0) {
-                    var codePieces = scannedResult.split("_")
-                    Log.d(TAG, codePieces[1])
+                    val codePieces = scannedResult.split("_")
                     var sheet = "Not found"
                     var image = "Not found"
                     var partNumber = "Not found"
@@ -115,29 +117,45 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                     var onHandNum = "Not found"
                     var row = "Not found"
 
-                for (e in InventoryItems){
-                    if (codePieces[1] == e[2]){//check if part number matches given row in Excel spreadsheet data returned in server call
-                        sheet = e[0]
-                        image = e[1]
-                        partNumber = e[2]
-                        description = e[3]
-                        minStockLevel = e[4]
-                        onHandNum = e[5]
-                        row = e[6]
-                        break
+                    for (e in InventoryItems){
+                        if (codePieces[1] == e[2]){//check if part number matches given row in Excel spreadsheet data returned in server call
+                            sheet = e[0]
+                            image = e[1]
+                            partNumber = e[2]
+                            description = e[3]
+                            minStockLevel = e[4]
+                            onHandNum = e[5]
+                            row = e[6]
+                            break
+                        }
                     }
-                }
-                    if (sheet == "Not found"){
-                        Snackbar.make(coordinator_layout, "Product not found. Check InventoryXls.xlsx", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null)
-                            .show()
+                    if (sheet == "Not found"){//Part number not found, show dialog to add item
+Log.d(TAG, sheet)
+                        val dialogBuilder = AlertDialog.Builder(this)
+                        dialogBuilder
+                            .setMessage("Item not found. Add item?")
+                            .setCancelable(true)
+                            .setPositiveButton("OK", DialogInterface.OnClickListener {
+                                    dialog, _ ->
+                                val intent = Intent(this, AddItemActivity::class.java)
+                                startActivity(intent)
+                            })
+                            .setNegativeButton("Cancel", DialogInterface.OnClickListener {
+                                    dialog, _ -> dialog.cancel()
+                            })
+
+                        val alert = dialogBuilder.create()
+                        alert.setTitle("Not Found")
+                        alert.show()
+                        return
                     }
 
                     var whichTabStr = ""
-                    when (sheet){
-                        "1" -> whichTabStr = "MainActivity1"
-                        "2" -> whichTabStr = "MainActivity2"
-                        "3" -> whichTabStr = "MainActivity3"
+                    whichTabStr = when (sheet){
+                        "1" -> "MainActivity1"
+                        "2" -> "MainActivity2"
+                        "3" -> "MainActivity3"
+                        else -> return
                     }
                     val intent = Intent(this, ItemActionActivity::class.java)
                     intent.putExtra("Sheet", sheet)
@@ -151,13 +169,20 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
 
                     this.startActivity(intent)
 
-                    val tabLayout = tabs as TabLayout
+                    val tabLayout = tabs as TabLayout//Go to appropriate tab...
                     val tab = tabLayout.getTabAt(sheet.toInt() - 1)
                     tab?.select()
-                } else {
-                    Snackbar.make(coordinator_layout, "Not a recognized product code", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null)
-                        .show()
+                } else {//scanned result contains no underscore character, not an inventory QR code
+                    val dialogBuilder = AlertDialog.Builder(this)
+                    dialogBuilder
+                        .setMessage("$scannedResult is not a recognized product code")
+                        .setPositiveButton("OK", DialogInterface.OnClickListener {
+                            dialog, _ -> dialog.cancel()
+                        })
+
+                    val alert = dialogBuilder.create()
+                    alert.setTitle("Not a Product Code")
+                    alert.show()
                 }
             } else {
                 Snackbar.make(coordinator_layout, "Scan failed", Snackbar.LENGTH_LONG)
