@@ -23,7 +23,6 @@ private const val TAG = "InscriptaInventory_IAA"
 class ItemActionActivity : AppCompatActivity(){
     private val client = OkHttpClient()
     private var ipAddressStr = ""
-    private var submitted = false
     private var shouldClose = 2
     private var seenActivity = false
     private var newQuantity = 0
@@ -75,9 +74,12 @@ class ItemActionActivity : AppCompatActivity(){
         inventoryItemName.text = itemName
         val itemImageStr = ImagesArray().IMAGE_URI[(imageIndex!!).toInt()]
         val uri = Uri.parse("android.resource://com.baked.inscriptainventory/drawable/$itemImageStr")
-        imageView.setImageURI(uri)
+        val minStockLevelNumber = minStockLevel?.toInt()
+
+        //Set TextViews and ImageView:
         numInInventory.text = "Inventory Count: $inStock"
         minStockLevelNum.text = "Min. Stock Level: $minStockLevel"
+        imageView.setImageURI(uri)
 
         submitButton.setOnClickListener {
             val quantityStr = if (numberToSubmitTxt.text.isNullOrBlank()) "1" else numberToSubmitTxt.text.toString()
@@ -96,7 +98,7 @@ class ItemActionActivity : AppCompatActivity(){
                 alert.show()
             } else {
                 newQuantity = if (radio0.isChecked) (inStock.toInt() - quantityStr.toInt()) else (inStock.toInt() + quantityStr.toInt())
-                val sendWarning = if (newQuantity <= minStockLevel!!.toInt()) "true" else "false"
+                val sendWarning = if (newQuantity <= minStockLevelNumber!!) "true" else "false"
 
                 shouldClose = 0
                 submitButton.text = getString(R.string.sent)
@@ -110,24 +112,27 @@ class ItemActionActivity : AppCompatActivity(){
                     itemPartNum,
                     sheetNum!!,
                     rowNum!!,
-                    sendWarning
+                    sendWarning,
+                    itemName!!,
+                    minStockLevel
                 )
             }
         }
-
     }
 
 private fun callServer(
-        view: View,
-        newCount: String,
-        partNum: String?,
-        sheetNum: String,
-        rowNum: String,
-        sendWarning: String
-    ) {
+    view: View,
+    newCount: String,
+    partNum: String?,
+    sheetNum: String,
+    rowNum: String,
+    sendWarning: String,
+    itemName: String,
+    minStockLevel: String
+) {
         ipAddressStr = "10.0.0.225"//ip_input.text.toString()
         val urlStr = "http://$ipAddressStr:80/index.php?NewCount=$newCount" +
-                "&PartNumber=$partNum&Sheet=$sheetNum&RowNum=$rowNum&SendWarning=$sendWarning"
+                "&PartNumber=$partNum&Sheet=$sheetNum&RowNum=$rowNum&SendWarning=$sendWarning&ItemName=$itemName&MinStockLevel=$minStockLevel"
         val request = Request.Builder()
             .url(urlStr)
             .build()
@@ -142,12 +147,19 @@ private fun callServer(
                 response.use {
                     if (!response.isSuccessful) throw IOException("Unexpected code $response")
                     val resp = response.body!!.string()
+                    val other = response.headers.toString()
+                    val successful = resp.indexOf("Success") > -1 || resp.indexOf("SERVER") > -1
+
                     this@ItemActionActivity.runOnUiThread(Runnable {
                         val intent = Intent()
-                        if (resp == "Success") {
+                        Log.d(TAG, resp + " body")
+                        Log.d(TAG, other + " headers " + other)
+                        if (successful) {
                             Snackbar.make(view,"Success\nInventory adjustment made",
                             Snackbar.LENGTH_LONG).setAction("Action", null).show()
                             numInInventory.text = "Inventory Count: $newQuantity"
+
+                            //Adapter notifyDataSetChanged():
                             val index = (rowNum.toInt() - 2).toString()
                             intent.putExtra("index", index)
                             intent.putExtra("newValue", newValueStr)
