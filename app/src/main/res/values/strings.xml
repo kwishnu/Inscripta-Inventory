@@ -20,4 +20,10 @@
     <string name="title_activity_add_item">Add Item</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+    <string name="item_name">Item Name</string>
+    <string name="number_in_stock">Number in Stock</string>
+    <string name="minimum_stock_level">Minimum Stock Level</string>
+    <string name="_2">2</string>
+    <string name="add_item">Add Item</string>
+    <string name="sheet">Sheet:</string>
 </resources>

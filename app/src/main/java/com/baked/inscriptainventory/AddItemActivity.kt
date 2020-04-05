@@ -1,12 +1,21 @@
 package com.baked.inscriptainventory
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
+import android.view.MotionEvent
+import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.RadioButton
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_add_item.*
-
-class AddItemActivity : AppCompatActivity() {
+private const val TAG = "InscriptaInventory_AIA"
+private const val STOCK_2 = "2"
+class AddItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
+    var sheetArray = arrayOf("Beta Kits", "Internal Reagents", "Purchased Parts")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -15,6 +24,22 @@ class AddItemActivity : AppCompatActivity() {
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_chevron_left_white_18dp)
         android.app.ActionBar.DISPLAY_HOME_AS_UP
 
+        sheetSelectSpinner!!.onItemSelectedListener = this
+        val aa = ArrayAdapter(this, android.R.layout.simple_spinner_item, sheetArray)
+        // Set layout to use when the list of choices appear
+        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        // Set Adapter to Spinner
+        sheetSelectSpinner!!.adapter = aa
+
+
+        numInStockET.setOnFocusChangeListener() { v, event ->
+            numInStockET.hint = if(numInStockET.hasFocus()) "" else STOCK_2
+            false
+        }
+        minStockLevelET.setOnFocusChangeListener() { v, event ->
+            minStockLevelET.hint = if(minStockLevelET.hasFocus()) "" else STOCK_2
+            false
+        }
         var currentSelected = radio0
         listOf<RadioButton>(
             radio0, radio1, radio2, radio3, radio4, radio5, radio6, radio7
@@ -25,11 +50,29 @@ class AddItemActivity : AppCompatActivity() {
                 currentSelected.isChecked = true
             }
         }
+
+
+
+
+
+
+        addButton.setOnClickListener {
+            Snackbar.make(content, "Button clicked!",
+                Snackbar.LENGTH_LONG).setAction("Action", null).show()
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+        Log.d(TAG, "Spinner")
+    }
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        Log.d(TAG, "Spinner Item Selected: " + sheetArray[position].toString())
     }
 
 }
