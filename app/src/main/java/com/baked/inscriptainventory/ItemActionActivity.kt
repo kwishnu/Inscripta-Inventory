@@ -6,6 +6,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -28,6 +29,10 @@ class ItemActionActivity : AppCompatActivity(){
     private var newQuantity = 0
     private var newValueStr = ""
     private var fromActivity = "Unknown"
+    private var sharedPrefs: SharedPreferences? = null//getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE)
+    private val prefsFilename = "SharedPreferences"
+    private val initialStateName = "InitialState"
+    private val ipAddressName = "IPAddress"
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,9 +42,10 @@ class ItemActionActivity : AppCompatActivity(){
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_close_white_48dp)
         android.app.ActionBar.DISPLAY_HOME_AS_UP
         setContentView(R.layout.item_action_activity)
+        sharedPrefs = this.getSharedPreferences(prefsFilename, 0)
 
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         //show keyboard after delay
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         numberToSubmitTxt.postDelayed(Runnable {
             numberToSubmitTxt.requestFocus()
             imm.showSoftInput(numberToSubmitTxt, 0)
@@ -47,7 +53,6 @@ class ItemActionActivity : AppCompatActivity(){
         numberToSubmitTxt.postDelayed(Runnable {
             seenActivity = true
         }, 1000)
-
         //Close activity on retract keyboard:
         constraintLayout.viewTreeObserver.addOnGlobalLayoutListener(ViewTreeObserver.OnGlobalLayoutListener {
             val heightDiff: Int = constraintLayout.rootView.height - constraintLayout.height
@@ -129,10 +134,13 @@ private fun callServer(
     sendWarning: String,
     itemName: String,
     minStockLevel: String
-) {
-        ipAddressStr = "10.0.0.225"//ip_input.text.toString()
+    ) {
+        val stateStr = sharedPrefs!!.getString(initialStateName, String.toString())
+        ipAddressStr = sharedPrefs!!.getString(ipAddressName, String.toString()).toString()
         val urlStr = "http://$ipAddressStr:80/index.php?NewCount=$newCount" +
-                "&PartNumber=$partNum&Sheet=$sheetNum&RowNum=$rowNum&SendWarning=$sendWarning&ItemName=$itemName&MinStockLevel=$minStockLevel"
+                "&PartNumber=$partNum&Sheet=$sheetNum&RowNum=$rowNum" +
+                "&SendWarning=$sendWarning&ItemName=$itemName" +
+                "&MinStockLevel=$minStockLevel"
         val request = Request.Builder()
             .url(urlStr)
             .build()

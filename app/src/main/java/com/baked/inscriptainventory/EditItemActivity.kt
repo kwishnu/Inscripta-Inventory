@@ -1,5 +1,6 @@
 package com.baked.inscriptainventory
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -14,6 +15,10 @@ private const val STOCK_2 = "2"
 class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private var sheetArray = arrayOf("Beta Kits", "Internal Reagents", "Purchased Parts")
     private var fromActivity = "Unknown"
+    private var sharedPrefs: SharedPreferences? = null
+    private val prefsFilename = "SharedPreferences"
+    private val ipAddressName = "IPAddress"
+    private var ipAddressStr = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,6 +26,7 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_chevron_left_white_18dp)
         android.app.ActionBar.DISPLAY_HOME_AS_UP
+        sharedPrefs = this.getSharedPreferences(prefsFilename, 0)
 
         sheetSelectSpinner!!.onItemSelectedListener = this
         val aa = ArrayAdapter(this, android.R.layout.simple_spinner_item, sheetArray)
@@ -37,9 +43,26 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
         fromActivity = intent.getStringExtra("FromActivity")!!.toString()
         var currentSelected: RadioButton? = null
         descriptionEditText.setText(itemName)
+        partNumberEditText.setText(itemPartNum)
         numInStockET.setText(inStock)
         minStockLevelET.setText(minStockLevel)
         sheetSelectSpinner.setSelection(sheetNum?.toInt()!! - 1)
+
+        addButton.setOnClickListener {
+            ipAddressStr = sharedPrefs!!.getString(ipAddressName, String.toString()).toString()
+
+            CallServer().makeCall(
+                content,//View
+                ipAddressStr,//IP Address
+                inStock,
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+            )
+        }
 
         when (imageIndex){
             "0" -> {
@@ -96,10 +119,7 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
         }
 
 
-        addButton.setOnClickListener {
-            Snackbar.make(content, "Button clicked!",
-                Snackbar.LENGTH_LONG).setAction("Action", null).show()
-        }
+
     }
 
     override fun onSupportNavigateUp(): Boolean {

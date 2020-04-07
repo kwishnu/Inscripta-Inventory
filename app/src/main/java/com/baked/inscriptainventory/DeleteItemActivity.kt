@@ -39,6 +39,7 @@ class DeleteItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
         val rowNum = intent.getStringExtra("Row")
         fromActivity = intent.getStringExtra("FromActivity")!!.toString()
         descriptionEditText.setText(itemName)
+        partNumberEditText.setText(itemPartNum)
         numInStockET.setText(inStock)
         minStockLevelET.setText(minStockLevel)
         sheetSelectSpinner.setSelection(sheetNum?.toInt()!! - 1)

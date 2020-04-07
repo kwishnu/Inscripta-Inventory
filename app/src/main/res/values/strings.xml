@@ -22,7 +22,8 @@
     <string name="title_activity_delete_item">Delete Item</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
-    <string name="item_name">Item Name</string>
+    <string name="item_name">Item Name:</string>
+    <string name="item_name2">Item Name</string>
     <string name="number_in_stock">Number in Stock</string>
     <string name="minimum_stock_level">Minimum Stock Level</string>
     <string name="_2">2</string>
@@ -31,4 +32,6 @@
     <string name="edit_item">Edit Item</string>
     <string name="submit_edit">Submit Edit</string>
     <string name="delete_item">Delete Item</string>
+    <string name="part_number">Part Number:</string>
+    <string name="part_number2">#######</string>
 </resources>

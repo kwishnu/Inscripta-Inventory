@@ -28,13 +28,12 @@ class AddItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
 
         numInStockET.setOnFocusChangeListener() { v, event ->
             numInStockET.hint = if(numInStockET.hasFocus()) "" else STOCK_2
-            false
         }
         minStockLevelET.setOnFocusChangeListener() { v, event ->
             minStockLevelET.hint = if(minStockLevelET.hasFocus()) "" else STOCK_2
-            false
         }
         var currentSelected = radio0
+
         listOf<RadioButton>(
             radio0, radio1, radio2, radio3, radio4, radio5, radio6, radio7
         ).forEach {
