@@ -18,6 +18,8 @@
     <string name="clear">Clear</string>
     <string name="exit_to_restart">Exit to Restart</string>
     <string name="title_activity_add_item">Add Item</string>
+    <string name="title_activity_edit_item">Edit Item</string>
+    <string name="title_activity_delete_item">Delete Item</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
     <string name="item_name">Item Name</string>
@@ -25,5 +27,8 @@
     <string name="minimum_stock_level">Minimum Stock Level</string>
     <string name="_2">2</string>
     <string name="add_item">Add Item</string>
-    <string name="sheet">Sheet:</string>
+    <string name="sheet">Tab:</string>
+    <string name="edit_item">Edit Item</string>
+    <string name="submit_edit">Submit Edit</string>
+    <string name="delete_item">Delete Item</string>
 </resources>

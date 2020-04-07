@@ -223,7 +223,7 @@ Log.d(TAG, sheet)
         this.finishAffinity()
     }
 
-    override fun attachBaseContext(base: Context?) {
+    override fun attachBaseContext(base: Context?) {//gets rid of non-SDK-components messages
         super.attachBaseContext(base)
         Reflection.unseal(base)
     }

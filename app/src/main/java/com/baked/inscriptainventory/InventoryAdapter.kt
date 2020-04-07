@@ -13,7 +13,12 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.list_item.view.*
 private const val TAG = "InscriptaInventory_IA"
 
-class InventoryAdapter(private val items: MutableList<MutableList<String>>, private val context: Context, val clickListener: (Int) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class InventoryAdapter(private val items: MutableList<MutableList<String>>,
+                       private val context: Context,
+                       val clickListener: (Int) -> Unit,
+                       val longClickListener: (Int, View) -> Unit
+):
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun getItemCount(): Int {
         return items.size
     }
@@ -49,8 +54,14 @@ class InventoryAdapter(private val items: MutableList<MutableList<String>>, priv
         holder.clickableView.setOnClickListener {
             clickListener(position)
         }
+        holder.clickableView.setOnLongClickListener {
+            val view = holder.itemView
+            longClickListener(position, view)
+            true
+        }
     }
 }
+
 
 class ViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
     val clickableView : RelativeLayout = itemView.list_element

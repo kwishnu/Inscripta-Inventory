@@ -4,9 +4,11 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -45,8 +47,12 @@ class FirstFragment(private val items: MutableList<MutableList<String>>) : Fragm
 
             startActivityForResult(intent, 1)
         }
+        fun longClickListener(position: Int, view: View) {
+            showPopUp(position, view)
+        }
         val listener = { i: Int -> fragClickListener(i) }
-        recyclerView.adapter = activity?.applicationContext?.let { InventoryAdapter( itemsContainer, it,  listener) }
+        val longClickListener = { i: Int, view: View -> longClickListener(i, view) }
+        recyclerView.adapter = activity?.applicationContext?.let { InventoryAdapter( itemsContainer, it,  listener, longClickListener) }
         recyclerView.addItemDecoration(DividerItemDecoration(activity?.applicationContext, DividerItemDecoration.VERTICAL))
 
         return rootView
@@ -61,6 +67,48 @@ class FirstFragment(private val items: MutableList<MutableList<String>>) : Fragm
                 itemsContainer[indexStr!!.toInt()][5] = valueStr.toString()
                 recyclerView.adapter?.notifyDataSetChanged()
             }
+        }
+    }
+    private fun showPopUp(pos: Int, view: View) {
+        val popupMenu = activity?.let { PopupMenu(it, view, 0, R.attr.actionOverflowMenuStyle, 0) }
+        val inflater = popupMenu?.menuInflater
+        inflater?.inflate(R.menu.context_menu, popupMenu.menu)
+        popupMenu?.show()
+
+        popupMenu?.setOnMenuItemClickListener {
+            when(it.itemId) {
+                R.id.header1 -> {//Go to Edit Item Activity
+                    Log.d(TAG, itemsContainer[pos][3])
+                    val intent = Intent(activity, EditItemActivity::class.java)
+                    intent.putExtra("Image", itemsContainer[pos][1])
+                    intent.putExtra("PartNum", itemsContainer[pos][2])
+                    intent.putExtra("Item", itemsContainer[pos][3])
+                    intent.putExtra("MinStockLevel", itemsContainer[pos][4])
+                    intent.putExtra("InStock", itemsContainer[pos][5])
+                    intent.putExtra("Sheet", "1")
+                    intent.putExtra("Row", (pos + 2).toString())
+                    intent.putExtra("FromActivity", "Fragment")
+
+                    startActivityForResult(intent, 1)
+
+                }
+                R.id.header2 -> {//Go to Delete Item Activity
+                    Log.d(TAG, itemsContainer[pos][3])
+                    val intent = Intent(activity, DeleteItemActivity::class.java)
+                    intent.putExtra("Image", itemsContainer[pos][1])
+                    intent.putExtra("PartNum", itemsContainer[pos][2])
+                    intent.putExtra("Item", itemsContainer[pos][3])
+                    intent.putExtra("MinStockLevel", itemsContainer[pos][4])
+                    intent.putExtra("InStock", itemsContainer[pos][5])
+                    intent.putExtra("Sheet", "1")
+                    intent.putExtra("Row", (pos + 2).toString())
+                    intent.putExtra("FromActivity", "Fragment")
+
+                    startActivityForResult(intent, 1)
+
+                }
+            }
+            true
         }
     }
 }

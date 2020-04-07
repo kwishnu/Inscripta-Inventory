@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar"> <!--  .Light.DarkActionBar"> -->
@@ -8,6 +8,13 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:dropDownListViewStyle">@style/PopupMenuListView</item>
     </style>
+
+<!--    <style name="OptionsMenuCustomStyle" parent="Widget.AppCompat.PopupMenu.Overflow">-->
+<!--        <item name="overlapAnchor">false</item>-->
+<!--        <item name="android:overlapAnchor" tools:ignore="NewApi">false</item>-->
+<!--        <item name="android:dropDownVerticalOffset">-20dp</item>-->
+<!--        <item name="android:dropDownHorizontalOffset">-20dp</item>-->
+<!--    </style>-->
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
