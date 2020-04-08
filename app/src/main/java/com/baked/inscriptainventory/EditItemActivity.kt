@@ -8,10 +8,11 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.RadioButton
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.snackbar.Snackbar
+import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_edit_item.*
 private const val TAG = "InscriptaInventory_EIA"
 private const val STOCK_2 = "2"
+
 class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private var sheetArray = arrayOf("Beta Kits", "Internal Reagents", "Purchased Parts")
     private var fromActivity = "Unknown"
@@ -31,10 +32,12 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
         sheetSelectSpinner!!.onItemSelectedListener = this
         val aa = ArrayAdapter(this, android.R.layout.simple_spinner_item, sheetArray)
         aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        sheetSelectSpinner.isEnabled = false;
+        sheetSelectSpinner.isClickable = false
         sheetSelectSpinner!!.adapter = aa
 
         val itemName = intent.getStringExtra("Item")
-        val imageIndex = intent.getStringExtra("Image")
+        var imageIndex = intent.getStringExtra("Image")
         val itemPartNum = intent.getStringExtra("PartNum")
         val minStockLevel = intent.getStringExtra("MinStockLevel")
         val inStock = intent.getStringExtra("InStock")
@@ -47,24 +50,6 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
         numInStockET.setText(inStock)
         minStockLevelET.setText(minStockLevel)
         sheetSelectSpinner.setSelection(sheetNum?.toInt()!! - 1)
-
-        editButton.setOnClickListener {
-            ipAddressStr = sharedPrefs!!.getString(ipAddressName, String.toString()).toString()
-
-            CallServer(this).makeCall(
-                content,//View
-                ipAddressStr,//IP Address
-                "editItem",//Reason
-                numInStockET.text.toString(),
-                partNumberEditText.text.toString(),
-                imageIndex!!,
-                sheetNum,
-                rowNum!!,
-                "false",//No need to send warning
-                descriptionEditText.text.toString(),
-                minStockLevelET.text.toString()
-            )
-        }
 
         when (imageIndex){
             "0" -> {
@@ -101,6 +86,36 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
             }
         }
 
+        editButton.setOnClickListener {
+            if (radio0.isChecked) imageIndex = "0"
+            if (radio1.isChecked) imageIndex = "1"
+            if (radio2.isChecked) imageIndex = "2"
+            if (radio3.isChecked) imageIndex = "3"
+            if (radio4.isChecked) imageIndex = "4"
+            if (radio5.isChecked) imageIndex = "5"
+            if (radio6.isChecked) imageIndex = "6"
+            if (radio7.isChecked) imageIndex = "7"
+            val numInStock = if (numInStockET.text.isNullOrBlank()) "0" else numInStockET.text.toString()
+            val minStock = if (minStockLevelET.text.isNullOrBlank()) "0" else minStockLevelET.text.toString()
+
+            ipAddressStr = sharedPrefs!!.getString(ipAddressName, String.toString()).toString()
+           CallServer(this).makeCall(
+                content,//View
+                ipAddressStr,//IP Address
+                "editItem",//Reason
+                numInStock,
+                partNumberEditText.text.toString(),
+                imageIndex!!,
+                sheetNum,
+                rowNum!!,
+                "false",//No need to send warning
+                descriptionEditText.text.toString(),
+                minStock
+            )
+            editButton.isEnabled = false
+            editButton.setBackgroundColor(ContextCompat.getColor(this, R.color.disabledGray))
+        }
+
         listOf<RadioButton>(
             radio0, radio1, radio2, radio3, radio4, radio5, radio6, radio7
         ).forEach {
@@ -117,9 +132,6 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
         minStockLevelET.setOnFocusChangeListener() { v, event ->
             minStockLevelET.hint = if(minStockLevelET.hasFocus()) "" else STOCK_2
         }
-
-
-
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -134,5 +146,4 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         Log.d(TAG, "Spinner Item Selected: " + sheetArray[position].toString())
     }
-
 }

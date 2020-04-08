@@ -1,5 +1,8 @@
 package com.baked.inscriptainventory
 
+import android.app.AlertDialog
+import android.content.DialogInterface
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -7,13 +10,18 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.RadioButton
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.snackbar.Snackbar
+import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_delete_item.*
 private const val TAG = "InscriptaInventory_DIA"
 private const val STOCK_2 = "2"
+
 class DeleteItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private var sheetArray = arrayOf("Beta Kits", "Internal Reagents", "Purchased Parts")
     private var fromActivity = "Unknown"
+    private var sharedPrefs: SharedPreferences? = null
+    private val prefsFilename = "SharedPreferences"
+    private val ipAddressName = "IPAddress"
+    private var ipAddressStr = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,6 +29,7 @@ class DeleteItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_chevron_left_white_18dp)
         android.app.ActionBar.DISPLAY_HOME_AS_UP
+        sharedPrefs = this.getSharedPreferences(prefsFilename, 0)
 
         sheetSelectSpinner!!.onItemSelectedListener = this
         val aa = ArrayAdapter(this, android.R.layout.simple_spinner_item, sheetArray)
@@ -58,9 +67,11 @@ class DeleteItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
         numInStockET.setOnFocusChangeListener() { v, event ->
             numInStockET.hint = if(numInStockET.hasFocus()) "" else STOCK_2
         }
+
         minStockLevelET.setOnFocusChangeListener() { v, event ->
             minStockLevelET.hint = if(minStockLevelET.hasFocus()) "" else STOCK_2
         }
+
         var currentSelected = radio0
         listOf<RadioButton>(
             radio0, radio1, radio2, radio3, radio4, radio5, radio6, radio7
@@ -73,12 +84,36 @@ class DeleteItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
         }
 
         deleteButton.setOnClickListener {
+            ipAddressStr = sharedPrefs!!.getString(ipAddressName, String.toString()).toString()
+            val dialogBuilder = AlertDialog.Builder(this)
+            dialogBuilder
+                .setMessage("Delete this item from InventoryXls.xslx?")
+                .setCancelable(true)
+                .setPositiveButton("Proceed", DialogInterface.OnClickListener {
+                        dialog, _ ->
+                    CallServer(this).makeCall(
+                        content,//View
+                        ipAddressStr,//IP Address
+                        "deleteItem",//Reason
+                        "none",
+                        "none",
+                        "none",
+                        sheetNum,
+                        rowNum!!,
+                        "false",//No need to send warning
+                        "none",
+                        "none"
+                    )
+                    deleteButton.isEnabled = false
+                    deleteButton.setBackgroundColor(ContextCompat.getColor(this, R.color.disabledGray))
+                })
+                .setNegativeButton("Cancel", DialogInterface.OnClickListener {
+                        dialog, _ -> dialog.cancel()
+                })
 
-
-
-
-            Snackbar.make(content, "Button clicked!",
-                Snackbar.LENGTH_LONG).setAction("Action", null).show()
+            val alert = dialogBuilder.create()
+            alert.setTitle("Confirm Delete")
+            alert.show()
         }
     }
 
@@ -94,5 +129,4 @@ class DeleteItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         Log.d(TAG, "Spinner Item Selected: " + sheetArray[position].toString())
     }
-
 }

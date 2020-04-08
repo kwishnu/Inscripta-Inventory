@@ -24,6 +24,7 @@ private const val TAG = "InscriptaInventory_IAA"
 class ItemActionActivity : AppCompatActivity(){
     private val client = OkHttpClient()
     private var ipAddressStr = ""
+    private var imageIndex = ""
     private var shouldClose = 2
     private var seenActivity = false
     private var newQuantity = 0
@@ -67,7 +68,7 @@ class ItemActionActivity : AppCompatActivity(){
 
         radio0.isSelected = true
         val itemName = intent.getStringExtra("Item")
-        val imageIndex = intent.getStringExtra("Image")
+        imageIndex = intent.getStringExtra("Image")
         val itemPartNum = intent.getStringExtra("PartNum")
         val minStockLevel = intent.getStringExtra("MinStockLevel")
         val inStock = intent.getStringExtra("InStock")
@@ -170,9 +171,9 @@ private fun callServer(
                             intent.putExtra("newValue", newValueStr)
                             setResult(Activity.RESULT_OK, intent)
                             when (fromActivity){
-                                "MainActivity1" -> FirstFragment.SetAdapterFromActivity(index, newValueStr)
-                                "MainActivity2" -> SecondFragment.SetAdapterFromActivity(index, newValueStr)
-                                "MainActivity3" -> ThirdFragment.SetAdapterFromActivity(index, newValueStr)
+                                "MainActivity1" -> FirstFragment.SetAdapterFromActivity("changeCount", index, imageIndex, partNum!!, itemName, minStockLevel, newValueStr)
+                                "MainActivity2" -> SecondFragment.SetAdapterFromActivity("changeCount", index, imageIndex, partNum!!, itemName, minStockLevel, newValueStr)
+                                "MainActivity3" -> ThirdFragment.SetAdapterFromActivity("changeCount", index, imageIndex, partNum!!, itemName, minStockLevel, newValueStr)
                             }
                         } else {
                             Snackbar.make(view,"Unexpected error\nEnter changes manually",

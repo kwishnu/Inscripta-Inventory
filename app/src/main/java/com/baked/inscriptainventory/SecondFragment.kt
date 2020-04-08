@@ -20,8 +20,16 @@ private lateinit var itemsContainer: MutableList<MutableList<String>>
 class SecondFragment(private val items: MutableList<MutableList<String>>) : Fragment() {
     private lateinit var rootView: View
     object SetAdapterFromActivity {
-        operator fun invoke(index: String, numInStock: String) {
-            itemsContainer[index.toInt()][5] = numInStock
+        operator fun invoke(reason: String, index: String, imageNum: String, partNum: String, itemName: String, minStockLevel: String, numInStock: String) {
+            if (reason == "deleteItem") {
+                itemsContainer.removeAt(index.toInt())
+            } else {
+                itemsContainer[index.toInt()][1] = imageNum
+                itemsContainer[index.toInt()][2] = partNum
+                itemsContainer[index.toInt()][3] = itemName
+                itemsContainer[index.toInt()][4] = minStockLevel
+                itemsContainer[index.toInt()][5] = numInStock
+            }
             recyclerView.adapter?.notifyDataSetChanged()
         }
     }
