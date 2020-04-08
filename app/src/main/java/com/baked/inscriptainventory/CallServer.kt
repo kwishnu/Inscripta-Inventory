@@ -3,7 +3,6 @@ package com.baked.inscriptainventory
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.util.Log
 import android.view.View
 import com.google.android.material.snackbar.Snackbar
 import okhttp3.*
@@ -45,7 +44,6 @@ class CallServer ( private var context: Context) {
                     if (!response.isSuccessful) throw IOException("Unexpected code $response")
                     val resp = response.body!!.string()
                     val successful = resp.indexOf("Success") > -1
-    Log.d(TAG, resp)
                     (context as Activity).runOnUiThread(Runnable {
                         if (successful) {
                             var appendStr =  when (reason){
@@ -60,9 +58,9 @@ class CallServer ( private var context: Context) {
                             //Adapter notifyDataSetChanged():
                             val index = (rowNum.toInt() - 2).toString()
                             when (sheetNum){
-                                "1" -> FirstFragment.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
-                                "2" -> SecondFragment.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
-                                "3" -> ThirdFragment.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
+                                "1" -> FirstFragment.SetAdapterFromActivity(reason, sheetNum, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
+                                "2" -> SecondFragment.SetAdapterFromActivity(reason, sheetNum, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
+                                "3" -> ThirdFragment.SetAdapterFromActivity(reason, sheetNum, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
                             }
                         } else {
                             Snackbar.make(view,"Unexpected error\nEnter changes manually",

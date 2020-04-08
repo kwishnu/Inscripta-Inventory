@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,9 +20,19 @@ private lateinit var itemsContainer: MutableList<MutableList<String>>
 class FirstFragment(private val items: MutableList<MutableList<String>>) : Fragment() {
     private lateinit var rootView: View
     object SetAdapterFromActivity {
-        operator fun invoke(reason: String, index: String, imageNum: String, partNum: String, itemName: String, minStockLevel: String, numInStock: String) {
+        operator fun invoke( reason: String,
+                             sheetNum: String,
+                             index: String,
+                             imageNum: String,
+                             partNum: String,
+                             itemName: String,
+                             minStockLevel: String,
+                             numInStock: String
+        ) {
             if (reason == "deleteItem") {
                 itemsContainer.removeAt(index.toInt())
+            } else if (reason == "addItem") {
+                itemsContainer.add(0, mutableListOf(sheetNum, imageNum, partNum, itemName, minStockLevel, numInStock, "2"))
             } else {
                 itemsContainer[index.toInt()][1] = imageNum
                 itemsContainer[index.toInt()][2] = partNum

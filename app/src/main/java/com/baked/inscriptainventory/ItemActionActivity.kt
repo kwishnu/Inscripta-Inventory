@@ -9,7 +9,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
@@ -171,9 +170,9 @@ private fun callServer(
                             intent.putExtra("newValue", newValueStr)
                             setResult(Activity.RESULT_OK, intent)
                             when (fromActivity){
-                                "MainActivity1" -> FirstFragment.SetAdapterFromActivity("changeCount", index, imageIndex, partNum!!, itemName, minStockLevel, newValueStr)
-                                "MainActivity2" -> SecondFragment.SetAdapterFromActivity("changeCount", index, imageIndex, partNum!!, itemName, minStockLevel, newValueStr)
-                                "MainActivity3" -> ThirdFragment.SetAdapterFromActivity("changeCount", index, imageIndex, partNum!!, itemName, minStockLevel, newValueStr)
+                                "MainActivity1" -> FirstFragment.SetAdapterFromActivity("changeCount", sheetNum, index, imageIndex, partNum!!, itemName, minStockLevel, newValueStr)
+                                "MainActivity2" -> SecondFragment.SetAdapterFromActivity("changeCount", sheetNum, index, imageIndex, partNum!!, itemName, minStockLevel, newValueStr)
+                                "MainActivity3" -> ThirdFragment.SetAdapterFromActivity("changeCount", sheetNum, index, imageIndex, partNum!!, itemName, minStockLevel, newValueStr)
                             }
                         } else {
                             Snackbar.make(view,"Unexpected error\nEnter changes manually",
