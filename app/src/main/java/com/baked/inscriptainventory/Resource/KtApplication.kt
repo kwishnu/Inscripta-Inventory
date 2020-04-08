@@ -1,6 +1,6 @@
-package com.baked.inscriptainventory
+package com.baked.inscriptainventory.Resource
 
-//import android.support.multidex.MultiDexApplication
+//Required for ZXing barcode scanning
 import androidx.multidex.MultiDexApplication
 
 class KtApplication: MultiDexApplication(){

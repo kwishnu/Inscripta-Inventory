@@ -36,6 +36,9 @@ android {
             assets {
                 srcDirs 'src/main/assets', 'src/main/assets/images'
             }
+            java {
+                srcDirs 'src/main/java', 'src/main/java/com.baked.inscriptainventory'
+            }
         }
     }
     kotlinOptions {

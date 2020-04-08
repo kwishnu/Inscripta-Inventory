@@ -1,4 +1,4 @@
-package com.baked.inscriptainventory
+package com.baked.inscriptainventory.Activity
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -14,6 +14,11 @@ import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.baked.inscriptainventory.*
+import com.baked.inscriptainventory.Fragment.FirstFragment
+import com.baked.inscriptainventory.Fragment.SecondFragment
+import com.baked.inscriptainventory.Fragment.ThirdFragment
+import com.baked.inscriptainventory.Resource.ImagesArray
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.item_action_activity.*
 import okhttp3.*
@@ -37,7 +42,10 @@ class ItemActionActivity : AppCompatActivity(){
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        overridePendingTransition(R.anim.slide_in_top, R.anim.slide_out_bottom)
+        overridePendingTransition(
+            R.anim.slide_in_top,
+            R.anim.slide_out_bottom
+        )
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_close_white_48dp)
         android.app.ActionBar.DISPLAY_HOME_AS_UP
@@ -108,7 +116,9 @@ class ItemActionActivity : AppCompatActivity(){
                 shouldClose = 0
                 submitButton.text = getString(R.string.sent)
                 submitButton.isEnabled = false
-                submitButton.setBackgroundColor(ContextCompat.getColor(this, R.color.disabledGray))
+                submitButton.setBackgroundColor(ContextCompat.getColor(this,
+                    R.color.disabledGray
+                ))
                 newValueStr = newQuantity.toString()
 
                 callServer(
@@ -170,9 +180,36 @@ private fun callServer(
                             intent.putExtra("newValue", newValueStr)
                             setResult(Activity.RESULT_OK, intent)
                             when (fromActivity){
-                                "MainActivity1" -> FirstFragment.SetAdapterFromActivity("changeCount", sheetNum, index, imageIndex, partNum!!, itemName, minStockLevel, newValueStr)
-                                "MainActivity2" -> SecondFragment.SetAdapterFromActivity("changeCount", sheetNum, index, imageIndex, partNum!!, itemName, minStockLevel, newValueStr)
-                                "MainActivity3" -> ThirdFragment.SetAdapterFromActivity("changeCount", sheetNum, index, imageIndex, partNum!!, itemName, minStockLevel, newValueStr)
+                                "MainActivity1" -> FirstFragment.SetAdapterFromActivity(
+                                    "changeCount",
+                                    sheetNum,
+                                    index,
+                                    imageIndex,
+                                    partNum!!,
+                                    itemName,
+                                    minStockLevel,
+                                    newValueStr
+                                )
+                                "MainActivity2" -> SecondFragment.SetAdapterFromActivity(
+                                    "changeCount",
+                                    sheetNum,
+                                    index,
+                                    imageIndex,
+                                    partNum!!,
+                                    itemName,
+                                    minStockLevel,
+                                    newValueStr
+                                )
+                                "MainActivity3" -> ThirdFragment.SetAdapterFromActivity(
+                                    "changeCount",
+                                    sheetNum,
+                                    index,
+                                    imageIndex,
+                                    partNum!!,
+                                    itemName,
+                                    minStockLevel,
+                                    newValueStr
+                                )
                             }
                         } else {
                             Snackbar.make(view,"Unexpected error\nEnter changes manually",

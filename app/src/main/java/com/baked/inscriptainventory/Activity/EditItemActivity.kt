@@ -1,4 +1,4 @@
-package com.baked.inscriptainventory
+package com.baked.inscriptainventory.Activity
 
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -9,6 +9,8 @@ import android.widget.ArrayAdapter
 import android.widget.RadioButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.baked.inscriptainventory.Resource.CallServer
+import com.baked.inscriptainventory.R
 import kotlinx.android.synthetic.main.activity_edit_item.*
 private const val TAG = "InscriptaInventory_EIA"
 private const val STOCK_2 = "2"
@@ -113,7 +115,9 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
                 minStock
             )
             editButton.isEnabled = false
-            editButton.setBackgroundColor(ContextCompat.getColor(this, R.color.disabledGray))
+            editButton.setBackgroundColor(ContextCompat.getColor(this,
+                R.color.disabledGray
+            ))
         }
 
         listOf<RadioButton>(

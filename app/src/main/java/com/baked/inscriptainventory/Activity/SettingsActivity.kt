@@ -1,4 +1,4 @@
-package com.baked.inscriptainventory
+package com.baked.inscriptainventory.Activity
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
+import com.baked.inscriptainventory.R
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.settings_layout.*
 

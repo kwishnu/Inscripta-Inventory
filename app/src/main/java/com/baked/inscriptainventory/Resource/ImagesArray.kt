@@ -1,4 +1,4 @@
-package com.baked.inscriptainventory
+package com.baked.inscriptainventory.Resource
 
 class ImagesArray(
     val IMAGE_URI: Array<String> = arrayOf(

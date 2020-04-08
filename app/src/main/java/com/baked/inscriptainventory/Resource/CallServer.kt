@@ -1,9 +1,12 @@
-package com.baked.inscriptainventory
+package com.baked.inscriptainventory.Resource
 
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.view.View
+import com.baked.inscriptainventory.Fragment.FirstFragment
+import com.baked.inscriptainventory.Fragment.SecondFragment
+import com.baked.inscriptainventory.Fragment.ThirdFragment
 import com.google.android.material.snackbar.Snackbar
 import okhttp3.*
 import java.io.IOException

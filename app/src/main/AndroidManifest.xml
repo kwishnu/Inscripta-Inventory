@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-        android:name=".KtApplication"
+        android:name=".Resource.KtApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
@@ -16,7 +16,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".MainActivity"
+            android:name=".Activity.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
@@ -28,27 +28,27 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ItemActionActivity"
+            android:name=".Activity.ItemActionActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".SettingsActivity"
+            android:name=".Activity.SettingsActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".AddItemActivity"
+            android:name=".Activity.AddItemActivity"
             android:label="@string/title_activity_add_item"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".EditItemActivity"
+            android:name=".Activity.EditItemActivity"
             android:label="@string/title_activity_edit_item"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".DeleteItemActivity"
+            android:name=".Activity.DeleteItemActivity"
             android:label="@string/title_activity_delete_item"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />

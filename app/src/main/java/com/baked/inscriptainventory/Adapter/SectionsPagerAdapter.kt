@@ -1,16 +1,21 @@
-package com.baked.inscriptainventory
+package com.baked.inscriptainventory.Adapter
 
 import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.PagerAdapter
+import com.baked.inscriptainventory.Fragment.FirstFragment
+import com.baked.inscriptainventory.Fragment.SecondFragment
+import com.baked.inscriptainventory.Fragment.ThirdFragment
+import com.baked.inscriptainventory.R
+
 private const val TAG = "InscriptaInventory_SPA"
 
 private val TAB_TITLES = arrayOf(
-        R.string.tab_text_1,
-        R.string.tab_text_2,
-        R.string.tab_text_3
+    R.string.tab_text_1,
+    R.string.tab_text_2,
+    R.string.tab_text_3
 )
 private var InventoryTab1: MutableList<MutableList<String>> = ArrayList()
 private var InventoryTab2: MutableList<MutableList<String>> = ArrayList()
@@ -36,9 +41,15 @@ class SectionsPagerAdapter(
             }
 
             return when (position) {
-            0 -> FirstFragment(InventoryTab1)
-            1 -> SecondFragment(InventoryTab2)
-            else -> ThirdFragment(InventoryTab3)
+            0 -> FirstFragment(
+                InventoryTab1
+            )
+            1 -> SecondFragment(
+                InventoryTab2
+            )
+            else -> ThirdFragment(
+                InventoryTab3
+            )
         }
     }
 

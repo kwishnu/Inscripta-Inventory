@@ -1,4 +1,4 @@
-package com.baked.inscriptainventory
+package com.baked.inscriptainventory.Adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -10,6 +10,8 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.baked.inscriptainventory.Resource.ImagesArray
+import com.baked.inscriptainventory.R
 import kotlinx.android.synthetic.main.list_item.view.*
 private const val TAG = "InscriptaInventory_IA"
 
@@ -24,7 +26,15 @@ class InventoryAdapter(private val items: MutableList<MutableList<String>>,
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int): RecyclerView.ViewHolder {
-        return ViewHolder(LayoutInflater.from(context).inflate(R.layout.list_item, parent, false))
+        return ViewHolder(
+            LayoutInflater.from(
+                context
+            ).inflate(
+                R.layout.list_item,
+                parent,
+                false
+            )
+        )
     }
 
     @SuppressLint("SetTextI18n")

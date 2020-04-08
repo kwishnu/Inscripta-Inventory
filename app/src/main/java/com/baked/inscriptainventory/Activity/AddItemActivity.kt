@@ -1,5 +1,6 @@
-package com.baked.inscriptainventory
+package com.baked.inscriptainventory.Activity
 
+import android.app.ActionBar
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.SharedPreferences
@@ -11,10 +12,11 @@ import android.widget.ArrayAdapter
 import android.widget.RadioButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.baked.inscriptainventory.Resource.CallServer
+import com.baked.inscriptainventory.R
 import kotlinx.android.synthetic.main.activity_add_item.*
 import kotlinx.android.synthetic.main.activity_add_item.radio0
 import kotlinx.android.synthetic.main.activity_add_item.radio1
-import kotlinx.android.synthetic.main.item_action_activity.*
 
 private const val TAG = "InscriptaInventory_AIA"
 private const val STOCK_2 = "2"
@@ -33,7 +35,7 @@ class AddItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
         setContentView(R.layout.activity_add_item)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_chevron_left_white_18dp)
-        android.app.ActionBar.DISPLAY_HOME_AS_UP
+        ActionBar.DISPLAY_HOME_AS_UP
         sharedPrefs = this.getSharedPreferences(prefsFilename, 0)
 
         sheetSelectSpinner!!.onItemSelectedListener = this
@@ -102,7 +104,9 @@ class AddItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
                 minStock
             )
             addButton.isEnabled = false
-            addButton.setBackgroundColor(ContextCompat.getColor(this, R.color.disabledGray))
+            addButton.setBackgroundColor(ContextCompat.getColor(this,
+                R.color.disabledGray
+            ))
         }
     }
     override fun onSupportNavigateUp(): Boolean {

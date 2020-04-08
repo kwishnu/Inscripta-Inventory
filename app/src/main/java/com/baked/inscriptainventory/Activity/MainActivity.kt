@@ -1,4 +1,4 @@
-package com.baked.inscriptainventory
+package com.baked.inscriptainventory.Activity
 
 import android.app.AlertDialog
 import android.content.Context
@@ -11,6 +11,8 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
+import com.baked.inscriptainventory.R
+import com.baked.inscriptainventory.Adapter.SectionsPagerAdapter
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.zxing.integration.android.IntentIntegrator
@@ -227,7 +229,12 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
     }
 
     private fun setTabs(){
-        val sectionsPagerAdapter = SectionsPagerAdapter(InventoryItems, this@MainActivity, supportFragmentManager)
+        val sectionsPagerAdapter =
+            SectionsPagerAdapter(
+                InventoryItems,
+                this@MainActivity,
+                supportFragmentManager
+            )
         val viewPager: ViewPager = findViewById(R.id.view_pager)
         viewPager.adapter = sectionsPagerAdapter
         val tabs: TabLayout = findViewById(R.id.tabs)

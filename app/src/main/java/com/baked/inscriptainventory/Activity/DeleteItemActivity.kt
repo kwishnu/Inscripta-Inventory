@@ -1,4 +1,4 @@
-package com.baked.inscriptainventory
+package com.baked.inscriptainventory.Activity
 
 import android.app.AlertDialog
 import android.content.DialogInterface
@@ -11,6 +11,8 @@ import android.widget.ArrayAdapter
 import android.widget.RadioButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.baked.inscriptainventory.Resource.CallServer
+import com.baked.inscriptainventory.R
 import kotlinx.android.synthetic.main.activity_delete_item.*
 private const val TAG = "InscriptaInventory_DIA"
 private const val STOCK_2 = "2"
@@ -105,7 +107,9 @@ class DeleteItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
                         "none"
                     )
                     deleteButton.isEnabled = false
-                    deleteButton.setBackgroundColor(ContextCompat.getColor(this, R.color.disabledGray))
+                    deleteButton.setBackgroundColor(ContextCompat.getColor(this,
+                        R.color.disabledGray
+                    ))
                 })
                 .setNegativeButton("Cancel", DialogInterface.OnClickListener {
                         dialog, _ -> dialog.cancel()
