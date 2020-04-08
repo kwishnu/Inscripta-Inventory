@@ -20,8 +20,8 @@ private lateinit var itemsContainer: MutableList<MutableList<String>>
 class ThirdFragment(private val items: MutableList<MutableList<String>>) : Fragment() {
     private lateinit var rootView: View
     object SetAdapterFromActivity {
-        operator fun invoke(index: String, value: String) {
-            itemsContainer[index.toInt()][5] = value
+        operator fun invoke(index: String, numInStock: String) {
+            itemsContainer[index.toInt()][5] = numInStock
             recyclerView.adapter?.notifyDataSetChanged()
         }
     }

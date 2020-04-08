@@ -130,7 +130,6 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                         }
                     }
                     if (sheet == "Not found"){//Part number not found, show dialog to add item
-Log.d(TAG, sheet)
                         val dialogBuilder = AlertDialog.Builder(this)
                         dialogBuilder
                             .setMessage("Item not found. Add item?")

@@ -113,13 +113,13 @@ class ItemActionActivity : AppCompatActivity(){
 
                 callServer(
                     constraintLayout,
-                    newValueStr,
+                    itemName!!,
                     itemPartNum,
+                    newValueStr,
+                    minStockLevel,
                     sheetNum!!,
                     rowNum!!,
-                    sendWarning,
-                    itemName!!,
-                    minStockLevel
+                    sendWarning
                 )
             }
         }
@@ -127,19 +127,19 @@ class ItemActionActivity : AppCompatActivity(){
 
 private fun callServer(
     view: View,
-    newCount: String,
+    itemName: String,
     partNum: String?,
+    invCount: String,
+    minStockLevel: String,
     sheetNum: String,
     rowNum: String,
-    sendWarning: String,
-    itemName: String,
-    minStockLevel: String
+    sendWarning: String
     ) {
         val stateStr = sharedPrefs!!.getString(initialStateName, String.toString())
         ipAddressStr = sharedPrefs!!.getString(ipAddressName, String.toString()).toString()
-        val urlStr = "http://$ipAddressStr:80/index.php?NewCount=$newCount" +
+        val urlStr = "http://$ipAddressStr:80/index.php?Reason=changeCount&InvCount=$invCount" +
                 "&PartNumber=$partNum&Sheet=$sheetNum&RowNum=$rowNum" +
-                "&SendWarning=$sendWarning&ItemName=$itemName" +
+                "&SendWarning=$sendWarning&ItemName=$itemName&ImageNum=0" +
                 "&MinStockLevel=$minStockLevel"
         val request = Request.Builder()
             .url(urlStr)
@@ -155,13 +155,10 @@ private fun callServer(
                 response.use {
                     if (!response.isSuccessful) throw IOException("Unexpected code $response")
                     val resp = response.body!!.string()
-                    val other = response.headers.toString()
                     val successful = resp.indexOf("Success") > -1 || resp.indexOf("SERVER") > -1
 
                     this@ItemActionActivity.runOnUiThread(Runnable {
                         val intent = Intent()
-                        Log.d(TAG, resp + " body")
-                        Log.d(TAG, other + " headers " + other)
                         if (successful) {
                             Snackbar.make(view,"Success\nInventory adjustment made",
                             Snackbar.LENGTH_LONG).setAction("Action", null).show()

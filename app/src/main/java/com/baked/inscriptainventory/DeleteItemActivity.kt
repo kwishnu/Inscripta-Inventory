@@ -57,11 +57,9 @@ class DeleteItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
 
         numInStockET.setOnFocusChangeListener() { v, event ->
             numInStockET.hint = if(numInStockET.hasFocus()) "" else STOCK_2
-            false
         }
         minStockLevelET.setOnFocusChangeListener() { v, event ->
             minStockLevelET.hint = if(minStockLevelET.hasFocus()) "" else STOCK_2
-            false
         }
         var currentSelected = radio0
         listOf<RadioButton>(
@@ -74,7 +72,11 @@ class DeleteItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
             }
         }
 
-        addButton.setOnClickListener {
+        deleteButton.setOnClickListener {
+
+
+
+
             Snackbar.make(content, "Button clicked!",
                 Snackbar.LENGTH_LONG).setAction("Action", null).show()
         }

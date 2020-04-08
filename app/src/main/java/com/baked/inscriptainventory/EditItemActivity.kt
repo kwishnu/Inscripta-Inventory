@@ -48,19 +48,21 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
         minStockLevelET.setText(minStockLevel)
         sheetSelectSpinner.setSelection(sheetNum?.toInt()!! - 1)
 
-        addButton.setOnClickListener {
+        editButton.setOnClickListener {
             ipAddressStr = sharedPrefs!!.getString(ipAddressName, String.toString()).toString()
 
-            CallServer().makeCall(
+            CallServer(this).makeCall(
                 content,//View
                 ipAddressStr,//IP Address
-                inStock,
-                "",
-                "",
-                "",
-                "",
-                "",
-                ""
+                "editItem",//Reason
+                numInStockET.text.toString(),
+                partNumberEditText.text.toString(),
+                imageIndex!!,
+                sheetNum,
+                rowNum!!,
+                "false",//No need to send warning
+                descriptionEditText.text.toString(),
+                minStockLevelET.text.toString()
             )
         }
 
@@ -111,11 +113,9 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
 
         numInStockET.setOnFocusChangeListener() { v, event ->
             numInStockET.hint = if(numInStockET.hasFocus()) "" else STOCK_2
-            false
         }
         minStockLevelET.setOnFocusChangeListener() { v, event ->
             minStockLevelET.hint = if(minStockLevelET.hasFocus()) "" else STOCK_2
-            false
         }
 
 
