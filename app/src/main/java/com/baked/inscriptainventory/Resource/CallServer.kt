@@ -28,7 +28,7 @@ class CallServer ( private var context: Context) {
         itemName: String,
         minStockLevel: String
         ){
-            val urlStr = "http://$ipAddressStr:80/index.php?Reason=$reason&InvCount=$invCount" +
+            val urlStr = "http://$ipAddressStr:10827/index.php?Reason=$reason&InvCount=$invCount" +
                     "&PartNumber=$partNum&ImageNum=$imageNum&Sheet=$sheetNum&RowNum=$rowNum" +
                     "&SendWarning=$sendWarning&ItemName=$itemName" +
                     "&MinStockLevel=$minStockLevel"

@@ -30,6 +30,7 @@ class AddItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
     private var imageIndex = "0"
     private var sheetNum = "1"
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_item)
@@ -37,6 +38,9 @@ class AddItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_chevron_left_white_18dp)
         ActionBar.DISPLAY_HOME_AS_UP
         sharedPrefs = this.getSharedPreferences(prefsFilename, 0)
+        val partNumber = intent.getStringExtra("PartNum")
+        val partNumNotNull = partNumber ?: ""
+        partNumberEditText.setText(partNumNotNull)
 
         sheetSelectSpinner!!.onItemSelectedListener = this
         val aa = ArrayAdapter(this, android.R.layout.simple_spinner_item, sheetArray)

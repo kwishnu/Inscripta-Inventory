@@ -71,7 +71,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
     private fun callServer(){// ipAddressStr = "10.0.0.225"
         val stateStr = sharedPrefs!!.getString(initialStateName, String.toString())
         ipAddressStr = sharedPrefs!!.getString(ipAddressName, String.toString()).toString()
-        val urlStr = "http://$ipAddressStr:80/index.php"
+        val urlStr = "http://$ipAddressStr:10827/index.php"//was 80
         val request = Request.Builder()
             .url(urlStr)
             .build()
@@ -138,6 +138,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                             .setPositiveButton("OK", DialogInterface.OnClickListener {
                                     dialog, _ ->
                                 val intent = Intent(this, AddItemActivity::class.java)
+                                intent.putExtra("PartNum", codePieces[1])
                                 startActivity(intent)
                             })
                             .setNegativeButton("Cancel", DialogInterface.OnClickListener {
@@ -168,7 +169,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                     intent.putExtra("FromActivity", whichTabStr)
 
                     this.startActivity(intent)
-
+Log.d(TAG, "Yep, you are here")
                     val tabLayout = tabs as TabLayout//Go to appropriate tab...
                     val tab = tabLayout.getTabAt(sheet.toInt() - 1)
                     tab?.select()
