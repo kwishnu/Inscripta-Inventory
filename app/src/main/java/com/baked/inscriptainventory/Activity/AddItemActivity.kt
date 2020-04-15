@@ -20,16 +20,20 @@ import kotlinx.android.synthetic.main.activity_add_item.radio1
 
 private const val TAG = "InscriptaInventory_AIA"
 private const val STOCK_2 = "2"
+private lateinit var tabArray: MutableList<String>
 
 class AddItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
-    private var sheetArray = arrayOf("Beta Kits", "Internal Reagents", "Purchased Parts")
     private var sharedPrefs: SharedPreferences? = null
     private val prefsFilename = "SharedPreferences"
     private val ipAddressName = "IPAddress"
     private var ipAddressStr = ""
     private var imageIndex = "0"
     private var sheetNum = "1"
-
+    companion object SendReceiveTabNames {//load array from MainActivity parseJson()
+        operator fun invoke(sent: MutableList<String>) {
+            tabArray = sent
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +47,7 @@ class AddItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
         partNumberEditText.setText(partNumNotNull)
 
         sheetSelectSpinner!!.onItemSelectedListener = this
-        val aa = ArrayAdapter(this, android.R.layout.simple_spinner_item, sheetArray)
+        val aa = ArrayAdapter(this, android.R.layout.simple_spinner_item, tabArray)
         aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         sheetSelectSpinner!!.adapter = aa
 
@@ -66,10 +70,10 @@ class AddItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
         }
 
         addButton.setOnClickListener {
-            if (descriptionEditText.text.isNullOrBlank() || partNumberEditText.text.isNullOrBlank()) {
+            if (descriptionEditText.text.isNullOrBlank()) {
                 val dialogBuilder = AlertDialog.Builder(this)
                 dialogBuilder
-                    .setMessage("""""Item Name" and "Part Number" fields are required""")
+                    .setMessage("""""Item Name" is required""")
                     .setCancelable(true)
                     .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, _ ->
                         dialog.cancel()
@@ -92,6 +96,8 @@ class AddItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
                 if (numInStockET.text.isNullOrBlank()) "0" else numInStockET.text.toString()
             val minStock =
                 if (minStockLevelET.text.isNullOrBlank()) "0" else minStockLevelET.text.toString()
+            val partNum =
+                if (partNumberEditText.text.isNullOrBlank()) "None" else partNumberEditText.text.toString()
 
             ipAddressStr = sharedPrefs!!.getString(ipAddressName, String.toString()).toString()
             CallServer(this).makeCall(
@@ -99,10 +105,10 @@ class AddItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
                 ipAddressStr,//IP Address
                 "addItem",//Reason
                 numInStock,
-                partNumberEditText.text.toString(),
+                partNum,
                 imageIndex,
                 sheetNum,
-                "1",
+                "2",//row number -- not actually used, row is inserted after header
                 "false",//No need to send warning
                 descriptionEditText.text.toString(),
                 minStock

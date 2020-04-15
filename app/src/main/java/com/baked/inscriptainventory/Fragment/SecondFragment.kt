@@ -76,14 +76,12 @@ class SecondFragment(private val items: MutableList<MutableList<String>>) : Frag
         }
         val listener = { i: Int -> fragClickListener(i) }
         val longClickListener = { i: Int, view: View -> longClickListener(i, view) }
-        recyclerView.adapter = activity?.applicationContext?.let {
-            InventoryAdapter(
-                itemsContainer,
-                it,
-                listener,
-                longClickListener
-            )
-        }
+//        recyclerView.adapter = activity?.applicationContext?.let {
+//            InventoryAdapter(
+//                InvFragment(items)
+////                longClickListener
+//            )
+//        }
         recyclerView.addItemDecoration(DividerItemDecoration(activity?.applicationContext, DividerItemDecoration.VERTICAL))
 
         return rootView

@@ -11,8 +11,8 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
-import com.baked.inscriptainventory.R
 import com.baked.inscriptainventory.Adapter.SectionsPagerAdapter
+import com.baked.inscriptainventory.R
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.zxing.integration.android.IntentIntegrator
@@ -23,9 +23,13 @@ import okhttp3.*
 import org.json.JSONObject
 import java.io.IOException
 
+private var TabTitles: MutableList<String> = ArrayList()
 private const val TAG = "InscriptaInventory_MA"
 
-class MainActivity(private var InventoryItems: MutableList<MutableList<String>> = ArrayList()) : AppCompatActivity() {
+class MainActivity(private var InventoryItems: MutableList<MutableList<String>> = ArrayList(),
+                   private var InventoryTabs:  MutableList<MutableList<MutableList<String>>> = ArrayList()
+) : AppCompatActivity()
+{
     private var ipAddressStr = ""
     private var scannedResult = ""
     private val client = OkHttpClient()
@@ -71,7 +75,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
     private fun callServer(){// ipAddressStr = "10.0.0.225"
         val stateStr = sharedPrefs!!.getString(initialStateName, String.toString())
         ipAddressStr = sharedPrefs!!.getString(ipAddressName, String.toString()).toString()
-        val urlStr = "http://$ipAddressStr:10827/index.php"//was 80
+        val urlStr = "http://$ipAddressStr:80/index.php"//was 80
         val request = Request.Builder()
             .url(urlStr)
             .build()
@@ -117,19 +121,23 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                     var minStockLevel = "Not found"
                     var onHandNum = "Not found"
                     var row = "Not found"
+                    loop@ for (t in InventoryTabs.indices) {
+                        for (e in InventoryTabs[t]) {
+                            Log.d(TAG, e.toString())
 
-                    for (e in InventoryItems){
-                        if (codePieces[1] == e[2]){//check if part number matches given row in Excel spreadsheet data returned in server call
-                            sheet = e[0]
-                            image = e[1]
-                            partNumber = e[2]
-                            description = e[3]
-                            minStockLevel = e[4]
-                            onHandNum = e[5]
-                            row = e[6]
-                            break
+                            if (codePieces[1] == e[1]) {//check if part number matches given row in Excel spreadsheet data returned in server call
+                                sheet = (t + 1).toString()
+                                image = e[0]
+                                partNumber = e[1]
+                                description = e[2]
+                                minStockLevel = e[3]
+                                onHandNum = e[4]
+                                row = e[5]
+                                break@loop
+                            }
                         }
                     }
+
                     if (sheet == "Not found"){//Part number not found, show dialog to add item
                         val dialogBuilder = AlertDialog.Builder(this)
                         dialogBuilder
@@ -151,13 +159,8 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                         return
                     }
 
-                    var whichTabStr = ""
-                    whichTabStr = when (sheet){
-                        "1" -> "MainActivity1"
-                        "2" -> "MainActivity2"
-                        "3" -> "MainActivity3"
-                        else -> return
-                    }
+                    val whichTabStr = "MainActivity$sheet"
+
                     val intent = Intent(this, ItemActionActivity::class.java)
                     intent.putExtra("Sheet", sheet)
                     intent.putExtra("Image", image)
@@ -169,7 +172,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                     intent.putExtra("FromActivity", whichTabStr)
 
                     this.startActivity(intent)
-Log.d(TAG, "Yep, you are here")
+
                     val tabLayout = tabs as TabLayout//Go to appropriate tab...
                     val tab = tabLayout.getTabAt(sheet.toInt() - 1)
                     tab?.select()
@@ -232,8 +235,8 @@ Log.d(TAG, "Yep, you are here")
     private fun setTabs(){
         val sectionsPagerAdapter =
             SectionsPagerAdapter(
-                InventoryItems,
-                this@MainActivity,
+                InventoryTabs,
+                TabTitles,
                 supportFragmentManager
             )
         val viewPager: ViewPager = findViewById(R.id.view_pager)
@@ -245,39 +248,225 @@ Log.d(TAG, "Yep, you are here")
     //Parse Excel Json object returned from server:
     private fun parseJsonStr(responseStr: String) {
         val respObj = JSONObject(responseStr)
-        val sheet1 = JSONObject(respObj["0"].toString())
-        val sheet2 = JSONObject(respObj["1"].toString())
-        val sheet3 = JSONObject(respObj["2"].toString())
+        val titles = respObj["0"].toString().split("\",\"").toMutableList()//Get tab titles from first array element
+        titles[0] = titles[0].substring(2)
+        titles[titles.size - 1] = titles[titles.size - 1].substring(0, titles[titles.size - 1].length - 2)
+
+        for (s in 0 until titles.size){
+            TabTitles.add(titles[s])
+            titles[s] = titles[s].trim()
+        }
+        EditItemActivity.SendReceiveTabNames(TabTitles)
+        AddItemActivity.SendReceiveTabNames(TabTitles)
+        DeleteItemActivity.SendReceiveTabNames(TabTitles)
+
+        val sheet1 = JSONObject(respObj["1"].toString())
+        var sheet2 = JSONObject(respObj["1"].toString())
+        var sheet3 = JSONObject(respObj["1"].toString())
+        var sheet4 = JSONObject(respObj["1"].toString())
+        var sheet5 = JSONObject(respObj["1"].toString())
+        var sheet6 = JSONObject(respObj["1"].toString())
+        var sheet7 = JSONObject(respObj["1"].toString())
+        var sheet8 = JSONObject(respObj["1"].toString())
+        var sheet9 = JSONObject(respObj["1"].toString())
+        var sheet10 = JSONObject(respObj["1"].toString())
+        var sheet11 = JSONObject(respObj["1"].toString())
+        var sheet12 = JSONObject(respObj["1"].toString())
+
+        if (respObj.length() > 12) sheet12 = JSONObject(respObj["12"].toString())
+        if (respObj.length() > 11) sheet11 = JSONObject(respObj["11"].toString())
+        if (respObj.length() > 10) sheet10 = JSONObject(respObj["10"].toString())
+        if (respObj.length() > 9 ) sheet9 = JSONObject(respObj["9"].toString())
+        if (respObj.length() > 8 ) sheet8 = JSONObject(respObj["8"].toString())
+        if (respObj.length() > 7 ) sheet7 = JSONObject(respObj["7"].toString())
+        if (respObj.length() > 6 ) sheet6 = JSONObject(respObj["6"].toString())
+        if (respObj.length() > 5 ) sheet5 = JSONObject(respObj["5"].toString())
+        if (respObj.length() > 4 ) sheet4 = JSONObject(respObj["4"].toString())
+        if (respObj.length() > 3 ) sheet3 = JSONObject(respObj["3"].toString())
+        if (respObj.length() > 2 ) sheet2 = JSONObject(respObj["2"].toString())
+
+        if (respObj.length() > 4) {
+            tabs.tabMode = TabLayout.MODE_SCROLLABLE
+        }else{
+            tabs.tabMode = TabLayout.MODE_FIXED
+        }
 
         for (i in 2 until sheet1.length() + 1){
-            val str1 = JSONObject(sheet1[i.toString()].toString())["A"].toString()//Column A: Sheet
-            val str2 = JSONObject(sheet1[i.toString()].toString())["B"].toString()//Column B: Image
-            val str3 = JSONObject(sheet1[i.toString()].toString())["C"].toString()//Column C: Part Number
-            val str4 = JSONObject(sheet1[i.toString()].toString())["D"].toString()//Column D: Description
-            val str5 = JSONObject(sheet1[i.toString()].toString())["E"].toString()//Column E: Min Stock Level
-            val str6 = JSONObject(sheet1[i.toString()].toString())["F"].toString()//Column F: Quantity on Hand
-            val str7 = i.toString()//Row in Excel sheet
-            InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
+            val str1 = JSONObject(sheet1[i.toString()].toString())["A"].toString()//Column A: Image
+            val str2 = JSONObject(sheet1[i.toString()].toString())["B"].toString()//Column B: Part Number
+            val str3 = JSONObject(sheet1[i.toString()].toString())["C"].toString()//Column C: Description
+            val str4 = JSONObject(sheet1[i.toString()].toString())["D"].toString()//Column D: Min Stock Level
+            val str5 = JSONObject(sheet1[i.toString()].toString())["E"].toString()//Column E: Quantity on Hand
+            val str6 = i.toString()//Row in Excel sheet
+            InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))//str1,
         }
-        for (i in 2 until sheet2.length() + 1){
-            val str1 = JSONObject(sheet2[i.toString()].toString())["A"].toString()
-            val str2 = JSONObject(sheet2[i.toString()].toString())["B"].toString()
-            val str3 = JSONObject(sheet2[i.toString()].toString())["C"].toString()
-            val str4 = JSONObject(sheet2[i.toString()].toString())["D"].toString()
-            val str5 = JSONObject(sheet2[i.toString()].toString())["E"].toString()
-            val str6 = JSONObject(sheet2[i.toString()].toString())["F"].toString()
-            val str7 = i.toString()
-            InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
+        var arrayCopy = InventoryItems.toTypedArray()
+        InventoryTabs.add(arrayCopy.toMutableList())
+        InventoryItems.clear()
+
+        if (respObj.length() > 2) {
+            for (i in 2 until sheet2.length() + 1) {
+                val str1 = JSONObject(sheet2[i.toString()].toString())["A"].toString()
+                val str2 = JSONObject(sheet2[i.toString()].toString())["B"].toString()
+                val str3 = JSONObject(sheet2[i.toString()].toString())["C"].toString()
+                val str4 = JSONObject(sheet2[i.toString()].toString())["D"].toString()
+                val str5 = JSONObject(sheet2[i.toString()].toString())["E"].toString()
+                val str6 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))
+            }
+            arrayCopy = InventoryItems.toTypedArray()
+            InventoryTabs.add(arrayCopy.toMutableList())
+            InventoryItems.clear()
         }
-        for (i in 2 until sheet3.length() + 1){
-            val str1 = JSONObject(sheet3[i.toString()].toString())["A"].toString()
-            val str2 = JSONObject(sheet3[i.toString()].toString())["B"].toString()
-            val str3 = JSONObject(sheet3[i.toString()].toString())["C"].toString()
-            val str4 = JSONObject(sheet3[i.toString()].toString())["D"].toString()
-            val str5 = JSONObject(sheet3[i.toString()].toString())["E"].toString()
-            val str6 = JSONObject(sheet3[i.toString()].toString())["F"].toString()
-            val str7 = i.toString()
-            InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
+
+        if (respObj.length() > 3) {
+            for (i in 2 until sheet3.length() + 1) {
+                val str1 = JSONObject(sheet3[i.toString()].toString())["A"].toString()
+                val str2 = JSONObject(sheet3[i.toString()].toString())["B"].toString()
+                val str3 = JSONObject(sheet3[i.toString()].toString())["C"].toString()
+                val str4 = JSONObject(sheet3[i.toString()].toString())["D"].toString()
+                val str5 = JSONObject(sheet3[i.toString()].toString())["E"].toString()
+                val str6 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))
+            }
+            arrayCopy = InventoryItems.toTypedArray()
+            InventoryTabs.add(arrayCopy.toMutableList())
+            InventoryItems.clear()
+        }
+
+        if (respObj.length() > 4) {
+            for (i in 2 until sheet4.length() + 1) {
+                val str1 = JSONObject(sheet4[i.toString()].toString())["A"].toString()
+                val str2 = JSONObject(sheet4[i.toString()].toString())["B"].toString()
+                val str3 = JSONObject(sheet4[i.toString()].toString())["C"].toString()
+                val str4 = JSONObject(sheet4[i.toString()].toString())["D"].toString()
+                val str5 = JSONObject(sheet4[i.toString()].toString())["E"].toString()
+                val str6 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))
+            }
+            arrayCopy = InventoryItems.toTypedArray()
+            InventoryTabs.add(arrayCopy.toMutableList())
+            InventoryItems.clear()
+        }
+
+        if (respObj.length() > 5) {
+            for (i in 2 until sheet5.length() + 1) {
+                val str1 = JSONObject(sheet5[i.toString()].toString())["A"].toString()
+                val str2 = JSONObject(sheet5[i.toString()].toString())["B"].toString()
+                val str3 = JSONObject(sheet5[i.toString()].toString())["C"].toString()
+                val str4 = JSONObject(sheet5[i.toString()].toString())["D"].toString()
+                val str5 = JSONObject(sheet5[i.toString()].toString())["E"].toString()
+                val str6 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))
+            }
+            arrayCopy = InventoryItems.toTypedArray()
+            InventoryTabs.add(arrayCopy.toMutableList())
+            InventoryItems.clear()
+        }
+
+        if (respObj.length() > 6) {
+            for (i in 2 until sheet6.length() + 1) {
+                val str1 = JSONObject(sheet6[i.toString()].toString())["A"].toString()
+                val str2 = JSONObject(sheet6[i.toString()].toString())["B"].toString()
+                val str3 = JSONObject(sheet6[i.toString()].toString())["C"].toString()
+                val str4 = JSONObject(sheet6[i.toString()].toString())["D"].toString()
+                val str5 = JSONObject(sheet6[i.toString()].toString())["E"].toString()
+                val str6 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))
+            }
+            arrayCopy = InventoryItems.toTypedArray()
+            InventoryTabs.add(arrayCopy.toMutableList())
+            InventoryItems.clear()
+        }
+
+        if (respObj.length() > 7) {
+            for (i in 2 until sheet7.length() + 1) {
+                val str1 = JSONObject(sheet7[i.toString()].toString())["A"].toString()
+                val str2 = JSONObject(sheet7[i.toString()].toString())["B"].toString()
+                val str3 = JSONObject(sheet7[i.toString()].toString())["C"].toString()
+                val str4 = JSONObject(sheet7[i.toString()].toString())["D"].toString()
+                val str5 = JSONObject(sheet7[i.toString()].toString())["E"].toString()
+                val str6 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))
+            }
+            arrayCopy = InventoryItems.toTypedArray()
+            InventoryTabs.add(arrayCopy.toMutableList())
+            InventoryItems.clear()
+        }
+
+        if (respObj.length() > 8) {
+            for (i in 2 until sheet8.length() + 1) {
+                val str1 = JSONObject(sheet8[i.toString()].toString())["A"].toString()
+                val str2 = JSONObject(sheet8[i.toString()].toString())["B"].toString()
+                val str3 = JSONObject(sheet8[i.toString()].toString())["C"].toString()
+                val str4 = JSONObject(sheet8[i.toString()].toString())["D"].toString()
+                val str5 = JSONObject(sheet8[i.toString()].toString())["E"].toString()
+                val str6 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))
+            }
+            arrayCopy = InventoryItems.toTypedArray()
+            InventoryTabs.add(arrayCopy.toMutableList())
+            InventoryItems.clear()
+        }
+
+        if (respObj.length() > 9) {
+            for (i in 2 until sheet9.length() + 1) {
+                val str1 = JSONObject(sheet9[i.toString()].toString())["A"].toString()
+                val str2 = JSONObject(sheet9[i.toString()].toString())["B"].toString()
+                val str3 = JSONObject(sheet9[i.toString()].toString())["C"].toString()
+                val str4 = JSONObject(sheet9[i.toString()].toString())["D"].toString()
+                val str5 = JSONObject(sheet9[i.toString()].toString())["E"].toString()
+                val str6 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))
+            }
+            arrayCopy = InventoryItems.toTypedArray()
+            InventoryTabs.add(arrayCopy.toMutableList())
+            InventoryItems.clear()
+        }
+
+        if (respObj.length() > 10) {
+            for (i in 2 until sheet10.length() + 1) {
+                val str1 = JSONObject(sheet10[i.toString()].toString())["A"].toString()
+                val str2 = JSONObject(sheet10[i.toString()].toString())["B"].toString()
+                val str3 = JSONObject(sheet10[i.toString()].toString())["C"].toString()
+                val str4 = JSONObject(sheet10[i.toString()].toString())["D"].toString()
+                val str5 = JSONObject(sheet10[i.toString()].toString())["E"].toString()
+                val str6 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))
+            }
+            arrayCopy = InventoryItems.toTypedArray()
+            InventoryTabs.add(arrayCopy.toMutableList())
+            InventoryItems.clear()
+        }
+
+        if (respObj.length() > 11) {
+            for (i in 2 until sheet11.length() + 1) {
+                val str1 = JSONObject(sheet11[i.toString()].toString())["A"].toString()
+                val str2 = JSONObject(sheet11[i.toString()].toString())["B"].toString()
+                val str3 = JSONObject(sheet11[i.toString()].toString())["C"].toString()
+                val str4 = JSONObject(sheet11[i.toString()].toString())["D"].toString()
+                val str5 = JSONObject(sheet11[i.toString()].toString())["E"].toString()
+                val str6 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))
+            }
+            arrayCopy = InventoryItems.toTypedArray()
+            InventoryTabs.add(arrayCopy.toMutableList())
+            InventoryItems.clear()
+        }
+
+        if (respObj.length() > 12) {
+            for (i in 2 until sheet12.length() + 1) {
+                val str1 = JSONObject(sheet12[i.toString()].toString())["A"].toString()
+                val str2 = JSONObject(sheet12[i.toString()].toString())["B"].toString()
+                val str3 = JSONObject(sheet12[i.toString()].toString())["C"].toString()
+                val str4 = JSONObject(sheet12[i.toString()].toString())["D"].toString()
+                val str5 = JSONObject(sheet12[i.toString()].toString())["E"].toString()
+                val str6 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))
+            }
+            arrayCopy = InventoryItems.toTypedArray()
+            InventoryTabs.add(arrayCopy.toMutableList())
+            InventoryItems.clear()
         }
     }
 }

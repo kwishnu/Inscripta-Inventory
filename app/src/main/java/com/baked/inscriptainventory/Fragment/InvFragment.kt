@@ -23,10 +23,9 @@ private lateinit var recyclerView: RecyclerView
 private lateinit var itemsContainer: MutableList<MutableList<String>>
 private lateinit var sheetNum: String
 
-class InvFragment(private val items: MutableList<MutableList<String>>) : Fragment() {//, private val tabNumber: Int
+class InvFragment(private val items: MutableList<MutableList<String>>, private val tabNumber: Int) : Fragment() {
     private lateinit var rootView: View
     object SetAdapterFromActivity {
-
         operator fun invoke( reason: String,
                              sheetNum: String,
                              index: String,
@@ -37,6 +36,8 @@ class InvFragment(private val items: MutableList<MutableList<String>>) : Fragmen
                              numInStock: String
         ) {
 //            val test = sheetNum
+            Log.d(TAG, "here")
+
             if (reason == "deleteItem") {
                 itemsContainer.removeAt(index.toInt())
             } else if (reason == "addItem") {
@@ -59,7 +60,6 @@ class InvFragment(private val items: MutableList<MutableList<String>>) : Fragmen
 //    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-//        Log.d(TAG, tabNumber.toString())
         rootView = inflater.inflate(R.layout.fragment_layout, container, false)
         recyclerView = rootView.findViewById(
             R.id.rv
@@ -67,11 +67,11 @@ class InvFragment(private val items: MutableList<MutableList<String>>) : Fragmen
         recyclerView.layoutManager = LinearLayoutManager(activity)
         fun fragClickListener(position: Int) {
             val intent = Intent(activity, ItemActionActivity::class.java)
-            intent.putExtra("Image", itemsContainer[position][0])
-            intent.putExtra("PartNum", itemsContainer[position][1])
-            intent.putExtra("Item", itemsContainer[position][2])
-            intent.putExtra("MinStockLevel", itemsContainer[position][3])
-            intent.putExtra("InStock", itemsContainer[position][4])
+            intent.putExtra("Image", items[position][0])
+            intent.putExtra("PartNum", items[position][1])
+            intent.putExtra("Item", items[position][2])
+            intent.putExtra("MinStockLevel", items[position][3])
+            intent.putExtra("InStock", items[position][4])
             intent.putExtra("Sheet", "1")//tabNumber.toString())
             intent.putExtra("Row", (position + 2).toString())
             intent.putExtra("FromActivity", "Fragment")
@@ -85,10 +85,10 @@ class InvFragment(private val items: MutableList<MutableList<String>>) : Fragmen
         val longClickListener = { i: Int, view: View -> longClickListener(i, view) }
         recyclerView.adapter = activity?.applicationContext?.let {
             InventoryAdapter(
-                itemsContainer,
+                items,
                 it,
-                listener
-//                longClickListener
+                listener,
+                longClickListener
             )
         }
         recyclerView.addItemDecoration(DividerItemDecoration(activity?.applicationContext, DividerItemDecoration.VERTICAL))
@@ -102,7 +102,7 @@ class InvFragment(private val items: MutableList<MutableList<String>>) : Fragmen
             if (resultCode == Activity.RESULT_OK) {
                 val indexStr = data?.getStringExtra("index")
                 val valueStr = data?.getStringExtra("newValue")
-                itemsContainer[indexStr!!.toInt()][5] = valueStr.toString()
+                items[indexStr!!.toInt()][5] = valueStr.toString()
                 recyclerView.adapter?.notifyDataSetChanged()
             }
         }
@@ -118,12 +118,12 @@ class InvFragment(private val items: MutableList<MutableList<String>>) : Fragmen
             when(it.itemId) {
                 R.id.header1 -> {//Go to Edit Item Activity
                     val intent = Intent(activity, EditItemActivity::class.java)
-                    intent.putExtra("Image", itemsContainer[pos][0])
-                    intent.putExtra("PartNum", itemsContainer[pos][1])
-                    intent.putExtra("Item", itemsContainer[pos][2])
-                    intent.putExtra("MinStockLevel", itemsContainer[pos][3])
-                    intent.putExtra("InStock", itemsContainer[pos][4])
-                    intent.putExtra("Sheet", "1")//tabNumber.toString())
+                    intent.putExtra("Image", items[pos][0])
+                    intent.putExtra("PartNum", items[pos][1])
+                    intent.putExtra("Item", items[pos][2])
+                    intent.putExtra("MinStockLevel", items[pos][3])
+                    intent.putExtra("InStock", items[pos][4])
+                    intent.putExtra("Sheet", tabNumber.toString())
                     intent.putExtra("Row", (pos + 2).toString())
                     intent.putExtra("FromActivity", "Fragment")
 
@@ -132,13 +132,12 @@ class InvFragment(private val items: MutableList<MutableList<String>>) : Fragmen
                 }
                 R.id.header2 -> {//Go to Delete Item Activity
                     val intent = Intent(activity, DeleteItemActivity::class.java)
-                    Log.d(TAG, itemsContainer[pos].toString())
-                    intent.putExtra("Image", itemsContainer[pos][0])
-                    intent.putExtra("PartNum", itemsContainer[pos][1])
-                    intent.putExtra("Item", itemsContainer[pos][2])
-                    intent.putExtra("MinStockLevel", itemsContainer[pos][3])
-                    intent.putExtra("InStock", itemsContainer[pos][4])
-                    intent.putExtra("Sheet", "1")//tabNumber.toString())
+                    intent.putExtra("Image", items[pos][0])
+                    intent.putExtra("PartNum", items[pos][1])
+                    intent.putExtra("Item", items[pos][2])
+                    intent.putExtra("MinStockLevel", items[pos][3])
+                    intent.putExtra("InStock", items[pos][4])
+                    intent.putExtra("Sheet", tabNumber.toString())
                     intent.putExtra("Row", (pos + 2).toString())
                     intent.putExtra("FromActivity", "Fragment")
 

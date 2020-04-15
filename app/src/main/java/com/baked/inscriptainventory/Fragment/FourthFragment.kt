@@ -18,11 +18,11 @@ import com.baked.inscriptainventory.Activity.ItemActionActivity
 import com.baked.inscriptainventory.Adapter.InventoryAdapter
 import com.baked.inscriptainventory.R
 
-private const val TAG = "InscriptaInventory_TF"
+private const val TAG = "InscriptaInventory_FF"
 private lateinit var recyclerView: RecyclerView
 private lateinit var itemsContainer: MutableList<MutableList<String>>
 
-class ThirdFragment(private val items: MutableList<MutableList<String>>) : Fragment() {
+class FourthFragment(private val items: MutableList<MutableList<String>>) : Fragment() {
     private lateinit var rootView: View
     object SetAdapterFromActivity {
         operator fun invoke( reason: String,
@@ -65,7 +65,7 @@ class ThirdFragment(private val items: MutableList<MutableList<String>>) : Fragm
             intent.putExtra("Item",  itemsContainer[position][3])
             intent.putExtra("MinStockLevel",  itemsContainer[position][4])
             intent.putExtra("InStock", itemsContainer[position][5])
-            intent.putExtra("Sheet", "3")
+            intent.putExtra("Sheet", "4")
             intent.putExtra("Row", (position + 2).toString())
             intent.putExtra("FromActivity", "Fragment")
 
@@ -105,18 +105,18 @@ class ThirdFragment(private val items: MutableList<MutableList<String>>) : Fragm
         val inflater = popupMenu?.menuInflater
         inflater?.inflate(R.menu.context_menu, popupMenu.menu)
         popupMenu?.show()
-
         popupMenu?.setOnMenuItemClickListener {
             when(it.itemId) {
                 R.id.header1 -> {//Go to Edit Item Activity
-                    Log.d(TAG, itemsContainer[pos][3])
+                    Log.d(TAG, itemsContainer.toString())
+
                     val intent = Intent(activity, EditItemActivity::class.java)
                     intent.putExtra("Image", itemsContainer[pos][1])
                     intent.putExtra("PartNum", itemsContainer[pos][2])
                     intent.putExtra("Item", itemsContainer[pos][3])
                     intent.putExtra("MinStockLevel", itemsContainer[pos][4])
                     intent.putExtra("InStock", itemsContainer[pos][5])
-                    intent.putExtra("Sheet", "3")
+                    intent.putExtra("Sheet", "4")
                     intent.putExtra("Row", (pos + 2).toString())
                     intent.putExtra("FromActivity", "Fragment")
 
@@ -124,14 +124,13 @@ class ThirdFragment(private val items: MutableList<MutableList<String>>) : Fragm
 
                 }
                 R.id.header2 -> {//Go to Delete Item Activity
-                    Log.d(TAG, itemsContainer[pos][3])
                     val intent = Intent(activity, DeleteItemActivity::class.java)
                     intent.putExtra("Image", itemsContainer[pos][1])
                     intent.putExtra("PartNum", itemsContainer[pos][2])
                     intent.putExtra("Item", itemsContainer[pos][3])
                     intent.putExtra("MinStockLevel", itemsContainer[pos][4])
                     intent.putExtra("InStock", itemsContainer[pos][5])
-                    intent.putExtra("Sheet", "3")
+                    intent.putExtra("Sheet", "4")
                     intent.putExtra("Row", (pos + 2).toString())
                     intent.putExtra("FromActivity", "Fragment")
 

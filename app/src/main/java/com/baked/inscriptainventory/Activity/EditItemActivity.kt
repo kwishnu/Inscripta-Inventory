@@ -14,15 +14,19 @@ import com.baked.inscriptainventory.R
 import kotlinx.android.synthetic.main.activity_edit_item.*
 private const val TAG = "InscriptaInventory_EIA"
 private const val STOCK_2 = "2"
+private lateinit var tabArray: MutableList<String>
 
 class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
-    private var sheetArray = arrayOf("Beta Kits", "Internal Reagents", "Purchased Parts")
     private var fromActivity = "Unknown"
     private var sharedPrefs: SharedPreferences? = null
     private val prefsFilename = "SharedPreferences"
     private val ipAddressName = "IPAddress"
     private var ipAddressStr = ""
-
+    companion object SendReceiveTabNames {
+        operator fun invoke(sent: MutableList<String>) {
+            tabArray = sent
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_item)
@@ -32,7 +36,7 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
         sharedPrefs = this.getSharedPreferences(prefsFilename, 0)
 
         sheetSelectSpinner!!.onItemSelectedListener = this
-        val aa = ArrayAdapter(this, android.R.layout.simple_spinner_item, sheetArray)
+        val aa = ArrayAdapter(this, android.R.layout.simple_spinner_item, tabArray)
         aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         sheetSelectSpinner.isEnabled = false;
         sheetSelectSpinner.isClickable = false
@@ -46,6 +50,7 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
         val sheetNum = intent.getStringExtra("Sheet")
         val rowNum = intent.getStringExtra("Row")
         fromActivity = intent.getStringExtra("FromActivity")!!.toString()
+
         var currentSelected: RadioButton? = null
         descriptionEditText.setText(itemName)
         partNumberEditText.setText(itemPartNum)
@@ -148,6 +153,6 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        Log.d(TAG, "Spinner Item Selected: " + sheetArray[position].toString())
+        Log.d(TAG, "Spinner Item Selected: " + tabArray[position])
     }
 }

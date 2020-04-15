@@ -20,7 +20,7 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            tools:ignore="LockedOrientationActivity">
+            tools:ignore="InnerclassSeparator,LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,27 +31,27 @@
             android:name=".Activity.ItemActionActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
-            tools:ignore="LockedOrientationActivity" />
+            tools:ignore="InnerclassSeparator,LockedOrientationActivity" />
         <activity
             android:name=".Activity.SettingsActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
-            tools:ignore="LockedOrientationActivity" />
+            tools:ignore="InnerclassSeparator,LockedOrientationActivity" />
         <activity
             android:name=".Activity.AddItemActivity"
             android:label="@string/title_activity_add_item"
             android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity" />
+            tools:ignore="InnerclassSeparator,LockedOrientationActivity" />
         <activity
             android:name=".Activity.EditItemActivity"
             android:label="@string/title_activity_edit_item"
             android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity" />
+            tools:ignore="InnerclassSeparator,LockedOrientationActivity" />
         <activity
             android:name=".Activity.DeleteItemActivity"
             android:label="@string/title_activity_delete_item"
             android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity" />
+            tools:ignore="InnerclassSeparator,LockedOrientationActivity" />
     </application>
 
 </manifest>

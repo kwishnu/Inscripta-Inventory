@@ -3,6 +3,7 @@ package com.baked.inscriptainventory.Adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,11 +40,11 @@ class InventoryAdapter(private val items: MutableList<MutableList<String>>,
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder as ViewHolder).clickableView.list_item.text = items[holder.adapterPosition][3]
-        val partNumberStr = items[holder.adapterPosition][2]
+        (holder as ViewHolder).clickableView.list_item.text = items[holder.adapterPosition][2]
+        val partNumberStr = items[holder.adapterPosition][1]
         holder.clickableView.list_subtitle.text = "Part No.: $partNumberStr"
-        val numInStockStr =  if (items[holder.adapterPosition][5] == "null") ("0") else (items[holder.adapterPosition][5])
-        val lowQuantityAlarm = numInStockStr.toInt() <= (items[holder.adapterPosition][4]).toInt()//true if count is less than or equal to Min Stock Level
+        val numInStockStr =  if (items[holder.adapterPosition][4] == "null") ("0") else (items[holder.adapterPosition][4])
+        val lowQuantityAlarm = numInStockStr.toInt() <= (items[holder.adapterPosition][3]).toInt()//true if count is less than or equal to Min Stock Level
         holder.clickableView.list_detail.text = numInStockStr
         if (lowQuantityAlarm) {
             holder.clickableView.list_detail.background =
@@ -58,7 +59,7 @@ class InventoryAdapter(private val items: MutableList<MutableList<String>>,
                     R.drawable.details_rect_green
                 )
         }
-        val itemImageStr = ImagesArray().IMAGE_URI[(items[holder.adapterPosition][1]).toInt()]
+        val itemImageStr = ImagesArray().IMAGE_URI[(items[holder.adapterPosition][0]).toInt()]
         val uri = Uri.parse("android.resource://com.baked.inscriptainventory/drawable/$itemImageStr")
         holder.image.setImageURI(uri)
         holder.clickableView.setOnClickListener {

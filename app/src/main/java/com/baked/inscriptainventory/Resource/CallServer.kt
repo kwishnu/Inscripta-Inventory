@@ -3,16 +3,15 @@ package com.baked.inscriptainventory.Resource
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import android.view.View
-import com.baked.inscriptainventory.Fragment.FirstFragment
-import com.baked.inscriptainventory.Fragment.SecondFragment
-import com.baked.inscriptainventory.Fragment.ThirdFragment
+import com.baked.inscriptainventory.Fragment.*
 import com.google.android.material.snackbar.Snackbar
 import okhttp3.*
 import java.io.IOException
 private const val TAG = "InscriptaInventory_CS"
 
-class CallServer ( private var context: Context) {
+class CallServer ( private val context: Context) {
     private val client = OkHttpClient()
 
     fun makeCall (
@@ -31,8 +30,9 @@ class CallServer ( private var context: Context) {
             val urlStr = "http://$ipAddressStr:80/index.php?Reason=$reason&InvCount=$invCount" +
                     "&PartNumber=$partNum&ImageNum=$imageNum&Sheet=$sheetNum&RowNum=$rowNum" +
                     "&SendWarning=$sendWarning&ItemName=$itemName" +
-                    "&MinStockLevel=$minStockLevel"
-            val request = Request.Builder()
+                    "&MinStockLevel=$minStockLevel&Host=empty&Who=" +
+                    "empty&Date=empty&Time=empty"
+        val request = Request.Builder()
                 .url(urlStr)
                 .build()
             client.newCall(request).enqueue(object : Callback {
@@ -46,10 +46,11 @@ class CallServer ( private var context: Context) {
                 response.use {
                     if (!response.isSuccessful) throw IOException("Unexpected code $response")
                     val resp = response.body!!.string()
+                    Log.d(TAG, resp)
                     val successful = resp.indexOf("Success") > -1
                     (context as Activity).runOnUiThread(Runnable {
                         if (successful) {
-                            var appendStr =  when (reason){
+                            val appendStr =  when (reason){
                                 "addItem" -> " added"
                                 "editItem" -> " edited"
                                 "deleteItem" -> " deleted"
@@ -57,13 +58,26 @@ class CallServer ( private var context: Context) {
                             }
                             Snackbar.make(view, "Item successfully$appendStr",
                             Snackbar.LENGTH_LONG).setAction("Action", null).show()
+//                            val index = (rowNum.toInt() - 2).toString()
+//                            Log.d(TAG, "&&&&&&&&&&&&&&&&&&&&&&&&&&" + index)
+//
+//                            InvFragment.SetAdapterFromActivity(reason, sheetNum, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
 
                             //Adapter notifyDataSetChanged():
                             val index = (rowNum.toInt() - 2).toString()
                             when (sheetNum){
-                                "1" -> FirstFragment.SetAdapterFromActivity(reason, sheetNum, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
-                                "2" -> SecondFragment.SetAdapterFromActivity(reason, sheetNum, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
-                                "3" -> ThirdFragment.SetAdapterFromActivity(reason, sheetNum, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
+                                "1" -> Fragment0.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
+                                "2" -> Fragment1.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
+                                "3" -> Fragment2.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
+                                "4" -> Fragment3.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
+                                "5" -> Fragment4.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
+                                "6" -> Fragment5.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
+                                "7" -> Fragment6.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
+                                "8" -> Fragment7.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
+                                "9" -> Fragment8.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
+                                "10" -> Fragment9.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
+                                "11" -> Fragment10.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
+                                "12" -> Fragment11.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
                             }
                         } else {
                             Snackbar.make(view,"Unexpected error\nEnter changes manually",
