@@ -33,14 +33,14 @@
         app:layout_constraintTop_toBottomOf="@+id/inventoryItemName">
 
         <TextView
-            android:id="@+id/numInInventory"
+            android:id="@+id/minStockLevelNum"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
             android:gravity="center"/>
 
         <TextView
-            android:id="@+id/minStockLevelNum"
+            android:id="@+id/numInInventory"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
