@@ -94,7 +94,7 @@ class Fragment4(private val items: MutableList<MutableList<String>>) : Fragment(
             if (resultCode == Activity.RESULT_OK) {
                 val indexStr = data?.getStringExtra("index")
                 val valueStr = data?.getStringExtra("newValue")
-                items[indexStr!!.toInt()][5] = valueStr.toString()
+                items[indexStr!!.toInt()][4] = valueStr.toString()
                 recyclerView.adapter?.notifyDataSetChanged()
             }
         }
