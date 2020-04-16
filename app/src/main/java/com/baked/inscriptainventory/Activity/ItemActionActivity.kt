@@ -145,7 +145,7 @@ private fun callServer(
     ) {
         val stateStr = sharedPrefs!!.getString(initialStateName, String.toString())
         ipAddressStr = sharedPrefs!!.getString(ipAddressName, String.toString()).toString()
-        val urlStr = "http://$ipAddressStr:10827/index.php?Reason=changeCount&InvCount=$invCount" +
+        val urlStr = "http://$ipAddressStr:80/index.php?Reason=changeCount&InvCount=$invCount" +
                 "&PartNumber=$partNum&Sheet=$sheetNum&RowNum=$rowNum" +
                 "&SendWarning=$sendWarning&ItemName=$itemName&ImageNum=0" +
                 "&MinStockLevel=$minStockLevel&Host=smtp.office365.com&Who=" +
