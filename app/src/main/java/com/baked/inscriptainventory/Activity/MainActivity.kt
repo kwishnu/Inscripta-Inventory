@@ -9,10 +9,14 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
 import com.baked.inscriptainventory.Adapter.SectionsPagerAdapter
 import com.baked.inscriptainventory.R
+import com.baked.inscriptainventory.Resource.CallServer
+import com.baked.inscriptainventory.Resource.TabsArray
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.zxing.integration.android.IntentIntegrator
@@ -22,6 +26,7 @@ import me.weishu.reflection.Reflection
 import okhttp3.*
 import org.json.JSONObject
 import java.io.IOException
+
 
 private var TabTitles: MutableList<String> = ArrayList()
 private const val TAG = "InscriptaInventory_MA"
@@ -70,12 +75,13 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
             val intent = Intent(this, AddItemActivity::class.java)
             startActivity(intent)
         }
+        TabsArray().test = "Yep"
     }
 
     private fun callServer(){// ipAddressStr = "10.0.0.225"
         val stateStr = sharedPrefs!!.getString(initialStateName, String.toString())
         ipAddressStr = sharedPrefs!!.getString(ipAddressName, String.toString()).toString()
-        val urlStr = "http://$ipAddressStr:80/index.php"//was 80
+        val urlStr = "http://$ipAddressStr:10827/index.php"//was 80
         val request = Request.Builder()
             .url(urlStr)
             .build()
@@ -221,6 +227,57 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
 
     fun closeApp(item: MenuItem) {
         android.os.Process.killProcess(android.os.Process.myPid())
+    }
+
+    fun addTab(item: MenuItem) {
+        val view: View = layoutInflater.inflate(R.layout.dialog_edit_text, null);
+        val etTitle = view.findViewById<View>(R.id.et_title) as EditText
+        val dialogBuilder = AlertDialog.Builder(this)
+
+        dialogBuilder
+            .setMessage("Enter title of tab:")
+            .setCancelable(true)
+            .setView(view)
+            .setPositiveButton("OK", DialogInterface.OnClickListener {
+                    dialog, _ ->
+                val emptyStringArray: MutableList<String> = ArrayList()
+                InventoryTabs.add(mutableListOf(emptyStringArray))
+                for (i in InventoryTabs){
+                    if (i.size > 0 && i[0].size < 1) i.removeAt(0)
+                }
+                val inputTitleStr: String = etTitle.text.toString()
+                TabTitles.add(inputTitleStr)
+                setTabs()
+                val tabLayout = tabs as TabLayout//Go to appropriate tab...
+                val tab = tabLayout.getTabAt(TabTitles.size - 1)
+                tab?.select()
+                CallServer(this).makeCall(
+                    coordinator_layout,//View
+                    ipAddressStr,//IP Address
+                    "newTab",//Reason
+                    "none",
+                    "none",
+                    "none",
+                    TabTitles.size.toString(),
+                    "2",
+                    "false",
+                    inputTitleStr,
+                    "none"
+                )
+
+//                setTabs()
+
+            })
+            .setNegativeButton("Cancel", DialogInterface.OnClickListener {
+                    dialog, _ -> dialog.cancel()
+            })
+
+        val alert = dialogBuilder.create()
+        alert.setTitle("New Tab")
+        alert.show()
+
+
+
     }
 
     override fun onBackPressed() {

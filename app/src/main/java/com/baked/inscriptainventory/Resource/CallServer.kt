@@ -54,33 +54,31 @@ class CallServer ( private val context: Context) {
                                 "addItem" -> " added"
                                 "editItem" -> " edited"
                                 "deleteItem" -> " deleted"
-                                else -> ""
+                                else -> " added"
                             }
                             Snackbar.make(view, "Item successfully$appendStr",
                             Snackbar.LENGTH_LONG).setAction("Action", null).show()
-//                            val index = (rowNum.toInt() - 2).toString()
-//                            Log.d(TAG, "&&&&&&&&&&&&&&&&&&&&&&&&&&" + index)
-//
-//                            InvFragment.SetAdapterFromActivity(reason, sheetNum, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
 
                             //Adapter notifyDataSetChanged():
                             val index = (rowNum.toInt() - 2).toString()
-                            when (sheetNum){
-                                "1" -> Fragment0.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
-                                "2" -> Fragment1.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
-                                "3" -> Fragment2.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
-                                "4" -> Fragment3.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
-                                "5" -> Fragment4.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
-                                "6" -> Fragment5.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
-                                "7" -> Fragment6.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
-                                "8" -> Fragment7.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
-                                "9" -> Fragment8.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
-                                "10" -> Fragment9.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
-                                "11" -> Fragment10.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
-                                "12" -> Fragment11.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
+                            if (reason != "newTab") {
+                                when (sheetNum){
+                                    "1" -> Fragment0.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
+                                    "2" -> Fragment1.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
+                                    "3" -> Fragment2.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
+                                    "4" -> Fragment3.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
+                                    "5" -> Fragment4.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
+                                    "6" -> Fragment5.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
+                                    "7" -> Fragment6.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
+                                    "8" -> Fragment7.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
+                                    "9" -> Fragment8.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
+                                    "10" -> Fragment9.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
+                                    "11" -> Fragment10.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
+                                    "12" -> Fragment11.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount)
+                                }
                             }
                         } else {
-                            Snackbar.make(view,"Unexpected error\nEnter changes manually",
+                            Snackbar.make(view,"Error\nInventoryXls file may be open\nEnter changes manually",
                                 Snackbar.LENGTH_LONG).setAction("Action", null).show()
                         }
                     })

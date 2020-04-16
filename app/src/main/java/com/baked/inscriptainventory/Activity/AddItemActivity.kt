@@ -113,6 +113,7 @@ class AddItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
                 descriptionEditText.text.toString(),
                 minStock
             )
+            Log.d(TAG, numInStock + " " + partNum + " " + imageIndex + " " + sheetNum + " " + descriptionEditText.text.toString() + " " + minStock)
             addButton.isEnabled = false
             addButton.setBackgroundColor(ContextCompat.getColor(this,
                 R.color.disabledGray

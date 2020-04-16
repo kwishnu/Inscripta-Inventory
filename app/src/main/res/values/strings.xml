@@ -34,4 +34,6 @@
     <string name="delete_item">Delete Item</string>
     <string name="part_number">Part Number:</string>
     <string name="part_number2">#######</string>
+    <string name="add_tab">Add Tab</string>
+    <string name="tab_title">Tab title</string>
 </resources>

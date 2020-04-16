@@ -10,6 +10,13 @@
         android:onClick="settingsClicked"
         />
     <item
+        android:id="@+id/add_tab"
+        android:orderInCategory="100"
+        android:title="@string/add_tab"
+        app:showAsAction="never"
+        android:onClick="addTab"
+        />
+    <item
         android:id="@+id/close_app"
         android:orderInCategory="100"
         android:title="@string/exit_to_restart"
