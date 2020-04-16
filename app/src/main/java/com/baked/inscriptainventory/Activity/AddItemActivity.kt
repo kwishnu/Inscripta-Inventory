@@ -45,11 +45,13 @@ class AddItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
         val partNumber = intent.getStringExtra("PartNum")
         val partNumNotNull = partNumber ?: ""
         partNumberEditText.setText(partNumNotNull)
+        val currentTab = intent.getStringExtra("CurrentTab")
 
         sheetSelectSpinner!!.onItemSelectedListener = this
         val aa = ArrayAdapter(this, android.R.layout.simple_spinner_item, tabArray)
         aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         sheetSelectSpinner!!.adapter = aa
+        sheetSelectSpinner.setSelection(currentTab?.toInt()!!)
 
         numInStockET.setOnFocusChangeListener() { v, event ->
             numInStockET.hint = if (numInStockET.hasFocus()) "" else STOCK_2
