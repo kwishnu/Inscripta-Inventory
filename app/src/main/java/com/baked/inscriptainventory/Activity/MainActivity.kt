@@ -81,7 +81,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
     private fun callServer(){// ipAddressStr = "10.0.0.225"
         val stateStr = sharedPrefs!!.getString(initialStateName, String.toString())
         ipAddressStr = sharedPrefs!!.getString(ipAddressName, String.toString()).toString()
-        val urlStr = "http://$ipAddressStr:10827/index.php"//was 80
+        val urlStr = "http://$ipAddressStr:80/index.php"//was 80
         val request = Request.Builder()
             .url(urlStr)
             .build()
