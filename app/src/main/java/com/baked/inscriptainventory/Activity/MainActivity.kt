@@ -16,9 +16,9 @@ import androidx.viewpager.widget.ViewPager
 import com.baked.inscriptainventory.Adapter.SectionsPagerAdapter
 import com.baked.inscriptainventory.R
 import com.baked.inscriptainventory.Resource.CallServer
-import com.baked.inscriptainventory.Resource.TabsArray
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.zxing.integration.android.IntentIntegrator
 import com.google.zxing.integration.android.IntentResult
 import kotlinx.android.synthetic.main.activity_main.*
@@ -43,6 +43,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
     private val initialStateName = "InitialState"
     private val ipAddressName = "IPAddress"
     private val startedAppName = "StartedAppOnce"
+    private var currentTab = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,9 +74,10 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
         }
         add.setOnClickListener {//Add inventory item Floating Action Button
             val intent = Intent(this, AddItemActivity::class.java)
+            currentTab = tabs.selectedTabPosition
+            intent.putExtra("CurrentTab", currentTab.toString())
             startActivity(intent)
         }
-        TabsArray().test = "Yep"
     }
 
     private fun callServer(){// ipAddressStr = "10.0.0.225"
