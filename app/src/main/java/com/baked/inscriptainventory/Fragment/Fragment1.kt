@@ -160,6 +160,7 @@ class Fragment1(private val items: MutableList<MutableList<String>>) : Fragment(
                     intent.putExtra("InStock", items[pos][4])
                     intent.putExtra("Sheet", "2")
                     intent.putExtra("Row", (pos + 2).toString())
+                    intent.putExtra("Comment", items[pos][5])
                     intent.putExtra("FromActivity", "Fragment")
 
                     startActivityForResult(intent, 1)
@@ -173,6 +174,7 @@ class Fragment1(private val items: MutableList<MutableList<String>>) : Fragment(
                     intent.putExtra("InStock", items[pos][4])
                     intent.putExtra("Sheet", "2")
                     intent.putExtra("Row", (pos + 2).toString())
+                    intent.putExtra("Comment", items[pos][5])
                     intent.putExtra("FromActivity", "Fragment")
 
                     startActivityForResult(intent, 1)

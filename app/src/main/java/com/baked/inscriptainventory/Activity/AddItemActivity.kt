@@ -147,7 +147,7 @@ class AddItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
     fun showCommentDialog() {
         val view: View = layoutInflater.inflate(R.layout.dialog_edit_comment, null);
         val etComment = view.findViewById<View>(R.id.et_comment) as EditText
-        etComment.setText(commentStr)
+        if (commentStr != "null") etComment.setText(commentStr)
         val dialogBuilder = this.let { androidx.appcompat.app.AlertDialog.Builder(it) }
         dialogBuilder
             .setMessage("")
