@@ -133,6 +133,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                     var description = "Not found"
                     var minStockLevel = "Not found"
                     var onHandNum = "Not found"
+                    var comment = "Not found"
                     var row = "Not found"
                     loop@ for (t in InventoryTabs.indices) {
                         for (e in InventoryTabs[t]) {
@@ -143,7 +144,8 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                                 description = e[2]
                                 minStockLevel = e[3]
                                 onHandNum = e[4]
-                                row = e[5]
+                                comment = e[5]
+                                row = e[6]
                                 break@loop
                             }
                         }
@@ -157,6 +159,8 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                             .setPositiveButton("OK", DialogInterface.OnClickListener {
                                     dialog, _ ->
                                 val intent = Intent(this, AddItemActivity::class.java)
+                                currentTab = tabs.selectedTabPosition
+                                intent.putExtra("CurrentTab", currentTab.toString())
                                 intent.putExtra("PartNum", codePieces[1])
                                 startActivity(intent)
                             })
@@ -179,6 +183,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                     intent.putExtra("Item", description)
                     intent.putExtra("MinStockLevel", minStockLevel)
                     intent.putExtra("InStock", onHandNum)
+                    intent.putExtra("Comment", comment)
                     intent.putExtra("Row", row)
                     intent.putExtra("FromActivity", whichTabStr)
 
