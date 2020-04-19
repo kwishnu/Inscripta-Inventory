@@ -31,7 +31,7 @@ class AddItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
     private var ipAddressStr = ""
     private var imageIndex = "0"
     private var sheetNum = "1"
-    private var commentStr = ""
+    private var commentStr = "null"
     companion object SendReceiveTabNames {//load array from MainActivity parseJson()
         operator fun invoke(sent: MutableList<String>) {
             tabArray = sent
@@ -107,8 +107,8 @@ class AddItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
                 if (minStockLevelET.text.isNullOrBlank()) "0" else minStockLevelET.text.toString()
             val partNum =
                 if (partNumberEditText.text.isNullOrBlank()) "None" else partNumberEditText.text.toString()
-
             ipAddressStr = sharedPrefs!!.getString(ipAddressName, String.toString()).toString()
+
             CallServer(this).makeCall(
                 content,//View
                 ipAddressStr,//IP Address
@@ -129,6 +129,7 @@ class AddItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
             ))
         }
     }
+
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
@@ -155,8 +156,8 @@ class AddItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
             .setPositiveButton("Save Comment", DialogInterface.OnClickListener { dialog, _ ->
                 commentStr = etComment.text.toString()
             })
-            .setNegativeButton("Dismiss", DialogInterface.OnClickListener { dialog, _ -> dialog.cancel()
-
+            .setNegativeButton("Dismiss", DialogInterface.OnClickListener { dialog, _ ->
+                dialog.cancel()
             })
         val alert = dialogBuilder.create()
         alert.setTitle("Item Comment:")
