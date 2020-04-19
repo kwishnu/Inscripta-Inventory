@@ -1,11 +1,14 @@
 package com.baked.inscriptainventory.Activity
 
+import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.EditText
 import android.widget.RadioButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -22,6 +25,7 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
     private val prefsFilename = "SharedPreferences"
     private val ipAddressName = "IPAddress"
     private var ipAddressStr = ""
+    private var commentStr = ""
     companion object SendReceiveTabNames {
         operator fun invoke(sent: MutableList<String>) {
             tabArray = sent
@@ -107,18 +111,19 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
 
             ipAddressStr = sharedPrefs!!.getString(ipAddressName, String.toString()).toString()
            CallServer(this).makeCall(
-                content,//View
-                ipAddressStr,//IP Address
-                "editItem",//Reason
-                numInStock,
-                partNumberEditText.text.toString(),
-                imageIndex!!,
-                sheetNum,
-                rowNum!!,
-                "false",//No need to send warning
-                descriptionEditText.text.toString(),
-                minStock
-            )
+               content,//View
+               ipAddressStr,//IP Address
+               "editItem",//Reason
+               numInStock,
+               partNumberEditText.text.toString(),
+               imageIndex!!,
+               sheetNum,
+               rowNum!!,
+               "false",//No need to send warning
+               descriptionEditText.text.toString(),
+               minStock,
+               commentStr
+           )
             editButton.isEnabled = false
             editButton.setBackgroundColor(ContextCompat.getColor(this,
                 R.color.disabledGray
@@ -133,6 +138,10 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
                 currentSelected = it
                 currentSelected?.isChecked = true
             }
+        }
+
+        commentsImage.setOnClickListener {
+            showCommentDialog()
         }
 
         numInStockET.setOnFocusChangeListener() { v, event ->
@@ -155,4 +164,26 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         Log.d(TAG, "Spinner Item Selected: " + tabArray[position])
     }
+
+    @SuppressLint("InflateParams")
+    fun showCommentDialog() {
+        val view: View = layoutInflater.inflate(R.layout.dialog_edit_comment, null);
+        val etComment = view.findViewById<View>(R.id.et_comment) as EditText
+        etComment.setText(commentStr)
+        val dialogBuilder = this.let { androidx.appcompat.app.AlertDialog.Builder(it) }
+        dialogBuilder
+            .setMessage("")
+            .setCancelable(true)
+            .setView(view)
+            .setPositiveButton("Save Comment", DialogInterface.OnClickListener { dialog, _ ->
+                commentStr = etComment.text.toString()
+            })
+            .setNegativeButton("Dismiss", DialogInterface.OnClickListener { dialog, _ -> dialog.cancel()
+
+            })
+        val alert = dialogBuilder.create()
+        alert.setTitle("Item Comment:")
+        alert.show()
+    }
+
 }

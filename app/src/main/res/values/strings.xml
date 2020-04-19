@@ -36,4 +36,5 @@
     <string name="part_number2">#######</string>
     <string name="add_tab">Add Tab</string>
     <string name="tab_title">Tab title</string>
+    <string name="comment">Enter Comment</string>
 </resources>

@@ -109,6 +109,7 @@ class DeleteItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
                         rowNum!!,
                         "false",//No need to send warning
                         "none",
+                        "none",
                         "none"
                     )
                     deleteButton.isEnabled = false

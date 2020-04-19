@@ -5,16 +5,16 @@
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
-
     <EditText
         android:id="@+id/et_comment"
         android:layout_width="fill_parent"
-        android:layout_height="200dp"
+        android:layout_height="300dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:lines="20"
-        android:inputType="textCapSentences"
+        android:inputType="textCapSentences|textMultiLine"
         android:gravity="top"
+        android:hint="@string/comment"
         android:importantForAutofill="no"/>
 
 </LinearLayout>

@@ -3,12 +3,12 @@ package com.baked.inscriptainventory.Adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.baked.inscriptainventory.Resource.ImagesArray
@@ -19,6 +19,7 @@ private const val TAG = "InscriptaInventory_IA"
 class InventoryAdapter(private val items: MutableList<MutableList<String>>,
                        private val context: Context,
                        val clickListener: (Int) -> Unit,
+                       val imageListener: (Int) -> Unit,
                        val longClickListener: (Int, View) -> Unit
 ):
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -45,25 +46,32 @@ class InventoryAdapter(private val items: MutableList<MutableList<String>>,
         holder.clickableView.list_subtitle.text = "Part No.: $partNumberStr"
         val numInStockStr =  if (items[holder.adapterPosition][4] == "null") ("0") else (items[holder.adapterPosition][4])
         val lowQuantityAlarm = numInStockStr.toInt() <= (items[holder.adapterPosition][3]).toInt()//true if count is less than or equal to Min Stock Level
-        holder.clickableView.list_detail.text = numInStockStr
+        holder.detail.text = numInStockStr
+
         if (lowQuantityAlarm) {
-            holder.clickableView.list_detail.background =
+            holder.detail.background =
                 ContextCompat.getDrawable(
                     context,
                     R.drawable.details_rect_red
                 )
         } else {
-            holder.clickableView.list_detail.background =
+            holder.detail.background =
                 ContextCompat.getDrawable(
                     context,
                     R.drawable.details_rect_green
                 )
         }
+        val commentsImageStr = if (items[holder.adapterPosition][5].isEmpty() || items[holder.adapterPosition][5] == "null") "blank" else "comments"
         val itemImageStr = ImagesArray().IMAGE_URI[(items[holder.adapterPosition][0]).toInt()]
         val uri = Uri.parse("android.resource://com.baked.inscriptainventory/drawable/$itemImageStr")
+        val commentsUri = Uri.parse("android.resource://com.baked.inscriptainventory/drawable/$commentsImageStr")
         holder.image.setImageURI(uri)
+        holder.clickableImage.setImageURI(commentsUri)
         holder.clickableView.setOnClickListener {
             clickListener(position)
+        }
+        holder.clickableImage.setOnClickListener {
+            imageListener(position)
         }
         holder.clickableView.setOnLongClickListener {
             val view = holder.itemView
@@ -75,6 +83,8 @@ class InventoryAdapter(private val items: MutableList<MutableList<String>>,
 
 
 class ViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val clickableView : RelativeLayout = itemView.list_element
+    val clickableView : RelativeLayout = itemView.list_text_layout
+    val clickableImage : ImageView = itemView.comment_image
+    val detail: TextView = itemView.list_detail
     val image: ImageView = itemView.list_thumbnail
 }

@@ -113,6 +113,7 @@
                 android:gravity="center" />
         </LinearLayout>
     </RadioGroup>
+
     <TextView
         android:id="@+id/nameTxt"
         android:layout_width="wrap_content"
@@ -123,44 +124,69 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/radioGroup"
         />
+
     <EditText
         android:id="@+id/descriptionEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
         android:layout_marginStart="30dp"
+        android:layout_marginTop="2dp"
         android:layout_marginEnd="30dp"
+        android:autofillHints=""
         android:ems="10"
         android:hint="@string/item_name2"
         android:inputType="textCapSentences"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nameTxt"
-        android:autofillHints="" />
+        app:layout_constraintTop_toBottomOf="@+id/nameTxt" />
 
-    <TextView
-        android:id="@+id/partNumberTxt"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/partNumberLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:layout_marginStart="16dp"
-        android:text="@string/part_number"
+        android:layout_weight="1"
+        android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/descriptionEditText"
-        />
-    <EditText
-        android:id="@+id/partNumberEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="start"
-        android:layout_marginTop="2dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        android:hint="@string/part_number2"
-        android:inputType="textVisiblePassword"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/partNumberTxt"
-        android:autofillHints="" />
+        app:layout_constraintTop_toBottomOf="@+id/descriptionEditText">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/partNumberTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="2dp"
+                android:text="@string/part_number"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <EditText
+                android:id="@+id/partNumberEditText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="30dp"
+                android:autofillHints=""
+                android:gravity="start"
+                android:hint="@string/part_number2"
+                android:inputType="textVisiblePassword"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/partNumberTxt"
+                tools:ignore="TextFields" />
+        </LinearLayout>
+        <ImageView
+            android:id="@+id/commentsImage"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@drawable/comments"
+            android:layout_marginStart="100dp"
+            android:layout_marginTop="10dp"
+            tools:ignore="ContentDescription" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/numberSelectionLayout"
@@ -171,23 +197,23 @@
         android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/partNumberEditText"
+        app:layout_constraintTop_toBottomOf="@+id/partNumberLayout"
         android:baselineAligned="false">
         <LinearLayout
-            android:layout_height="match_parent"
             android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical">
             <EditText
                 android:id="@+id/minStockLevelET"
                 android:layout_width="60dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:importantForAutofill="no"
                 android:inputType="number"
                 android:gravity="center"
                 android:textSize="20sp"
                 android:hint="@string/_2"
-                android:layout_height="wrap_content"
                 tools:ignore="LabelFor" />
             <TextView
                 android:layout_height="wrap_content"
@@ -198,8 +224,8 @@
                 android:text="@string/minimum_stock_level" />
         </LinearLayout>
         <LinearLayout
-            android:layout_height="match_parent"
             android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical" >
             <EditText
@@ -222,6 +248,7 @@
                 android:text="@string/number_in_stock" />
         </LinearLayout>
     </LinearLayout>
+
     <LinearLayout
         android:id="@+id/spinnerLayout"
         android:layout_width="wrap_content"
@@ -231,6 +258,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/numberSelectionLayout" >
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -238,11 +266,13 @@
             android:textSize="18sp"
             android:textColor="@color/colorBlack"
             android:layout_marginEnd="10dp"/>
+
         <Spinner
             android:id="@+id/sheetSelectSpinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
+
     <Button
         android:id="@+id/addButton"
         android:layout_width="120dp"
@@ -254,8 +284,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spinnerLayout" />
-
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

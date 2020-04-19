@@ -27,6 +27,7 @@ class ItemActionActivity : AppCompatActivity(){
     private val client = OkHttpClient()
     private var ipAddressStr = ""
     private var imageIndex = ""
+    private var commentStr = ""
     private var shouldClose = 2
     private var seenActivity = false
     private var newQuantity = 0
@@ -79,6 +80,7 @@ class ItemActionActivity : AppCompatActivity(){
         val inStock = intent.getStringExtra("InStock")
         val sheetNum = intent.getStringExtra("Sheet")
         val rowNum = intent.getStringExtra("Row")
+        val commentStr = intent.getStringExtra("Comment")
         fromActivity = intent.getStringExtra("FromActivity")!!.toString()
 
         supportActionBar!!.title = getString(R.string.detail_title) + " " + itemPartNum
@@ -145,10 +147,11 @@ class ItemActionActivity : AppCompatActivity(){
     ) {
         val stateStr = sharedPrefs!!.getString(initialStateName, String.toString())
         ipAddressStr = sharedPrefs!!.getString(ipAddressName, String.toString()).toString()
-        val urlStr = "http://$ipAddressStr:10827/index.php?Reason=changeCount&InvCount=$invCount" +
+        val urlStr = "http://$ipAddressStr:80/index.php?Reason=changeCount&InvCount=$invCount" +
                 "&PartNumber=$partNum&Sheet=$sheetNum&RowNum=$rowNum" +
                 "&SendWarning=$sendWarning&ItemName=$itemName&ImageNum=0" +
-                "&MinStockLevel=$minStockLevel"
+                "&MinStockLevel=$minStockLevel&Host=smtp.office365.com&Who=" +
+                "ken.wishart@inscripta.com&Date=JennyMilo00&Time=882277!"
         val request = Request.Builder()
             .url(urlStr)
             .build()
@@ -178,113 +181,125 @@ class ItemActionActivity : AppCompatActivity(){
                             intent.putExtra("newValue", newValueStr)
                             setResult(Activity.RESULT_OK, intent)
                             when (fromActivity) {
-                                "MainActivity1" -> Fragment0.SetAdapterFromActivity(
+                                "MainActivity1" -> Fragment0.SetAdapterFromActivity.invoke(
                                     "changeCount",
                                     index,
                                     imageIndex,
                                     partNum!!,
                                     itemName,
                                     minStockLevel,
-                                    newValueStr
+                                    newValueStr,
+                                    commentStr
                                 )
-                                "MainActivity2" -> Fragment1.SetAdapterFromActivity(
+                                "MainActivity2" -> Fragment1.SetAdapterFromActivity.invoke(
                                     "changeCount",
                                     index,
                                     imageIndex,
                                     partNum!!,
                                     itemName,
                                     minStockLevel,
-                                    newValueStr
+                                    newValueStr,
+                                    commentStr
                                 )
-                                "MainActivity3" -> Fragment2.SetAdapterFromActivity(
+                                "MainActivity3" -> Fragment2.SetAdapterFromActivity.invoke(
                                     "changeCount",
                                     index,
                                     imageIndex,
                                     partNum!!,
                                     itemName,
                                     minStockLevel,
-                                    newValueStr
+                                    newValueStr,
+                                    commentStr
                                 )
-                                "MainActivity4" -> Fragment3.SetAdapterFromActivity(
+                                "MainActivity4" -> Fragment3.SetAdapterFromActivity.invoke(
                                     "changeCount",
                                     index,
                                     imageIndex,
                                     partNum!!,
                                     itemName,
                                     minStockLevel,
-                                    newValueStr
+                                    newValueStr,
+                                    commentStr
                                 )
-                                "MainActivity5" -> Fragment4.SetAdapterFromActivity(
+                                "MainActivity5" -> Fragment4.SetAdapterFromActivity.invoke(
                                     "changeCount",
                                     index,
                                     imageIndex,
                                     partNum!!,
                                     itemName,
                                     minStockLevel,
-                                    newValueStr
+                                    newValueStr,
+                                    commentStr
                                 )
-                                "MainActivity6" -> Fragment5.SetAdapterFromActivity(
+                                "MainActivity6" -> Fragment5.SetAdapterFromActivity.invoke(
                                     "changeCount",
                                     index,
                                     imageIndex,
                                     partNum!!,
                                     itemName,
                                     minStockLevel,
-                                    newValueStr
+                                    newValueStr,
+                                    commentStr
                                 )
-                                "MainActivity7" -> Fragment6.SetAdapterFromActivity(
+                                "MainActivity7" -> Fragment6.SetAdapterFromActivity.invoke(
                                     "changeCount",
                                     index,
                                     imageIndex,
                                     partNum!!,
                                     itemName,
                                     minStockLevel,
-                                    newValueStr
+                                    newValueStr,
+                                    commentStr
                                 )
-                                "MainActivity8" -> Fragment7.SetAdapterFromActivity(
+                                "MainActivity8" -> Fragment7.SetAdapterFromActivity.invoke(
                                     "changeCount",
                                     index,
                                     imageIndex,
                                     partNum!!,
                                     itemName,
                                     minStockLevel,
-                                    newValueStr
+                                    newValueStr,
+                                    commentStr
                                 )
-                                "MainActivity9" -> Fragment8.SetAdapterFromActivity(
+                                "MainActivity9" -> Fragment8.SetAdapterFromActivity.invoke(
                                     "changeCount",
                                     index,
                                     imageIndex,
                                     partNum!!,
                                     itemName,
                                     minStockLevel,
-                                    newValueStr
+                                    newValueStr,
+                                    commentStr
                                 )
-                                "MainActivity10" -> Fragment9.SetAdapterFromActivity(
+                                "MainActivity10" -> Fragment9.SetAdapterFromActivity.invoke(
                                     "changeCount",
                                     index,
                                     imageIndex,
                                     partNum!!,
                                     itemName,
                                     minStockLevel,
-                                    newValueStr
+                                    newValueStr,
+                                    commentStr
                                 )
-                                "MainActivity11" -> Fragment10.SetAdapterFromActivity(
+                                "MainActivity11" -> Fragment10.SetAdapterFromActivity.invoke(
                                     "changeCount",
                                     index,
                                     imageIndex,
                                     partNum!!,
                                     itemName,
                                     minStockLevel,
-                                    newValueStr
+                                    newValueStr,
+                                    commentStr
                                 )
-                                "MainActivity12" -> Fragment11.SetAdapterFromActivity(
+                                "MainActivity12" -> Fragment11.SetAdapterFromActivity.invoke(
                                     "changeCount",
                                     index,
                                     imageIndex,
                                     partNum!!,
                                     itemName,
                                     minStockLevel,
-                                    newValueStr
+                                    newValueStr,
+                                    commentStr
                                 )
                             }
                         } else {

@@ -1,5 +1,6 @@
 package com.baked.inscriptainventory.Activity
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
@@ -18,7 +19,6 @@ import com.baked.inscriptainventory.R
 import com.baked.inscriptainventory.Resource.CallServer
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.zxing.integration.android.IntentIntegrator
 import com.google.zxing.integration.android.IntentResult
 import kotlinx.android.synthetic.main.activity_main.*
@@ -44,6 +44,10 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
     private val ipAddressName = "IPAddress"
     private val startedAppName = "StartedAppOnce"
     private var currentTab = 0
+
+    companion object {
+        var globalIPAddress = "10.0.0.225"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,10 +84,11 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
         }
     }
 
-    private fun callServer(){// ipAddressStr = "10.0.0.225"
+    private fun callServer(){
         val stateStr = sharedPrefs!!.getString(initialStateName, String.toString())
         ipAddressStr = sharedPrefs!!.getString(ipAddressName, String.toString()).toString()
-        val urlStr = "http://$ipAddressStr:80/index.php"//was 80
+        globalIPAddress = ipAddressStr
+        val urlStr = "http://$ipAddressStr:80/index.php"
         val request = Request.Builder()
             .url(urlStr)
             .build()
@@ -131,8 +136,6 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                     var row = "Not found"
                     loop@ for (t in InventoryTabs.indices) {
                         for (e in InventoryTabs[t]) {
-                            Log.d(TAG, e.toString())
-
                             if (codePieces[1] == e[1]) {//check if part number matches given row in Excel spreadsheet data returned in server call
                                 sheet = (t + 1).toString()
                                 image = e[0]
@@ -231,6 +234,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
         android.os.Process.killProcess(android.os.Process.myPid())
     }
 
+    @SuppressLint("InflateParams")
     fun addTab(item: MenuItem) {
         val view: View = layoutInflater.inflate(R.layout.dialog_edit_text, null);
         val etTitle = view.findViewById<View>(R.id.et_title) as EditText
@@ -264,6 +268,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                     "2",
                     "false",
                     inputTitleStr,
+                    "none",
                     "none"
                 )
 
@@ -356,8 +361,9 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
             val str3 = JSONObject(sheet1[i.toString()].toString())["C"].toString()//Column C: Description
             val str4 = JSONObject(sheet1[i.toString()].toString())["D"].toString()//Column D: Min Stock Level
             val str5 = JSONObject(sheet1[i.toString()].toString())["E"].toString()//Column E: Quantity on Hand
-            val str6 = i.toString()//Row in Excel sheet
-            InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))//str1,
+            val str6 = JSONObject(sheet1[i.toString()].toString())["F"].toString()//Column F: Comments
+            val str7 = i.toString()//Row in Excel sheet
+            InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
         }
         var arrayCopy = InventoryItems.toTypedArray()
         InventoryTabs.add(arrayCopy.toMutableList())
@@ -370,8 +376,9 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str3 = JSONObject(sheet2[i.toString()].toString())["C"].toString()
                 val str4 = JSONObject(sheet2[i.toString()].toString())["D"].toString()
                 val str5 = JSONObject(sheet2[i.toString()].toString())["E"].toString()
-                val str6 = i.toString()
-                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))
+                val str6 = JSONObject(sheet2[i.toString()].toString())["F"].toString()
+                val str7 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -385,8 +392,9 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str3 = JSONObject(sheet3[i.toString()].toString())["C"].toString()
                 val str4 = JSONObject(sheet3[i.toString()].toString())["D"].toString()
                 val str5 = JSONObject(sheet3[i.toString()].toString())["E"].toString()
-                val str6 = i.toString()
-                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))
+                val str6 = JSONObject(sheet3[i.toString()].toString())["F"].toString()
+                val str7 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -400,8 +408,9 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str3 = JSONObject(sheet4[i.toString()].toString())["C"].toString()
                 val str4 = JSONObject(sheet4[i.toString()].toString())["D"].toString()
                 val str5 = JSONObject(sheet4[i.toString()].toString())["E"].toString()
-                val str6 = i.toString()
-                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))
+                val str6 = JSONObject(sheet4[i.toString()].toString())["F"].toString()
+                val str7 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -415,8 +424,9 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str3 = JSONObject(sheet5[i.toString()].toString())["C"].toString()
                 val str4 = JSONObject(sheet5[i.toString()].toString())["D"].toString()
                 val str5 = JSONObject(sheet5[i.toString()].toString())["E"].toString()
-                val str6 = i.toString()
-                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))
+                val str6 = JSONObject(sheet5[i.toString()].toString())["F"].toString()
+                val str7 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -430,8 +440,9 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str3 = JSONObject(sheet6[i.toString()].toString())["C"].toString()
                 val str4 = JSONObject(sheet6[i.toString()].toString())["D"].toString()
                 val str5 = JSONObject(sheet6[i.toString()].toString())["E"].toString()
-                val str6 = i.toString()
-                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))
+                val str6 = JSONObject(sheet6[i.toString()].toString())["F"].toString()
+                val str7 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -445,8 +456,9 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str3 = JSONObject(sheet7[i.toString()].toString())["C"].toString()
                 val str4 = JSONObject(sheet7[i.toString()].toString())["D"].toString()
                 val str5 = JSONObject(sheet7[i.toString()].toString())["E"].toString()
-                val str6 = i.toString()
-                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))
+                val str6 = JSONObject(sheet7[i.toString()].toString())["F"].toString()
+                val str7 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -460,8 +472,9 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str3 = JSONObject(sheet8[i.toString()].toString())["C"].toString()
                 val str4 = JSONObject(sheet8[i.toString()].toString())["D"].toString()
                 val str5 = JSONObject(sheet8[i.toString()].toString())["E"].toString()
-                val str6 = i.toString()
-                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))
+                val str6 = JSONObject(sheet8[i.toString()].toString())["F"].toString()
+                val str7 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -475,8 +488,9 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str3 = JSONObject(sheet9[i.toString()].toString())["C"].toString()
                 val str4 = JSONObject(sheet9[i.toString()].toString())["D"].toString()
                 val str5 = JSONObject(sheet9[i.toString()].toString())["E"].toString()
-                val str6 = i.toString()
-                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))
+                val str6 = JSONObject(sheet9[i.toString()].toString())["F"].toString()
+                val str7 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -490,8 +504,9 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str3 = JSONObject(sheet10[i.toString()].toString())["C"].toString()
                 val str4 = JSONObject(sheet10[i.toString()].toString())["D"].toString()
                 val str5 = JSONObject(sheet10[i.toString()].toString())["E"].toString()
-                val str6 = i.toString()
-                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))
+                val str6 = JSONObject(sheet10[i.toString()].toString())["F"].toString()
+                val str7 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -505,8 +520,9 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str3 = JSONObject(sheet11[i.toString()].toString())["C"].toString()
                 val str4 = JSONObject(sheet11[i.toString()].toString())["D"].toString()
                 val str5 = JSONObject(sheet11[i.toString()].toString())["E"].toString()
-                val str6 = i.toString()
-                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))
+                val str6 = JSONObject(sheet11[i.toString()].toString())["F"].toString()
+                val str7 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -520,8 +536,9 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str3 = JSONObject(sheet12[i.toString()].toString())["C"].toString()
                 val str4 = JSONObject(sheet12[i.toString()].toString())["D"].toString()
                 val str5 = JSONObject(sheet12[i.toString()].toString())["E"].toString()
-                val str6 = i.toString()
-                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6))
+                val str6 = JSONObject(sheet12[i.toString()].toString())["F"].toString()
+                val str7 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
