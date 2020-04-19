@@ -9,6 +9,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
@@ -145,7 +146,6 @@ class ItemActionActivity : AppCompatActivity(){
     rowNum: String,
     sendWarning: String
     ) {
-        val stateStr = sharedPrefs!!.getString(initialStateName, String.toString())
         ipAddressStr = sharedPrefs!!.getString(ipAddressName, String.toString()).toString()
         val urlStr = "http://$ipAddressStr:80/index.php?Reason=changeCount&InvCount=$invCount" +
                 "&PartNumber=$partNum&Sheet=$sheetNum&RowNum=$rowNum" +
@@ -170,7 +170,7 @@ class ItemActionActivity : AppCompatActivity(){
                     if (!response.isSuccessful) throw IOException("Unexpected code $response")
                     val resp = response.body!!.string()
                     val successful = resp.indexOf("Success") > -1 || resp.indexOf("SERVER") > -1
-
+Log.d(TAG, resp)
                     this@ItemActionActivity.runOnUiThread(Runnable {
                         val intent = Intent()
                         if (successful) {
