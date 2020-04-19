@@ -35,7 +35,8 @@ class CallServer ( private val context: Context) {
         val urlStr = "http://$ipAddressStr:80/index.php?Reason=$reason&InvCount=$invCount" +
                 "&PartNumber=$partNum&ImageNum=$imageNum&Sheet=$sheetNum&RowNum=$rowNum" +
                 "&SendWarning=$sendWarning&ItemName=$itemName" +
-                "&MinStockLevel=$minStockLevel"
+                "&MinStockLevel=$minStockLevel&Host=empty&Who=" +
+                "empty&Date=empty&Time=empty"
         val postBody = FormBody.Builder()
             .add("CommentStr", commentStr)
             .build()
