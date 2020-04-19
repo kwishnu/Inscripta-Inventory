@@ -150,9 +150,12 @@ class ItemActionActivity : AppCompatActivity(){
         val urlStr = "http://$ipAddressStr:80/index.php?Reason=changeCount&InvCount=$invCount" +
                 "&PartNumber=$partNum&Sheet=$sheetNum&RowNum=$rowNum" +
                 "&SendWarning=$sendWarning&ItemName=$itemName&ImageNum=0" +
-                "&MinStockLevel=$minStockLevel&Host=smtp.office365.com&Who=" +
-                "ken.wishart@inscripta.com&Date=JennyMilo00&Time=882277!"
+                "&MinStockLevel=$minStockLevel"
+        val postBody = FormBody.Builder()
+            .add("CommentStr", commentStr)
+            .build()
         val request = Request.Builder()
+            .post(postBody)
             .url(urlStr)
             .build()
         client.newCall(request).enqueue(object : Callback {
