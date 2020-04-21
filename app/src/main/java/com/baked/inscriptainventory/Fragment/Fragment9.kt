@@ -78,11 +78,7 @@ class Fragment9(private val items: MutableList<MutableList<String>>) : Fragment(
         }
 
         fun imageClickListener(position: Int) {
-            if (items[position][5].isEmpty() || items[position][5] == "null") {
-                launchItemActionActivity(position)
-            } else {
-                showEditableComment(position)
-            }
+            showEditableComment(position)
         }
 
         fun longClickListener(position: Int, view: View) {
@@ -189,7 +185,7 @@ class Fragment9(private val items: MutableList<MutableList<String>>) : Fragment(
         val view: View = layoutInflater.inflate(R.layout.dialog_edit_comment, null);
         val etComment = view.findViewById<View>(R.id.et_comment) as EditText
         var clicked = false
-        etComment.setText(items[pos][5])
+        if (items[pos][5] != "null" && items[pos][5] != "") etComment.setText(items[pos][5])
         etComment.setOnFocusChangeListener{ _: View, focused: Boolean ->
             if (focused) clicked = true
         }
