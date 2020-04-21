@@ -56,10 +56,10 @@ class AddItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
         sheetSelectSpinner!!.adapter = aa
         sheetSelectSpinner.setSelection(currentTab?.toInt()!!)
 
-        numInStockET.setOnFocusChangeListener() { v, event ->
+        numInStockET.setOnFocusChangeListener { v, event ->
             numInStockET.hint = if (numInStockET.hasFocus()) "" else STOCK_2
         }
-        minStockLevelET.setOnFocusChangeListener() { v, event ->
+        minStockLevelET.setOnFocusChangeListener { v, event ->
             minStockLevelET.hint = if (minStockLevelET.hasFocus()) "" else STOCK_2
         }
         var currentSelected = radio0
@@ -145,7 +145,7 @@ class AddItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
 
     @SuppressLint("InflateParams")
     fun showCommentDialog() {
-        val view: View = layoutInflater.inflate(R.layout.dialog_edit_comment, null);
+        val view: View = layoutInflater.inflate(R.layout.dialog_edit_comment, null)
         val etComment = view.findViewById<View>(R.id.et_comment) as EditText
         if (commentStr != "null") etComment.setText(commentStr)
         val dialogBuilder = this.let { androidx.appcompat.app.AlertDialog.Builder(it) }
