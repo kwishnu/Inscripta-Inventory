@@ -145,10 +145,10 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
             showCommentDialog()
         }
 
-        numInStockET.setOnFocusChangeListener() { v, event ->
+        numInStockET.setOnFocusChangeListener { v, event ->
             numInStockET.hint = if(numInStockET.hasFocus()) "" else STOCK_2
         }
-        minStockLevelET.setOnFocusChangeListener() { v, event ->
+        minStockLevelET.setOnFocusChangeListener { v, event ->
             minStockLevelET.hint = if(minStockLevelET.hasFocus()) "" else STOCK_2
         }
     }
