@@ -8,121 +8,40 @@
     tools:context=".Activity.AddItemActivity"
     android:id="@+id/content" >
 
-    <RadioGroup
-        android:id="@+id/radioGroup"
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/imageTxt"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="45dp"
-        android:gravity="center"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="16dp"
+        android:text="@string/image"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/radio0"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_marginStart="3dp"
-                android:layout_marginEnd="3dp"
-                android:background="@drawable/radio_flat_selector"
-                android:button="@drawable/blank"
-                android:checked="true"
-                android:gravity="center" />
-
-            <RadioButton
-                android:id="@+id/radio1"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_marginStart="3dp"
-                android:layout_marginEnd="3dp"
-                android:background="@drawable/radio_flat_selector"
-                android:button="@drawable/strip_tube_1"
-                android:gravity="center" />
-
-            <RadioButton
-                android:id="@+id/radio2"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_marginStart="3dp"
-                android:layout_marginEnd="3dp"
-                android:background="@drawable/radio_flat_selector"
-                android:button="@drawable/strip_tube_4"
-                android:gravity="center" />
-
-            <RadioButton
-                android:id="@+id/radio3"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_marginStart="3dp"
-                android:layout_marginEnd="3dp"
-                android:background="@drawable/radio_flat_selector"
-                android:button="@drawable/strip_tube_6"
-                android:gravity="center" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_margin="6dp"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/radio4"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_marginStart="3dp"
-                android:layout_marginEnd="3dp"
-                android:background="@drawable/radio_flat_selector"
-                android:button="@drawable/tubes_w_caps"
-                android:gravity="center" />
-
-            <RadioButton
-                android:id="@+id/radio5"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_gravity="center"
-                android:layout_marginStart="3dp"
-                android:layout_marginEnd="3dp"
-                android:background="@drawable/radio_flat_selector"
-                android:button="@drawable/cell_tube"
-                android:gravity="center" />
-
-            <RadioButton
-                android:id="@+id/radio6"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_marginStart="3dp"
-                android:layout_marginEnd="3dp"
-                android:background="@drawable/radio_flat_selector"
-                android:button="@drawable/rotary_growth_vial"
-                android:gravity="center" />
-
-            <RadioButton
-                android:id="@+id/radio7"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_marginStart="3dp"
-                android:layout_marginEnd="3dp"
-                android:background="@drawable/radio_flat_selector"
-                android:button="@drawable/bottle"
-                android:gravity="center" />
-        </LinearLayout>
-    </RadioGroup>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/image_rv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        app:layout_constraintTop_toBottomOf="@+id/imageTxt"
+        app:layout_constraintStart_toStartOf="parent"
+        android:paddingEnd="30dp"
+        android:clipToPadding="false"
+        tools:ignore="RtlSymmetry">
+    </androidx.recyclerview.widget.RecyclerView>
 
     <TextView
         android:id="@+id/nameTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:layout_marginStart="16dp"
         android:text="@string/item_name"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup"
+        app:layout_constraintTop_toBottomOf="@+id/image_rv"
         />
 
     <EditText
@@ -213,7 +132,7 @@
                 android:inputType="number"
                 android:gravity="center"
                 android:textSize="20sp"
-                android:hint="@string/_2"
+                android:hint="@string/_0"
                 tools:ignore="LabelFor" />
             <TextView
                 android:layout_height="wrap_content"
@@ -236,7 +155,7 @@
                 android:inputType="number"
                 android:gravity="center"
                 android:textSize="20sp"
-                android:hint="@string/_2"
+                android:hint="@string/_0"
                 android:layout_height="wrap_content"
                 tools:ignore="LabelFor" />
             <TextView
