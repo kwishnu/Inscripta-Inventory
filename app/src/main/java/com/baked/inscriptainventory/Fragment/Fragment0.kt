@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,11 +19,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.baked.inscriptainventory.Activity.DeleteItemActivity
 import com.baked.inscriptainventory.Activity.EditItemActivity
 import com.baked.inscriptainventory.Activity.ItemActionActivity
+import com.baked.inscriptainventory.Activity.MainActivity
 import com.baked.inscriptainventory.Adapter.InventoryAdapter
 import com.baked.inscriptainventory.R
 import com.baked.inscriptainventory.Resource.CallServer
 import kotlinx.android.synthetic.main.fragment_layout.*
 import com.baked.inscriptainventory.Activity.MainActivity.Companion.globalIPAddress
+import com.google.android.material.snackbar.Snackbar
+
 private const val TAG = "InscriptaInventory_F0"
 private const val TAB = "1"
 private lateinit var recyclerView: RecyclerView
@@ -161,7 +165,18 @@ class Fragment0(private val items: MutableList<MutableList<String>>) : Fragment(
 
                     startActivityForResult(intent, 1)
                 }
-                R.id.header2 -> {//Go to Delete Item Activity
+                R.id.header2 -> {//Copy Item
+                    MainActivity.globalImageIndex = items[pos][0]
+                    MainActivity.globalPartNumber = items[pos][1]
+                    MainActivity.globalItemName = items[pos][2]
+                    MainActivity.globalMinStockLevel = items[pos][3]
+                    MainActivity.globalStockCount = items[pos][4]
+                    MainActivity.globalCommentStr= items[pos][5]
+                    MainActivity.globalItemOnClipboard= true
+                      Snackbar.make(rv, "Item copied to clipboard", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show()
+                }
+                R.id.header3 -> {//Go to Delete Item Activity
                     val intent = Intent(activity, DeleteItemActivity::class.java)
                     intent.putExtra("Image", items[pos][0])
                     intent.putExtra("PartNum", items[pos][1])
