@@ -44,9 +44,18 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
     private val ipAddressName = "IPAddress"
     private val startedAppName = "StartedAppOnce"
     private var currentTab = 0
-
     companion object {
-        var globalIPAddress = "10.0.0.225"
+        var globalIPAddress = ""
+        const val globalPortNum = ""
+        const val globalEmailStr = ""
+        var globalImageIndex = "0"
+        var globalPartNumber = "none"
+        var globalItemName = "none"
+        var globalMinStockLevel = "0"
+        var globalStockCount = "0"
+        var globalCommentStr = "null"
+        var globalItemOnClipboard = false
+        var globalDataArray: MutableList<MutableList<String>> = ArrayList()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,8 +76,8 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
             editor.putBoolean("StartedAppOnce", true)
             editor.apply()
         }
-
         setContentView(R.layout.activity_main)
+
         callServer()//Load array with Excel data
 
         scan.setOnClickListener {//QR Code Floating Action Button
@@ -88,12 +97,12 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
         val stateStr = sharedPrefs!!.getString(initialStateName, String.toString())
         ipAddressStr = sharedPrefs!!.getString(ipAddressName, String.toString()).toString()
         globalIPAddress = ipAddressStr
-        val urlStr = "http://$ipAddressStr:80/index.php"
+        val urlStr = "http://$ipAddressStr:10827/index.php"
         val request = Request.Builder()
             .url(urlStr)
             .build()
-
         client.newCall(request).enqueue(object : Callback {
+
             override fun onFailure(call: Call, e: IOException) {
                 Snackbar.make(coordinator_layout, "No server response: functionality will be limited", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
@@ -276,9 +285,6 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                     "none",
                     "none"
                 )
-
-//                setTabs()
-
             })
             .setNegativeButton("Cancel", DialogInterface.OnClickListener {
                     dialog, _ -> dialog.cancel()
@@ -287,9 +293,39 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
         val alert = dialogBuilder.create()
         alert.setTitle("New Tab")
         alert.show()
+    }
 
-
-
+    fun pasteItem(item: MenuItem) {
+        if (!globalItemOnClipboard){//nothing on clipboard, show dialog
+            val dialogBuilder = AlertDialog.Builder(this)
+            dialogBuilder
+                .setMessage("No item on clipboard. Long-press an item to copy.")
+                .setCancelable(true)
+                .setPositiveButton("OK", DialogInterface.OnClickListener {
+                    dialog, _ -> dialog.cancel()
+                })
+            val alert = dialogBuilder.create()
+            alert.setTitle("Item Not Found")
+            alert.show()
+            return
+        }
+        currentTab = tabs.selectedTabPosition
+        Log.d(TAG, currentTab.toString())
+        CallServer(this).makeCall(
+            coordinator_layout,
+            ipAddressStr,
+            "addItem",
+            globalStockCount,
+            globalPartNumber,
+            globalImageIndex,
+            (currentTab + 1).toString(),
+            "2",
+            "false",
+            globalItemName,
+            globalMinStockLevel,
+            globalCommentStr
+        )
+        globalItemOnClipboard = false
     }
 
     override fun onBackPressed() {
@@ -369,6 +405,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
             val str6 = JSONObject(sheet1[i.toString()].toString())["F"].toString()//Column F: Comments
             val str7 = i.toString()//Row in Excel sheet
             InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
+            globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "1"))
         }
         var arrayCopy = InventoryItems.toTypedArray()
         InventoryTabs.add(arrayCopy.toMutableList())
@@ -384,6 +421,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str6 = JSONObject(sheet2[i.toString()].toString())["F"].toString()
                 val str7 = i.toString()
                 InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
+                globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "2"))
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -400,6 +438,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str6 = JSONObject(sheet3[i.toString()].toString())["F"].toString()
                 val str7 = i.toString()
                 InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
+                globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "3"))
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -416,6 +455,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str6 = JSONObject(sheet4[i.toString()].toString())["F"].toString()
                 val str7 = i.toString()
                 InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
+                globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "4"))
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -432,6 +472,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str6 = JSONObject(sheet5[i.toString()].toString())["F"].toString()
                 val str7 = i.toString()
                 InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
+                globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "5"))
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -448,6 +489,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str6 = JSONObject(sheet6[i.toString()].toString())["F"].toString()
                 val str7 = i.toString()
                 InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
+                globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "6"))
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -464,6 +506,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str6 = JSONObject(sheet7[i.toString()].toString())["F"].toString()
                 val str7 = i.toString()
                 InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
+                globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "7"))
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -480,6 +523,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str6 = JSONObject(sheet8[i.toString()].toString())["F"].toString()
                 val str7 = i.toString()
                 InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
+                globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "8"))
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -496,6 +540,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str6 = JSONObject(sheet9[i.toString()].toString())["F"].toString()
                 val str7 = i.toString()
                 InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
+                globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "9"))
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -512,6 +557,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str6 = JSONObject(sheet10[i.toString()].toString())["F"].toString()
                 val str7 = i.toString()
                 InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
+                globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "10"))
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -528,6 +574,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str6 = JSONObject(sheet11[i.toString()].toString())["F"].toString()
                 val str7 = i.toString()
                 InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
+                globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "11"))
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -544,10 +591,12 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str6 = JSONObject(sheet12[i.toString()].toString())["F"].toString()
                 val str7 = i.toString()
                 InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
+                globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "12"))
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
             InventoryItems.clear()
         }
+        Log.d(TAG, globalDataArray.toString())
     }
 }
