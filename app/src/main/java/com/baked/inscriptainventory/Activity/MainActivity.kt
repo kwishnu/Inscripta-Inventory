@@ -36,18 +36,22 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
 ) : AppCompatActivity()
 {
     private var ipAddressStr = ""
+    private var portNumStr = ""
     private var scannedResult = ""
     private val client = OkHttpClient()
     private var sharedPrefs: SharedPreferences? = null//getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE)
     private val prefsFilename = "SharedPreferences"
     private val initialStateName = "InitialState"
     private val ipAddressName = "IPAddress"
+    private val portName = "Port"
     private val startedAppName = "StartedAppOnce"
     private var currentTab = 0
     companion object {
+        //***********************************************Remove before Git commit****************************************************************//
         var globalIPAddress = ""
-        const val globalPortNum = ""
+        var globalPortNum = ""
         const val globalEmailStr = ""
+        //***********************************************Remove before Git commit****************************************************************//
         var globalImageIndex = "0"
         var globalPartNumber = "none"
         var globalItemName = "none"
@@ -72,7 +76,8 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 it.readText()
             }
             editor.putString(initialStateName, jsonString)
-            editor.putString(ipAddressName, resources.getString(R.string.home_ip_address))
+            editor.putString(ipAddressName, globalIPAddress)
+            editor.putString(portName, globalPortNum)
             editor.putBoolean("StartedAppOnce", true)
             editor.apply()
         }
@@ -96,8 +101,10 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
     private fun callServer(){
         val stateStr = sharedPrefs!!.getString(initialStateName, String.toString())
         ipAddressStr = sharedPrefs!!.getString(ipAddressName, String.toString()).toString()
+        portNumStr = sharedPrefs!!.getString(portName, String.toString()).toString()
         globalIPAddress = ipAddressStr
-        val urlStr = "http://$ipAddressStr:10827/index.php"
+        globalPortNum = portNumStr
+        val urlStr = "http://$ipAddressStr:$portNumStr/index.php"
         val request = Request.Builder()
             .url(urlStr)
             .build()
