@@ -220,7 +220,7 @@
                 android:inputType="number|text"
                 android:gravity="center"
                 android:textSize="20sp"
-                android:hint="@string/_2"
+                android:hint="@string/_0"
                 android:layout_height="wrap_content"
                 tools:ignore="LabelFor" />
             <TextView
@@ -244,7 +244,7 @@
                 android:importantForAutofill="no"
                 android:gravity="center"
                 android:textSize="20sp"
-                android:hint="@string/_2"
+                android:hint="@string/_0"
                 android:layout_height="wrap_content"
                 tools:ignore="LabelFor" />
             <TextView

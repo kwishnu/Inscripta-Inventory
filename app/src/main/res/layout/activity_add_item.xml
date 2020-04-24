@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:layout_marginStart="15dp"
+        android:layout_marginStart="30dp"
         android:layout_marginEnd="15dp"
         app:layout_constraintTop_toBottomOf="@+id/imageTxt"
         app:layout_constraintStart_toStartOf="parent"
@@ -71,6 +71,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:orientation="vertical">
 
             <TextView
@@ -85,7 +86,7 @@
             <EditText
                 android:id="@+id/partNumberEditText"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="2dp"
                 android:layout_marginEnd="30dp"
@@ -97,14 +98,28 @@
                 app:layout_constraintTop_toBottomOf="@+id/partNumberTxt"
                 tools:ignore="TextFields" />
         </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/commentTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="2dp"
+            android:text="@string/comment_"
+            app:layout_constraintStart_toStartOf="parent" />
         <ImageView
             android:id="@+id/commentsImage"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
             android:src="@drawable/comments"
             android:layout_marginStart="100dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="6dp"
             tools:ignore="ContentDescription" />
+    </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -196,7 +211,7 @@
         android:id="@+id/addButton"
         android:layout_width="120dp"
         android:layout_height="50dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="40dp"
         android:background="@color/colorPrimary"
         android:text="@string/add_item"
         android:textColor="@color/colorWhite"
