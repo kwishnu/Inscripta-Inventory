@@ -13,10 +13,10 @@ import kotlinx.android.synthetic.main.item_grid.view.*
 private const val TAG = "InscriptaInventory_IGA"
 private var lastClicked = 0
 
-class ImageGridAdapter(private val context: Context, private val images: Array<String>, val imageListener: (Int) -> Unit) :
+class ImageGridAdapter(private val context: Context, private val images: ArrayList<String>, val imageListener: (Int) -> Unit) :
     RecyclerView.Adapter<ImageGridAdapter.ViewHolder>() {
     companion object {
-        var setIGAtoZero = 0
+        var setIGAIndex = 0
     }
 
     override fun getItemCount(): Int {
@@ -28,13 +28,14 @@ class ImageGridAdapter(private val context: Context, private val images: Array<S
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        lastClicked = setIGAtoZero
+        lastClicked = setIGAIndex
         val path = images[position]
         Picasso.get()
             .load(path)
             .centerCrop()
             .resize(50, 0)
             .into(holder.iv)
+
         if (position == lastClicked) {
             holder.iv.background =
                 ContextCompat.getDrawable(
@@ -56,7 +57,7 @@ class ImageGridAdapter(private val context: Context, private val images: Array<S
                     R.drawable.radio_flat_selected
                 )
             lastClicked = position
-            setIGAtoZero = position
+            setIGAIndex = position
             imageListener(position)
         }
     }
