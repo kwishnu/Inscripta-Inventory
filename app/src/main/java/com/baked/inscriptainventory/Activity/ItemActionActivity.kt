@@ -36,7 +36,6 @@ class ItemActionActivity : AppCompatActivity(){
     private var fromActivity = "Unknown"
     private var sharedPrefs: SharedPreferences? = null//getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE)
     private val prefsFilename = "SharedPreferences"
-    private val initialStateName = "InitialState"
     private val ipAddressName = "IPAddress"
 
     @SuppressLint("SetTextI18n")
@@ -84,7 +83,7 @@ class ItemActionActivity : AppCompatActivity(){
         val commentStr = intent.getStringExtra("Comment")
         fromActivity = intent.getStringExtra("FromActivity")!!.toString()
 
-        supportActionBar!!.title = getString(R.string.detail_title) + " " + itemPartNum
+        supportActionBar!!.title = if (itemPartNum == "None") "" else getString(R.string.detail_title) + " " + itemPartNum
         inventoryItemName.text = itemName
         val itemImageStr = ImagesArray().IMAGE_URI[(imageIndex).toInt()]
         val uri = Uri.parse("android.resource://com.baked.inscriptainventory/drawable/$itemImageStr")
@@ -147,10 +146,13 @@ class ItemActionActivity : AppCompatActivity(){
     sendWarning: String
     ) {
         ipAddressStr = sharedPrefs!!.getString(ipAddressName, String.toString()).toString()
-        val urlStr = "http://$ipAddressStr:80/index.php?Reason=changeCount&InvCount=$invCount" +
+        val portNum = MainActivity.globalPortNum;
+        val emailStr = MainActivity.globalEmailStr;
+
+        val urlStr = "http://$ipAddressStr:$portNum/index.php?Reason=changeCount&InvCount=$invCount" +
                 "&PartNumber=$partNum&Sheet=$sheetNum&RowNum=$rowNum" +
                 "&SendWarning=$sendWarning&ItemName=$itemName&ImageNum=0" +
-                "&MinStockLevel=$minStockLevel"
+                "&MinStockLevel=$minStockLevel$emailStr"
         val postBody = FormBody.Builder()
             .add("CommentStr", commentStr)
             .build()
@@ -322,10 +324,8 @@ Log.d(TAG, resp)
 
     override fun onSupportNavigateUp(): Boolean {
         startMainActivity()
-//            onBackPressed()
         return true
     }
-
 }
 
 
