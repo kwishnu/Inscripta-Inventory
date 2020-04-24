@@ -17,6 +17,13 @@
         android:onClick="addTab"
         />
     <item
+        android:id="@+id/paste_item"
+        android:orderInCategory="100"
+        android:title="@string/paste_item"
+        app:showAsAction="never"
+        android:onClick="pasteItem"
+        />
+    <item
         android:id="@+id/close_app"
         android:orderInCategory="100"
         android:title="@string/exit_to_restart"

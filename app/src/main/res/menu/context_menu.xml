@@ -5,5 +5,8 @@
         android:title="@string/edit_item" />
     <item
         android:id="@+id/header2"
+        android:title="@string/copy_item" />
+    <item
+        android:id="@+id/header3"
         android:title="@string/delete_item" />
 </menu>
