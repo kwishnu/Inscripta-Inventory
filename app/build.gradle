@@ -49,6 +49,7 @@ android {
 
 dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.4.1'
+    implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
     implementation 'me.weishu:free_reflection:2.2.0'
     implementation 'com.google.code.gson:gson:2.8.6'
