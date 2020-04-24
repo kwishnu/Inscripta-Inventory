@@ -5,16 +5,17 @@ import android.app.Activity
 import android.content.Context
 import android.util.Log
 import android.view.View
+import com.baked.inscriptainventory.Activity.MainActivity
 import com.baked.inscriptainventory.Fragment.*
 import com.google.android.material.snackbar.Snackbar
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 private const val TAG = "InscriptaInventory_CS"
 
 class CallServer ( private val context: Context) {
     private val client = OkHttpClient()
+    private val portNum = MainActivity.globalPortNum
     companion object {
         val MEDIA_TYPE_MARKDOWN = "text/x-markdown; charset=utf-8".toMediaType()
     }
@@ -32,7 +33,7 @@ class CallServer ( private val context: Context) {
         minStockLevel: String,
         commentStr: String
     ){
-        val urlStr = "http://$ipAddressStr:80/index.php?Reason=$reason&InvCount=$invCount" +
+        val urlStr = "http://$ipAddressStr:$portNum/index.php?Reason=$reason&InvCount=$invCount" +
                 "&PartNumber=$partNum&ImageNum=$imageNum&Sheet=$sheetNum&RowNum=$rowNum" +
                 "&SendWarning=$sendWarning&ItemName=$itemName" +
                 "&MinStockLevel=$minStockLevel&Host=empty&Who=" +
