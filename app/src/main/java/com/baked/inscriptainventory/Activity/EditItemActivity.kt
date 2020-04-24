@@ -12,25 +12,45 @@ import android.widget.EditText
 import android.widget.RadioButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.baked.inscriptainventory.Adapter.ImageGridAdapter
 import com.baked.inscriptainventory.Resource.CallServer
 import com.baked.inscriptainventory.R
+import com.baked.inscriptainventory.Resource.ImagesArray
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_add_item.*
 import kotlinx.android.synthetic.main.activity_edit_item.*
+import kotlinx.android.synthetic.main.activity_edit_item.commentsImage
+import kotlinx.android.synthetic.main.activity_edit_item.content
+import kotlinx.android.synthetic.main.activity_edit_item.descriptionEditText
+import kotlinx.android.synthetic.main.activity_edit_item.image_rv
+import kotlinx.android.synthetic.main.activity_edit_item.minStockLevelET
+import kotlinx.android.synthetic.main.activity_edit_item.numInStockET
+import kotlinx.android.synthetic.main.activity_edit_item.partNumberEditText
+import kotlinx.android.synthetic.main.activity_edit_item.sheetSelectSpinner
+import okhttp3.*
+import java.io.IOException
+
 private const val TAG = "InscriptaInventory_EIA"
 private const val STOCK_2 = "2"
 private lateinit var tabArray: MutableList<String>
 
 class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
+    private val client = OkHttpClient()
     private var fromActivity = "Unknown"
     private var sharedPrefs: SharedPreferences? = null
     private val prefsFilename = "SharedPreferences"
     private val ipAddressName = "IPAddress"
     private var ipAddressStr = ""
     private var commentStr = ""
+    private var imageIndex = "0"
     companion object SendReceiveTabNames {
         operator fun invoke(sent: MutableList<String>) {
             tabArray = sent
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_item)
@@ -38,6 +58,7 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_chevron_left_white_18dp)
         android.app.ActionBar.DISPLAY_HOME_AS_UP
         sharedPrefs = this.getSharedPreferences(prefsFilename, 0)
+        ipAddressStr = sharedPrefs!!.getString(ipAddressName, String.toString()).toString()
 
         sheetSelectSpinner!!.onItemSelectedListener = this
         val aa = ArrayAdapter(this, android.R.layout.simple_spinner_item, tabArray)
@@ -47,7 +68,7 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
         sheetSelectSpinner!!.adapter = aa
 
         val itemName = intent.getStringExtra("Item")
-        var imageIndex = intent.getStringExtra("Image")
+        imageIndex = intent.getStringExtra("Image")!!.toString()
         val itemPartNum = intent.getStringExtra("PartNum")
         val minStockLevel = intent.getStringExtra("MinStockLevel")
         val inStock = intent.getStringExtra("InStock")
@@ -55,90 +76,39 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
         val rowNum = intent.getStringExtra("Row")
         commentStr = intent.getStringExtra("Comment")!!.toString()
         fromActivity = intent.getStringExtra("FromActivity")!!.toString()
+        ImageGridAdapter.setIGAIndex = imageIndex.toInt()
 
-        var currentSelected: RadioButton? = null
         descriptionEditText.setText(itemName)
         partNumberEditText.setText(itemPartNum)
         numInStockET.setText(inStock)
         minStockLevelET.setText(minStockLevel)
         sheetSelectSpinner.setSelection(sheetNum?.toInt()!! - 1)
 
-        when (imageIndex){
-            "0" -> {
-                radio0.isChecked = true
-                currentSelected = radio0
-            }
-            "1" -> {
-                radio1.isChecked = true
-                currentSelected = radio1
-            }
-            "2" -> {
-                radio2.isChecked = true
-                currentSelected = radio2
-            }
-            "3" -> {
-                radio3.isChecked = true
-                currentSelected = radio3
-            }
-            "4" -> {
-                radio4.isChecked = true
-                currentSelected = radio4
-            }
-            "5" -> {
-                radio5.isChecked = true
-                currentSelected = radio5
-            }
-            "6" -> {
-                radio6.isChecked = true
-                currentSelected = radio6
-            }
-            "7" -> {
-                radio7.isChecked = true
-                currentSelected = radio7
-            }
-        }
+        setAdapter(ImagesArray().imageList)
+        getImages(content)
 
         editButton.setOnClickListener {
-            if (radio0.isChecked) imageIndex = "0"
-            if (radio1.isChecked) imageIndex = "1"
-            if (radio2.isChecked) imageIndex = "2"
-            if (radio3.isChecked) imageIndex = "3"
-            if (radio4.isChecked) imageIndex = "4"
-            if (radio5.isChecked) imageIndex = "5"
-            if (radio6.isChecked) imageIndex = "6"
-            if (radio7.isChecked) imageIndex = "7"
             val numInStock = if (numInStockET.text.isNullOrBlank()) "0" else numInStockET.text.toString()
             val minStock = if (minStockLevelET.text.isNullOrBlank()) "0" else minStockLevelET.text.toString()
 
-            ipAddressStr = sharedPrefs!!.getString(ipAddressName, String.toString()).toString()
-           CallServer(this).makeCall(
-               content,//View
-               ipAddressStr,//IP Address
-               "editItem",//Reason
-               numInStock,
-               partNumberEditText.text.toString(),
-               imageIndex!!,
-               sheetNum,
-               rowNum!!,
-               "false",//No need to send warning
-               descriptionEditText.text.toString(),
-               minStock,
-               commentStr
-           )
+            CallServer(this).makeCall(
+                content,//View
+                ipAddressStr,//IP Address
+                "editItem",//Reason
+                numInStock,
+                partNumberEditText.text.toString(),
+                imageIndex,
+                sheetNum,
+                rowNum!!,
+                "false",//No need to send warning
+                descriptionEditText.text.toString(),
+                minStock,
+                commentStr
+            )
             editButton.isEnabled = false
             editButton.setBackgroundColor(ContextCompat.getColor(this,
-                R.color.disabledGray
+            R.color.disabledGray
             ))
-        }
-
-        listOf<RadioButton>(
-            radio0, radio1, radio2, radio3, radio4, radio5, radio6, radio7
-        ).forEach {
-            it.setOnClickListener { _ ->
-                currentSelected?.isChecked = false
-                currentSelected = it
-                currentSelected?.isChecked = true
-            }
         }
 
         commentsImage.setOnClickListener {
@@ -151,19 +121,6 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
         minStockLevelET.setOnFocusChangeListener { v, event ->
             minStockLevelET.hint = if(minStockLevelET.hasFocus()) "" else STOCK_2
         }
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
-        return true
-    }
-
-    override fun onNothingSelected(parent: AdapterView<*>?) {
-        Log.d(TAG, "Spinner")
-    }
-
-    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        Log.d(TAG, "Spinner Item Selected: " + tabArray[position])
     }
 
     @SuppressLint("InflateParams")
@@ -187,4 +144,70 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
         alert.show()
     }
 
+    private fun getImages(view: View) {
+        val portNum = MainActivity.globalPortNum;
+        val urlStr = "http://$ipAddressStr:$portNum/index.php?GetImages=$ipAddressStr&PortNum=$portNum"
+        val request = Request.Builder()
+            .url(urlStr)
+            .build()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Snackbar.make(view, "No server response: using local images",
+                    Snackbar.LENGTH_LONG).setAction("Action", null).show()
+                e.printStackTrace()
+            }
+            @SuppressLint("SetTextI18n")
+            override fun onResponse(call: Call, response: Response) {
+                response.use {
+                    if (!response.isSuccessful) throw IOException("Unexpected code $response")
+                    val resp = response.body!!.string()
+                    val escapedStr = resp.replace("\\", "")
+                    Log.d(TAG, escapedStr)
+                    val respArr = ArrayList(escapedStr.split("\",\""))
+                    respArr[0] = respArr[0].substring(2)
+                    respArr[respArr.size - 1] = respArr[respArr.size - 1].substring(0, respArr[respArr.size - 1].length - 2)
+
+                    Log.d(TAG, respArr.toString())
+                    val successful = respArr.size > 1
+                    this@EditItemActivity.runOnUiThread(Runnable {
+                        if (successful) {
+                            setAdapter(respArr)
+                        } else {
+                            setAdapter(ImagesArray().imageList)
+                            Snackbar.make(
+                                view, "Error retrieving images",
+                                Snackbar.LENGTH_LONG
+                            ).setAction("Action", null).show()
+                        }
+                    })
+                }
+            }
+        })
+    }
+
+    private fun setAdapter(images: ArrayList<String>){
+        fun imageClickListener(position: Int) {
+            imageIndex = position.toString()
+            image_rv.adapter?.notifyDataSetChanged()
+        }
+        val glm = StaggeredGridLayoutManager(2, GridLayoutManager.HORIZONTAL)
+        image_rv.layoutManager = glm
+        val imageListener = { i: Int -> imageClickListener(i) }
+        val iga = ImageGridAdapter(this@EditItemActivity, images, imageListener)
+        image_rv.adapter = iga
+        image_rv.adapter?.notifyDataSetChanged()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+        Log.d(TAG, "Spinner")
+    }
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        Log.d(TAG, "Spinner Item Selected: " + tabArray[position])
+    }
 }
