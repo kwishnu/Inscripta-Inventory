@@ -3,13 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.baked.inscriptainventory.Activity.MainActivity">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/ip_address"
-        app:showAsAction="never"
-        android:onClick="settingsClicked"
-        />
-    <item
         android:id="@+id/add_tab"
         android:orderInCategory="100"
         android:title="@string/add_tab"
@@ -22,6 +15,13 @@
         android:title="@string/paste_item"
         app:showAsAction="never"
         android:onClick="pasteItem"
+        />
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/settings"
+        app:showAsAction="never"
+        android:onClick="settingsClicked"
         />
     <item
         android:id="@+id/close_app"
