@@ -8,128 +8,40 @@
     tools:context=".Activity.DeleteItemActivity"
     android:id="@+id/content" >
 
-    <RadioGroup
-        android:id="@+id/radioGroup"
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/imageTxt"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="45dp"
-        android:gravity="center"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="16dp"
+        android:text="@string/image"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/radio0"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_marginStart="3dp"
-                android:layout_marginEnd="3dp"
-                android:enabled="false"
-                android:background="@drawable/radio_flat_selector"
-                android:button="@drawable/blank"
-                android:gravity="center" />
-
-            <RadioButton
-                android:id="@+id/radio1"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_marginStart="3dp"
-                android:layout_marginEnd="3dp"
-                android:enabled="false"
-                android:background="@drawable/radio_flat_selector"
-                android:button="@drawable/strip_tube_1"
-                android:gravity="center" />
-
-            <RadioButton
-                android:id="@+id/radio2"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_marginStart="3dp"
-                android:layout_marginEnd="3dp"
-                android:enabled="false"
-                android:background="@drawable/radio_flat_selector"
-                android:button="@drawable/strip_tube_4"
-                android:gravity="center" />
-
-            <RadioButton
-                android:id="@+id/radio3"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_marginStart="3dp"
-                android:layout_marginEnd="3dp"
-                android:enabled="false"
-                android:background="@drawable/radio_flat_selector"
-                android:button="@drawable/strip_tube_6"
-                android:gravity="center" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_margin="6dp"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/radio4"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_marginStart="3dp"
-                android:layout_marginEnd="3dp"
-                android:enabled="false"
-                android:background="@drawable/radio_flat_selector"
-                android:button="@drawable/tubes_w_caps"
-                android:gravity="center" />
-
-            <RadioButton
-                android:id="@+id/radio5"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_gravity="center"
-                android:layout_marginStart="3dp"
-                android:layout_marginEnd="3dp"
-                android:enabled="false"
-                android:background="@drawable/radio_flat_selector"
-                android:button="@drawable/cell_tube"
-                android:gravity="center" />
-
-            <RadioButton
-                android:id="@+id/radio6"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_marginStart="3dp"
-                android:layout_marginEnd="3dp"
-                android:enabled="false"
-                android:background="@drawable/radio_flat_selector"
-                android:button="@drawable/rotary_growth_vial"
-                android:gravity="center" />
-
-            <RadioButton
-                android:id="@+id/radio7"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_marginStart="3dp"
-                android:layout_marginEnd="3dp"
-                android:enabled="false"
-                android:background="@drawable/radio_flat_selector"
-                android:button="@drawable/bottle"
-                android:gravity="center" />
-        </LinearLayout>
-    </RadioGroup>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/image_rv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="15dp"
+        app:layout_constraintTop_toBottomOf="@+id/imageTxt"
+        app:layout_constraintStart_toStartOf="parent"
+        android:paddingEnd="30dp"
+        android:clipToPadding="false"
+        tools:ignore="RtlSymmetry">
+    </androidx.recyclerview.widget.RecyclerView>
 
     <TextView
         android:id="@+id/nameTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:layout_marginStart="16dp"
         android:text="@string/item_name"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup"
+        app:layout_constraintTop_toBottomOf="@+id/image_rv"
         />
 
     <EditText
@@ -137,15 +49,16 @@
         android:enabled="false"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
         android:layout_marginStart="30dp"
+        android:layout_marginTop="2dp"
         android:layout_marginEnd="30dp"
+        android:autofillHints=""
         android:ems="10"
-        android:hint="@string/item_name"
+        android:hint="@string/item_name2"
+        android:inputType="textCapSentences"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nameTxt"
-        android:autofillHints="" />
+        app:layout_constraintTop_toBottomOf="@+id/nameTxt" />
 
     <LinearLayout
         android:id="@+id/partNumberLayout"
@@ -159,6 +72,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:orientation="vertical">
 
             <TextView
@@ -172,8 +86,9 @@
 
             <EditText
                 android:id="@+id/partNumberEditText"
+                android:enabled="false"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="2dp"
                 android:layout_marginEnd="30dp"
@@ -185,14 +100,28 @@
                 app:layout_constraintTop_toBottomOf="@+id/partNumberTxt"
                 tools:ignore="TextFields" />
         </LinearLayout>
-        <ImageView
-            android:id="@+id/commentsImage"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:src="@drawable/comments"
-            android:layout_marginStart="100dp"
-            android:layout_marginTop="10dp"
-            tools:ignore="ContentDescription" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/commentTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="2dp"
+                android:text="@string/comment_"
+                app:layout_constraintStart_toStartOf="parent" />
+            <ImageView
+                android:id="@+id/commentsImage"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:src="@drawable/comments"
+                android:layout_marginStart="100dp"
+                android:layout_marginTop="6dp"
+                tools:ignore="ContentDescription" />
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -207,21 +136,21 @@
         app:layout_constraintTop_toBottomOf="@+id/partNumberLayout"
         android:baselineAligned="false">
         <LinearLayout
-            android:layout_height="match_parent"
             android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical">
             <EditText
                 android:id="@+id/minStockLevelET"
                 android:enabled="false"
                 android:layout_width="60dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:importantForAutofill="no"
-                android:inputType="number|text"
+                android:inputType="number"
                 android:gravity="center"
                 android:textSize="20sp"
                 android:hint="@string/_0"
-                android:layout_height="wrap_content"
                 tools:ignore="LabelFor" />
             <TextView
                 android:layout_height="wrap_content"
@@ -232,8 +161,8 @@
                 android:text="@string/minimum_stock_level" />
         </LinearLayout>
         <LinearLayout
-            android:layout_height="match_parent"
             android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical" >
             <EditText
@@ -242,6 +171,7 @@
                 android:layout_width="60dp"
                 android:layout_gravity="center"
                 android:importantForAutofill="no"
+                android:inputType="number"
                 android:gravity="center"
                 android:textSize="20sp"
                 android:hint="@string/_0"
@@ -256,6 +186,7 @@
                 android:text="@string/number_in_stock" />
         </LinearLayout>
     </LinearLayout>
+
     <LinearLayout
         android:id="@+id/spinnerLayout"
         android:layout_width="wrap_content"
@@ -265,6 +196,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/numberSelectionLayout" >
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -272,23 +204,23 @@
             android:textSize="18sp"
             android:textColor="@color/colorBlack"
             android:layout_marginEnd="10dp"/>
+
         <Spinner
             android:id="@+id/sheetSelectSpinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
+
     <Button
         android:id="@+id/deleteButton"
         android:layout_width="120dp"
         android:layout_height="50dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="40dp"
         android:background="@color/colorPrimary"
         android:text="@string/delete_item"
         android:textColor="@color/colorWhite"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spinnerLayout" />
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
