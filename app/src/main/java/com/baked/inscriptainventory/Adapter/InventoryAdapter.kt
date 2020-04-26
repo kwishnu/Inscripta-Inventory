@@ -3,6 +3,7 @@ package com.baked.inscriptainventory.Adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,16 +12,18 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.baked.inscriptainventory.Resource.ImagesArray
 import com.baked.inscriptainventory.R
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.list_item.view.*
 private const val TAG = "InscriptaInventory_IA"
 
-class InventoryAdapter(private val items: MutableList<MutableList<String>>,
-                       private val context: Context,
-                       val clickListener: (Int) -> Unit,
-                       val imageListener: (Int) -> Unit,
-                       val longClickListener: (Int, View) -> Unit
+class InventoryAdapter(
+    private val items: MutableList<MutableList<String>>,
+    private val context: Context,
+    val clickListener: (Int) -> Unit,
+    val imageListener: (Int) -> Unit,
+    val longClickListener: (Int, View) -> Unit,
+    val images: MutableList<String>
 ):
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun getItemCount(): Int {
@@ -61,11 +64,15 @@ class InventoryAdapter(private val items: MutableList<MutableList<String>>,
                     R.drawable.details_rect_green
                 )
         }
+        val path = images[(items[holder.adapterPosition][0]).toInt()]
+        Picasso.get()
+            .load(path)
+            .centerCrop()
+            .resize(50, 0)
+            .into(holder.image)
+
         val commentsImageStr = if (items[holder.adapterPosition][5].isEmpty() || items[holder.adapterPosition][5] == "null") "blank" else "comments"
-        val itemImageStr = ImagesArray().IMAGE_URI[(items[holder.adapterPosition][0]).toInt()]
-        val uri = Uri.parse("android.resource://com.baked.inscriptainventory/drawable/$itemImageStr")
         val commentsUri = Uri.parse("android.resource://com.baked.inscriptainventory/drawable/$commentsImageStr")
-        holder.image.setImageURI(uri)
         holder.clickableImage.setImageURI(commentsUri)
         holder.clickableView.setOnClickListener {
             clickListener(position)
