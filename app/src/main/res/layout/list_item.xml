@@ -9,13 +9,13 @@ android:id="@+id/list_element">
         android:id="@+id/list_thumbnail"
         android:layout_width="75dp"
         android:layout_height="75dp"
+        android:padding="5dp"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:layout_marginBottom="6dp"
         android:layout_marginStart="0dp"
         android:layout_marginTop="6dp"
         android:contentDescription="@string/thumbnail"
-        android:scaleType="centerInside"
         tools:src="@mipmap/ic_launcher" />
 
     <LinearLayout
