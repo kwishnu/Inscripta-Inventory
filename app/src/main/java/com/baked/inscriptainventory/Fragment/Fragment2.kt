@@ -15,10 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.baked.inscriptainventory.Activity.DeleteItemActivity
-import com.baked.inscriptainventory.Activity.EditItemActivity
-import com.baked.inscriptainventory.Activity.ItemActionActivity
-import com.baked.inscriptainventory.Activity.MainActivity
+import com.baked.inscriptainventory.Activity.*
 import com.baked.inscriptainventory.Adapter.InventoryAdapter
 import com.baked.inscriptainventory.R
 import com.baked.inscriptainventory.Resource.CallServer
@@ -32,7 +29,10 @@ private lateinit var recyclerView: RecyclerView
 private lateinit var itemsContainer: MutableList<MutableList<String>>
 
 
-class Fragment2(private val items: MutableList<MutableList<String>>) : Fragment() {
+class Fragment2(
+    private val items: MutableList<MutableList<String>>,
+    private val images: MutableList<String>
+) : Fragment() {
     private lateinit var rootView: View
     object SetAdapterFromActivity {
         operator fun invoke(
@@ -47,8 +47,10 @@ class Fragment2(private val items: MutableList<MutableList<String>>) : Fragment(
         ) {
             if (reason == "deleteItem") {
                 itemsContainer.removeAt(index.toInt())
+                MainActivity.globalDataArray.removeAt(index.toInt())
             } else if (reason == "addItem") {
                 itemsContainer.add(0, mutableListOf(imageNum, partNum, itemName, minStockLevel, numInStock, commentStr, "2"))
+                MainActivity.globalDataArray.add(AddItemActivity.itemIndexInGlobalArray, mutableListOf(imageNum, partNum, itemName, minStockLevel, numInStock, commentStr, "2", "2"))
             } else {
                 itemsContainer[index.toInt()][0] = imageNum
                 itemsContainer[index.toInt()][1] = partNum
@@ -97,7 +99,8 @@ class Fragment2(private val items: MutableList<MutableList<String>>) : Fragment(
                 it,
                 listener,
                 imageListener,
-                longClickListener
+                longClickListener,
+                images
             )
         }
         recyclerView.addItemDecoration(
@@ -157,7 +160,7 @@ class Fragment2(private val items: MutableList<MutableList<String>>) : Fragment(
                     intent.putExtra("Item", items[pos][2])
                     intent.putExtra("MinStockLevel", items[pos][3])
                     intent.putExtra("InStock", items[pos][4])
-                    intent.putExtra("Sheet", "3")
+                    intent.putExtra("Sheet", "2")
                     intent.putExtra("Row", (pos + 2).toString())
                     intent.putExtra("Comment", items[pos][5])
                     intent.putExtra("FromActivity", "Fragment")
@@ -182,7 +185,7 @@ class Fragment2(private val items: MutableList<MutableList<String>>) : Fragment(
                     intent.putExtra("Item", items[pos][2])
                     intent.putExtra("MinStockLevel", items[pos][3])
                     intent.putExtra("InStock", items[pos][4])
-                    intent.putExtra("Sheet", "3")
+                    intent.putExtra("Sheet", "2")
                     intent.putExtra("Row", (pos + 2).toString())
                     intent.putExtra("Comment", items[pos][5])
                     intent.putExtra("FromActivity", "Fragment")
@@ -212,19 +215,33 @@ class Fragment2(private val items: MutableList<MutableList<String>>) : Fragment(
                 if (clicked){
                     items[pos][5] = etComment.text.toString()
                     recyclerView.adapter?.notifyDataSetChanged()
+
+                    var delimSheetNumStr = ""
+                    var delimRowNumStr = ""
+
+                    for (i in 0 until MainActivity.globalDataArray.size) {
+                        if (MainActivity.globalDataArray[i][2] == items[pos][2] && MainActivity.globalDataArray[i][1] == items[pos][1]) {
+                            delimSheetNumStr = MainActivity.globalDataArray[i][7] + "~" + delimSheetNumStr
+                            delimRowNumStr = MainActivity.globalDataArray[i][6] + "~" + delimRowNumStr
+                        }
+                    }
+                    val sheetResultStr = delimSheetNumStr.dropLastWhile { it.toString() == "~" }//Remove terminal ~ characters
+                    val rowResultStr = delimRowNumStr.dropLastWhile { it.toString() == "~" }
+
+
                     context?.let {
                         CallServer(it).makeCall(
                             rv,//View
                             globalIPAddress,//ipAddressStr
-                            "editComment",//Reason
-                            "none",//Count
-                            "none",//Part Number
-                            "none",//Image
-                            TAB,//Sheet
-                            items[pos][6],//Row Number
+                            "editItem",//Reason
+                            items[pos][4],//Count
+                            items[pos][1],//Part Number
+                            items[pos][0],//Image
+                            sheetResultStr,//Sheet
+                            rowResultStr,//Row Number
                             "false",//Send Warning
-                            "none",//Item Name
-                            "none",//Min Stock Level
+                            items[pos][2],//Item Name
+                            items[pos][3],//Min Stock Level
                             etComment.text.toString()//Comment
                         )
                     }

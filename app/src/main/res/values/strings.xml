@@ -7,14 +7,13 @@
     <string name="thumbnail">thumbnail</string>
     <string name="detail_title">Part No.</string>
     <string name="_1">1</string>
-    <string name="home_ip_address">10.0.0.225</string>
     <string name="remove_from_inventory">Remove</string>
     <string name="add_to_inventory">Add</string>
     <string name="submit">SUBMIT</string>
     <string name="sent">SENT</string>
     <string name="item_image">item_image</string>
     <string name="save_ip">Save IP</string>
-    <string name="ip_address">IP Address</string>
+    <string name="settings">Settings</string>
     <string name="clear">Clear</string>
     <string name="exit_to_restart">Exit to Restart</string>
     <string name="title_activity_add_item">Add Item</string>
@@ -26,7 +25,7 @@
     <string name="item_name2">Item Name</string>
     <string name="number_in_stock">Number in Stock</string>
     <string name="minimum_stock_level">Minimum Stock Level</string>
-    <string name="_2">2</string>
+    <string name="_0">0</string>
     <string name="add_item">Add Item</string>
     <string name="sheet">Tab:</string>
     <string name="edit_item">Edit Item</string>
@@ -37,4 +36,9 @@
     <string name="add_tab">Add Tab</string>
     <string name="tab_title">Tab title</string>
     <string name="comment">Enter Comment</string>
+    <string name="comment_">Comment:</string>
+    <string name="image">Image:</string>
+    <string name="paste_item">Paste Item</string>
+    <string name="copy_item">Copy Item</string>
+    <string name="ip_address">IP Address</string>
 </resources>

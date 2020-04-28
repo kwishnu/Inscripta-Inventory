@@ -41,6 +41,7 @@ class AddItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
         fun sendReceiveImages(imagesSent: MutableList<String>) {
             imagesArray = imagesSent
         }
+        var itemIndexInGlobalArray = 0
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -98,7 +99,7 @@ class AddItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
                 if (MainActivity.globalDataArray[i][2] == itemName) {
                     nameExists = true
                 }
-                if (MainActivity.globalDataArray[i][1] == partNumber) {
+                if (MainActivity.globalDataArray[i][1] == partNumber && MainActivity.globalDataArray[i][2] == itemName) {
                     alreadyExists = true
                 }
             }
@@ -146,7 +147,14 @@ class AddItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener 
             if (minStockLevelET.text.isNullOrBlank()) "0" else minStockLevelET.text.toString()
         val partNum =
             if (partNumberEditText.text.isNullOrBlank()) "None" else partNumberEditText.text.toString()
-        MainActivity.globalDataArray.add(mutableListOf(imageIndex, partNum, item, minStock, numInStock, commentStr, "2", sheetNum))
+
+        for (i in 0 until MainActivity.globalDataArray.size) {
+            if (MainActivity.globalDataArray[i][7] != sheetNum) {
+                itemIndexInGlobalArray++
+            } else {
+                break
+            }
+        }
 
         CallServer(this).makeCall(
             content,//View

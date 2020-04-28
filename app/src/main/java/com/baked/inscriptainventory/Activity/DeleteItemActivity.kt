@@ -8,15 +8,18 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.RadioButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.baked.inscriptainventory.Adapter.ImageGridAdapter
 import com.baked.inscriptainventory.Resource.CallServer
 import com.baked.inscriptainventory.R
 import kotlinx.android.synthetic.main.activity_delete_item.*
 private const val TAG = "InscriptaInventory_DIA"
 private const val STOCK_2 = "2"
 private lateinit var tabArray: MutableList<String>
+private lateinit var imagesArray: MutableList<String>
 
 class DeleteItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private var fromActivity = "Unknown"
@@ -24,9 +27,13 @@ class DeleteItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
     private val prefsFilename = "SharedPreferences"
     private val ipAddressName = "IPAddress"
     private var ipAddressStr = ""
-    companion object SendReceiveTabNames {
+    private var imageIndex = "0"
+    companion object SendReceive {
         operator fun invoke(sent: MutableList<String>) {
             tabArray = sent
+        }
+        fun sendReceiveImages(imagesSent: MutableList<String>) {
+            imagesArray = imagesSent
         }
     }
 
@@ -46,30 +53,20 @@ class DeleteItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
         sheetSelectSpinner!!.adapter = aa
 
         val itemName = intent.getStringExtra("Item")
-        val imageIndex = intent.getStringExtra("Image")
+        imageIndex = intent.getStringExtra("Image")!!.toString()
         val itemPartNum = intent.getStringExtra("PartNum")
         val minStockLevel = intent.getStringExtra("MinStockLevel")
         val inStock = intent.getStringExtra("InStock")
         val sheetNum = intent.getStringExtra("Sheet")
         val rowNum = intent.getStringExtra("Row")
         fromActivity = intent.getStringExtra("FromActivity")!!.toString()
+        ImageGridAdapter.setIGAIndex = imageIndex.toInt()
 
         descriptionEditText.setText(itemName)
         partNumberEditText.setText(itemPartNum)
         numInStockET.setText(inStock)
         minStockLevelET.setText(minStockLevel)
         sheetSelectSpinner.setSelection(sheetNum?.toInt()!! - 1)
-
-        when (imageIndex){
-            "0" -> radio0.isChecked = true
-            "1" -> radio1.isChecked = true
-            "2" -> radio2.isChecked = true
-            "3" -> radio3.isChecked = true
-            "4" -> radio4.isChecked = true
-            "5" -> radio5.isChecked = true
-            "6" -> radio6.isChecked = true
-            "7" -> radio7.isChecked = true
-        }
 
         numInStockET.setOnFocusChangeListener() { v, event ->
             numInStockET.hint = if(numInStockET.hasFocus()) "" else STOCK_2
@@ -79,16 +76,7 @@ class DeleteItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
             minStockLevelET.hint = if(minStockLevelET.hasFocus()) "" else STOCK_2
         }
 
-        var currentSelected = radio0
-        listOf<RadioButton>(
-            radio0, radio1, radio2, radio3, radio4, radio5, radio6, radio7
-        ).forEach {
-            it.setOnClickListener { _ ->
-                currentSelected.isChecked = false
-                currentSelected = it
-                currentSelected.isChecked = true
-            }
-        }
+        setAdapter(imagesArray)
 
         deleteButton.setOnClickListener {
             ipAddressStr = sharedPrefs!!.getString(ipAddressName, String.toString()).toString()
@@ -97,21 +85,21 @@ class DeleteItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
                 .setMessage("Delete this item from InventoryXls.xslx?")
                 .setCancelable(true)
                 .setPositiveButton("Proceed", DialogInterface.OnClickListener {
-                        dialog, _ ->
-                    CallServer(this).makeCall(
-                        content,//View
-                        ipAddressStr,//IP Address
-                        "deleteItem",//Reason
-                        "none",
-                        "none",
-                        "none",
-                        sheetNum,
-                        rowNum!!,
-                        "false",//No need to send warning
-                        "none",
-                        "none",
-                        "none"
-                    )
+                    dialog, _ ->
+                        CallServer(this).makeCall(
+                            content,//View
+                            ipAddressStr,//IP Address
+                            "deleteItem",//Reason
+                            "none",
+                            "none",
+                            "none",
+                            sheetNum,
+                            rowNum!!,
+                            "false",//No need to send warning
+                            "none",
+                            "none",
+                            "none"
+                        )
                     deleteButton.isEnabled = false
                     deleteButton.setBackgroundColor(ContextCompat.getColor(this,
                         R.color.disabledGray
@@ -125,6 +113,19 @@ class DeleteItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
             alert.setTitle("Confirm Delete")
             alert.show()
         }
+    }
+
+    private fun setAdapter(images: MutableList<String>){
+        fun imageClickListener(position: Int) {
+            imageIndex = position.toString()
+            image_rv.adapter?.notifyDataSetChanged()
+        }
+        val glm = StaggeredGridLayoutManager(2, GridLayoutManager.HORIZONTAL)
+        image_rv.layoutManager = glm
+        val imageListener = { i: Int -> imageClickListener(i) }
+        val iga = ImageGridAdapter(this@DeleteItemActivity, images as ArrayList<String>, imageListener)
+        image_rv.adapter = iga
+        image_rv.adapter?.notifyDataSetChanged()
     }
 
     override fun onSupportNavigateUp(): Boolean {

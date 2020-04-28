@@ -33,8 +33,9 @@ import okhttp3.*
 import java.io.IOException
 
 private const val TAG = "InscriptaInventory_EIA"
-private const val STOCK_2 = "2"
+private const val STOCK_0 = "0"
 private lateinit var tabArray: MutableList<String>
+private lateinit var imagesArray: MutableList<String>
 
 class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private val client = OkHttpClient()
@@ -45,9 +46,12 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
     private var ipAddressStr = ""
     private var commentStr = ""
     private var imageIndex = "0"
-    companion object SendReceiveTabNames {
+    companion object SendReceive {
         operator fun invoke(sent: MutableList<String>) {
             tabArray = sent
+        }
+        fun sendReceiveImages(imagesSent: MutableList<String>) {
+            imagesArray = imagesSent
         }
     }
 
@@ -73,7 +77,6 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
         val minStockLevel = intent.getStringExtra("MinStockLevel")
         val inStock = intent.getStringExtra("InStock")
         val sheetNum = intent.getStringExtra("Sheet")
-        val rowNum = intent.getStringExtra("Row")
         commentStr = intent.getStringExtra("Comment")!!.toString()
         fromActivity = intent.getStringExtra("FromActivity")!!.toString()
         ImageGridAdapter.setIGAIndex = imageIndex.toInt()
@@ -84,24 +87,45 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
         minStockLevelET.setText(minStockLevel)
         sheetSelectSpinner.setSelection(sheetNum?.toInt()!! - 1)
 
-        setAdapter(ImagesArray().imageList)
-        getImages(content)
+        setAdapter(imagesArray)
 
         editButton.setOnClickListener {
             val numInStock = if (numInStockET.text.isNullOrBlank()) "0" else numInStockET.text.toString()
             val minStock = if (minStockLevelET.text.isNullOrBlank()) "0" else minStockLevelET.text.toString()
+            val itemDescription = descriptionEditText.text.toString()
+            val partNumber = partNumberEditText.text.toString()
+
+            var delimSheetNumStr = ""
+            var delimRowNumStr = ""
+            Log.d(TAG, MainActivity.globalDataArray.toString())
+
+            for (i in 0 until MainActivity.globalDataArray.size) {
+                if (MainActivity.globalDataArray[i][2] == itemName && MainActivity.globalDataArray[i][1] == itemPartNum) {
+                    delimSheetNumStr = MainActivity.globalDataArray[i][7] + "~" + delimSheetNumStr
+                    delimRowNumStr = MainActivity.globalDataArray[i][6] + "~" + delimRowNumStr
+                    MainActivity.globalDataArray[i][0] = imageIndex
+                    MainActivity.globalDataArray[i][1] = partNumber
+                    MainActivity.globalDataArray[i][2] = itemDescription
+                    MainActivity.globalDataArray[i][3] = minStock
+                    MainActivity.globalDataArray[i][4] = numInStock
+                    MainActivity.globalDataArray[i][5] = commentStr
+                }
+            }
+            val sheetResultStr = delimSheetNumStr.dropLastWhile { it.toString() == "~" }//Remove terminal ~ characters
+            val rowResultStr = delimRowNumStr.dropLastWhile { it.toString() == "~" }
+            Log.d(TAG, sheetResultStr)
 
             CallServer(this).makeCall(
                 content,//View
                 ipAddressStr,//IP Address
                 "editItem",//Reason
                 numInStock,
-                partNumberEditText.text.toString(),
+                partNumber,
                 imageIndex,
-                sheetNum,
-                rowNum!!,
+                sheetResultStr,
+                rowResultStr,
                 "false",//No need to send warning
-                descriptionEditText.text.toString(),
+                itemDescription,
                 minStock,
                 commentStr
             )
@@ -116,10 +140,10 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
         }
 
         numInStockET.setOnFocusChangeListener { v, event ->
-            numInStockET.hint = if(numInStockET.hasFocus()) "" else STOCK_2
+            numInStockET.hint = if(numInStockET.hasFocus()) "" else STOCK_0
         }
         minStockLevelET.setOnFocusChangeListener { v, event ->
-            minStockLevelET.hint = if(minStockLevelET.hasFocus()) "" else STOCK_2
+            minStockLevelET.hint = if(minStockLevelET.hasFocus()) "" else STOCK_0
         }
     }
 
@@ -144,48 +168,7 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
         alert.show()
     }
 
-    private fun getImages(view: View) {
-        val portNum = MainActivity.globalPortNum;
-        val urlStr = "http://$ipAddressStr:$portNum/index.php?GetImages=$ipAddressStr&PortNum=$portNum"
-        val request = Request.Builder()
-            .url(urlStr)
-            .build()
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Snackbar.make(view, "No server response: using local images",
-                    Snackbar.LENGTH_LONG).setAction("Action", null).show()
-                e.printStackTrace()
-            }
-            @SuppressLint("SetTextI18n")
-            override fun onResponse(call: Call, response: Response) {
-                response.use {
-                    if (!response.isSuccessful) throw IOException("Unexpected code $response")
-                    val resp = response.body!!.string()
-                    val escapedStr = resp.replace("\\", "")
-                    Log.d(TAG, escapedStr)
-                    val respArr = ArrayList(escapedStr.split("\",\""))
-                    respArr[0] = respArr[0].substring(2)
-                    respArr[respArr.size - 1] = respArr[respArr.size - 1].substring(0, respArr[respArr.size - 1].length - 2)
-
-                    Log.d(TAG, respArr.toString())
-                    val successful = respArr.size > 1
-                    this@EditItemActivity.runOnUiThread(Runnable {
-                        if (successful) {
-                            setAdapter(respArr)
-                        } else {
-                            setAdapter(ImagesArray().imageList)
-                            Snackbar.make(
-                                view, "Error retrieving images",
-                                Snackbar.LENGTH_LONG
-                            ).setAction("Action", null).show()
-                        }
-                    })
-                }
-            }
-        })
-    }
-
-    private fun setAdapter(images: ArrayList<String>){
+    private fun setAdapter(images: MutableList<String>){
         fun imageClickListener(position: Int) {
             imageIndex = position.toString()
             image_rv.adapter?.notifyDataSetChanged()
@@ -193,7 +176,7 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
         val glm = StaggeredGridLayoutManager(2, GridLayoutManager.HORIZONTAL)
         image_rv.layoutManager = glm
         val imageListener = { i: Int -> imageClickListener(i) }
-        val iga = ImageGridAdapter(this@EditItemActivity, images, imageListener)
+        val iga = ImageGridAdapter(this@EditItemActivity, images as ArrayList<String>, imageListener)
         image_rv.adapter = iga
         image_rv.adapter?.notifyDataSetChanged()
     }

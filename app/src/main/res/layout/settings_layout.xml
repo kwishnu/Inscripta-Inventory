@@ -17,7 +17,6 @@
         android:cursorVisible="false"
         android:ems="10"
         android:gravity="center"
-        android:text="@string/home_ip_address"
         android:hint="@string/ip_address"
         android:importantForAutofill="no"
         android:inputType="number|text"
