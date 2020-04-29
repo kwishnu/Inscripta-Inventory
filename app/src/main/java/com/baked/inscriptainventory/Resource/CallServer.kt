@@ -9,7 +9,6 @@ import com.baked.inscriptainventory.Activity.MainActivity
 import com.baked.inscriptainventory.Fragment.*
 import com.google.android.material.snackbar.Snackbar
 import okhttp3.*
-import okhttp3.MediaType.Companion.toMediaType
 import java.io.IOException
 private const val TAG = "InscriptaInventory_CS"
 
@@ -19,12 +18,13 @@ class CallServer ( private val context: Context) {
     companion object {
         var itemIndexInGlobalArray = 0
     }
+
     fun makeCall (
         view: View,
         ipAddressStr: String,
         reason: String,
         invCount: String,
-        partNum: String?,
+        partNum: String,
         imageNum: String,
         sheetNum: String,
         rowNum: String,
@@ -33,11 +33,17 @@ class CallServer ( private val context: Context) {
         minStockLevel: String,
         commentStr: String
     ){
-        val urlStr = "http://$ipAddressStr:$portNum/index.php?Reason=$reason&InvCount=$invCount" +
-                "&PartNumber=$partNum&ImageNum=$imageNum&Sheet=$sheetNum&RowNum=$rowNum" +
-                "&SendWarning=$sendWarning&ItemName=$itemName" +
-                "&MinStockLevel=$minStockLevel&Host=empty&Who=" +
-                "empty&Date=empty&Time=empty"
+        val invalidCharacters = arrayOf("*", ":", "/", "\\", "?", "[", "]", "#")
+        var safeName = ""
+        var safePartNum = ""
+        for (char in invalidCharacters){
+            safeName = itemName.replace(char, "x")
+            safePartNum = partNum.replace(char, "x")
+        }
+
+        val urlStr = "http://$ipAddressStr:$portNum/index.php?Reason=$reason&InvCount=$invCount&PartNumber=$safePartNum&ImageNum=" +
+                "$imageNum&Sheet=$sheetNum&RowNum=$rowNum&SendWarning=$sendWarning&ItemName=$safeName&MinStockLevel=" +
+                "$minStockLevel&Host=empty&Who=empty&Date=empty&Time=empty"
         val postBody = FormBody.Builder()
             .add("CommentStr", commentStr)
             .build()
@@ -71,7 +77,6 @@ class CallServer ( private val context: Context) {
                             Snackbar.LENGTH_LONG).setAction("Action", null).show()
 
                             //Adapter notifyDataSetChanged() for each fragment:
-
                             val rowNumArray = rowNum.split("~")
                             val sheetArray = sheetNum.split("~")
 
@@ -83,28 +88,26 @@ class CallServer ( private val context: Context) {
                                         for (j in 0 until MainActivity.globalDataArray.size) {
                                             if (MainActivity.globalDataArray[j][7] != theSheet) {
                                                 itemIndexInGlobalArray++
-                                                Log.d(TAG, "theSheet = " + theSheet + " and MainActivity.globalDataArray[j][7] = " + MainActivity.globalDataArray[j][7])
                                             } else {
                                                 break
                                             }
                                         }
                                         itemIndexInGlobalArray = itemIndexInGlobalArray + rowNumArray[i].toInt() - 1
                                     }
-Log.d(TAG, "sheetArray[i] = " + sheetArray[i] + " and itemIndexInGlobalArray = " + itemIndexInGlobalArray.toString())
                                     val index = (rowNumArray[i].toInt() - 2).toString()
                                     when (sheetArray[i]){
-                                        "0" -> Fragment0.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
-                                        "1" -> Fragment1.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
-                                        "2" -> Fragment2.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
-                                        "3" -> Fragment3.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
-                                        "4" -> Fragment4.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
-                                        "5" -> Fragment5.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
-                                        "6" -> Fragment6.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
-                                        "7" -> Fragment7.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
-                                        "8" -> Fragment8.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
-                                        "9" -> Fragment9.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
-                                        "10" -> Fragment10.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
-                                        "11" -> Fragment11.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
+                                        "0" -> Fragment0.SetAdapterFromActivity(reason, index, imageNum, safePartNum, safeName, minStockLevel, invCount, commentStr)
+                                        "1" -> Fragment1.SetAdapterFromActivity(reason, index, imageNum, safePartNum, safeName, minStockLevel, invCount, commentStr)
+                                        "2" -> Fragment2.SetAdapterFromActivity(reason, index, imageNum, safePartNum, safeName, minStockLevel, invCount, commentStr)
+                                        "3" -> Fragment3.SetAdapterFromActivity(reason, index, imageNum, safePartNum, safeName, minStockLevel, invCount, commentStr)
+                                        "4" -> Fragment4.SetAdapterFromActivity(reason, index, imageNum, safePartNum, safeName, minStockLevel, invCount, commentStr)
+                                        "5" -> Fragment5.SetAdapterFromActivity(reason, index, imageNum, safePartNum, safeName, minStockLevel, invCount, commentStr)
+                                        "6" -> Fragment6.SetAdapterFromActivity(reason, index, imageNum, safePartNum, safeName, minStockLevel, invCount, commentStr)
+                                        "7" -> Fragment7.SetAdapterFromActivity(reason, index, imageNum, safePartNum, safeName, minStockLevel, invCount, commentStr)
+                                        "8" -> Fragment8.SetAdapterFromActivity(reason, index, imageNum, safePartNum, safeName, minStockLevel, invCount, commentStr)
+                                        "9" -> Fragment9.SetAdapterFromActivity(reason, index, imageNum, safePartNum, safeName, minStockLevel, invCount, commentStr)
+                                        "10" -> Fragment10.SetAdapterFromActivity(reason, index, imageNum, safePartNum, safeName, minStockLevel, invCount, commentStr)
+                                        "11" -> Fragment11.SetAdapterFromActivity(reason, index, imageNum, safePartNum, safeName, minStockLevel, invCount, commentStr)
                                     }
                                 }
                             }
