@@ -81,9 +81,6 @@ class ItemActionActivity : AppCompatActivity(){
         val itemPartNum = intent.getStringExtra("PartNum")
         val minStockLevel = intent.getStringExtra("MinStockLevel")
         val inStock = intent.getStringExtra("InStock")
-        val sheetNum = intent.getStringExtra("Sheet")
-        val rowNum = intent.getStringExtra("Row")
-        val commentStr = intent.getStringExtra("Comment")
         fromActivity = intent.getStringExtra("FromActivity")!!.toString()
 
         supportActionBar!!.title = if (itemPartNum == "None") "" else getString(R.string.detail_title) + " " + itemPartNum
