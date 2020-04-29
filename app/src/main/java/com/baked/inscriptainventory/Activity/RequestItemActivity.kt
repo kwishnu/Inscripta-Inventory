@@ -30,7 +30,7 @@ class RequestItemActivity : AppCompatActivity(){
     private val client = OkHttpClient()
     private var ipAddressStr = ""
     private var imageIndex = ""
-    private var commentStr = ""
+    private var commentStrStr = ""
     private var shouldClose = 2
     private var seenActivity = false
     private var newQuantity = 0
@@ -71,7 +71,7 @@ class RequestItemActivity : AppCompatActivity(){
 
 
         submitButton.setOnClickListener {
-            val quantityStr = if (numberToRequestTxt.text.isNullOrBlank()) "1" else numberToRequestTxt.text.toString()
+            val quantityStr = if (numberToRequestTxt.text.isNullOrBlank()) "(Number not specified)" else numberToRequestTxt.text.toString()
 
             if (itemName.isNullOrBlank()){
                 val dialogBuilder = AlertDialog.Builder(this)
@@ -88,9 +88,10 @@ class RequestItemActivity : AppCompatActivity(){
 
                 callServer(
                     content,
-                    itemName!!,
+                    itemName,
                     itemPartNum,
-                    newValueStr
+                    quantityStr,
+                    commentStrStr
                 )
             }
         }
@@ -100,13 +101,19 @@ class RequestItemActivity : AppCompatActivity(){
     view: View,
     itemName: String,
     partNum: String?,
-    invCount: String
+    numRequested: String,
+    commentStr: String
     ) {
         val portNum = MainActivity.globalPortNum;
         val emailStr = MainActivity.globalEmailStr;
 
-        val urlStr = "http://$ipAddressStr:$portNum/index.php?SendEmailRequest=Send&ItemName=$itemName&PartNumber=$partNum$emailStr"
+        val urlStr = "http://$ipAddressStr:$portNum/index.php?SendEmailRequest=Send&ItemName=$itemName&PartNumber=$partNum" +
+                "&NumRequested=$numRequested$emailStr"
+        val postBody = FormBody.Builder()
+            .add("CommentStr", commentStr)
+            .build()
         val request = Request.Builder()
+            .post(postBody)
             .url(urlStr)
             .build()
         client.newCall(request).enqueue(object : Callback {
