@@ -47,10 +47,13 @@ class Fragment11(
         ) {
             if (reason == "deleteItem") {
                 itemsContainer.removeAt(index.toInt())
-                MainActivity.globalDataArray.removeAt(index.toInt())
+                MainActivity.globalDataArray.removeAt(DeleteItemActivity.itemIndexInGlobalArray)
             } else if (reason == "addItem") {
                 itemsContainer.add(0, mutableListOf(imageNum, partNum, itemName, minStockLevel, numInStock, commentStr, "2"))
                 MainActivity.globalDataArray.add(AddItemActivity.itemIndexInGlobalArray, mutableListOf(imageNum, partNum, itemName, minStockLevel, numInStock, commentStr, "2", "11"))
+            } else if (reason == "changeCount") {
+                itemsContainer[index.toInt()][4] = numInStock
+                MainActivity.globalDataArray[index.toInt()][4] = numInStock
             } else {
                 itemsContainer[index.toInt()][0] = imageNum
                 itemsContainer[index.toInt()][1] = partNum
@@ -58,6 +61,13 @@ class Fragment11(
                 itemsContainer[index.toInt()][3] = minStockLevel
                 itemsContainer[index.toInt()][4] = numInStock
                 itemsContainer[index.toInt()][5] = commentStr
+
+                MainActivity.globalDataArray[CallServer.itemIndexInGlobalArray][0] = imageNum
+                MainActivity.globalDataArray[CallServer.itemIndexInGlobalArray][1] = partNum
+                MainActivity.globalDataArray[CallServer.itemIndexInGlobalArray][2] = itemName
+                MainActivity.globalDataArray[CallServer.itemIndexInGlobalArray][3] = minStockLevel
+                MainActivity.globalDataArray[CallServer.itemIndexInGlobalArray][4] = numInStock
+                MainActivity.globalDataArray[CallServer.itemIndexInGlobalArray][5] = commentStr
             }
             recyclerView.adapter?.notifyDataSetChanged()
         }
@@ -130,14 +140,14 @@ class Fragment11(
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1) {
-            if (resultCode == Activity.RESULT_OK) {
-                val indexStr = data?.getStringExtra("index")
-                val valueStr = data?.getStringExtra("newValue")
-                items[indexStr!!.toInt()][4] = valueStr.toString()
-                recyclerView.adapter?.notifyDataSetChanged()
-            }
-        }
+//        if (requestCode == 1) {
+//            if (resultCode == Activity.RESULT_OK) {
+//                val indexStr = data?.getStringExtra("index")
+//                val valueStr = data?.getStringExtra("newValue")
+//                items[indexStr!!.toInt()][4] = valueStr.toString()
+//                recyclerView.adapter?.notifyDataSetChanged()
+//            }
+//        }
     }
 
     private fun showPopUp(pos: Int, view: View) {

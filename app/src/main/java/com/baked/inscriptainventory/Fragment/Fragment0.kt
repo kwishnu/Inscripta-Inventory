@@ -1,7 +1,6 @@
 package com.baked.inscriptainventory.Fragment
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
@@ -48,10 +47,14 @@ class Fragment0(
         ) {
             if (reason == "deleteItem") {
                 itemsContainer.removeAt(index.toInt())
-                MainActivity.globalDataArray.removeAt(index.toInt())
+                MainActivity.globalDataArray.removeAt(DeleteItemActivity.itemIndexInGlobalArray)
             } else if (reason == "addItem") {
                 itemsContainer.add(0, mutableListOf(imageNum, partNum, itemName, minStockLevel, numInStock, commentStr, "2"))
                 MainActivity.globalDataArray.add(AddItemActivity.itemIndexInGlobalArray, mutableListOf(imageNum, partNum, itemName, minStockLevel, numInStock, commentStr, "2", "0"))
+            } else if (reason == "changeCount") {
+                itemsContainer[index.toInt()][4] = numInStock
+                MainActivity.globalDataArray[ItemActionActivity.itemIndexInGlobalArray][4] = numInStock
+                Log.d(TAG, MainActivity.globalDataArray.toString())
             } else {
                 itemsContainer[index.toInt()][0] = imageNum
                 itemsContainer[index.toInt()][1] = partNum
@@ -59,6 +62,13 @@ class Fragment0(
                 itemsContainer[index.toInt()][3] = minStockLevel
                 itemsContainer[index.toInt()][4] = numInStock
                 itemsContainer[index.toInt()][5] = commentStr
+
+                MainActivity.globalDataArray[CallServer.itemIndexInGlobalArray][0] = imageNum
+                MainActivity.globalDataArray[CallServer.itemIndexInGlobalArray][1] = partNum
+                MainActivity.globalDataArray[CallServer.itemIndexInGlobalArray][2] = itemName
+                MainActivity.globalDataArray[CallServer.itemIndexInGlobalArray][3] = minStockLevel
+                MainActivity.globalDataArray[CallServer.itemIndexInGlobalArray][4] = numInStock
+                MainActivity.globalDataArray[CallServer.itemIndexInGlobalArray][5] = commentStr
             }
             recyclerView.adapter?.notifyDataSetChanged()
         }
@@ -131,14 +141,14 @@ class Fragment0(
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1) {
-            if (resultCode == Activity.RESULT_OK) {
-                val indexStr = data?.getStringExtra("index")
-                val valueStr = data?.getStringExtra("newValue")
-                items[indexStr!!.toInt()][4] = valueStr.toString()
-                recyclerView.adapter?.notifyDataSetChanged()
-            }
-        }
+//        if (requestCode == 1) {
+//            if (resultCode == Activity.RESULT_OK) {
+//                val indexStr = data?.getStringExtra("index")
+//                val valueStr = data?.getStringExtra("newValue")
+//                items[indexStr!!.toInt()][4] = valueStr.toString()
+//                recyclerView.adapter?.notifyDataSetChanged()
+//            }
+//        }
     }
 
     private fun showPopUp(pos: Int, view: View) {

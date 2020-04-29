@@ -35,6 +35,7 @@ class DeleteItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
         fun sendReceiveImages(imagesSent: MutableList<String>) {
             imagesArray = imagesSent
         }
+        var itemIndexInGlobalArray = -1
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,7 +87,17 @@ class DeleteItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
                 .setCancelable(true)
                 .setPositiveButton("Proceed", DialogInterface.OnClickListener {
                     dialog, _ ->
-                        CallServer(this).makeCall(
+
+                    for (i in 0 until MainActivity.globalDataArray.size) {
+                        if (MainActivity.globalDataArray[i][7] != sheetNum) {
+                            itemIndexInGlobalArray++
+                        } else {
+                            break
+                        }
+                    }
+                    itemIndexInGlobalArray = itemIndexInGlobalArray + rowNum!!.toInt() - 1
+
+                    CallServer(this).makeCall(
                             content,//View
                             ipAddressStr,//IP Address
                             "deleteItem",//Reason

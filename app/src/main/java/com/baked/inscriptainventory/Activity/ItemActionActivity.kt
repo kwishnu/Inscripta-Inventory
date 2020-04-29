@@ -37,6 +37,9 @@ class ItemActionActivity : AppCompatActivity(){
     private var sharedPrefs: SharedPreferences? = null//getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE)
     private val prefsFilename = "SharedPreferences"
     private val ipAddressName = "IPAddress"
+    companion object {
+        var itemIndexInGlobalArray = -1
+    }
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -121,14 +124,28 @@ class ItemActionActivity : AppCompatActivity(){
                 ))
                 newValueStr = newQuantity.toString()
 
+                var delimSheetNumStr = ""
+                var delimRowNumStr = ""
+
+                for (i in 0 until MainActivity.globalDataArray.size) {
+                    if (MainActivity.globalDataArray[i][2] == itemName && MainActivity.globalDataArray[i][1] == itemPartNum) {
+                        delimSheetNumStr = MainActivity.globalDataArray[i][7] + "~" + delimSheetNumStr
+                        delimRowNumStr = MainActivity.globalDataArray[i][6] + "~" + delimRowNumStr
+                    }
+                }
+                val sheetResultStr = delimSheetNumStr.dropLastWhile { it.toString() == "~" }//Remove terminal ~ characters
+                val rowResultStr = delimRowNumStr.dropLastWhile { it.toString() == "~" }
+                Log.d(TAG, MainActivity.globalDataArray.toString())
+                Log.d(TAG, sheetResultStr)
+
                 callServer(
                     constraintLayout,
                     itemName!!,
                     itemPartNum,
                     newValueStr,
                     minStockLevel,
-                    sheetNum!!,
-                    rowNum!!,
+                    sheetResultStr,
+                    rowResultStr,
                     sendWarning
                 )
             }
@@ -141,8 +158,8 @@ class ItemActionActivity : AppCompatActivity(){
     partNum: String?,
     invCount: String,
     minStockLevel: String,
-    sheetNum: String,
-    rowNum: String,
+    sheetNumArrayStr: String,
+    rowNumArrayStr: String,
     sendWarning: String
     ) {
         ipAddressStr = sharedPrefs!!.getString(ipAddressName, String.toString()).toString()
@@ -150,7 +167,7 @@ class ItemActionActivity : AppCompatActivity(){
         val emailStr = MainActivity.globalEmailStr;
 
         val urlStr = "http://$ipAddressStr:$portNum/index.php?Reason=changeCount&InvCount=$invCount" +
-                "&PartNumber=$partNum&Sheet=$sheetNum&RowNum=$rowNum" +
+                "&PartNumber=$partNum&Sheet=$sheetNumArrayStr&RowNum=$rowNumArrayStr" +
                 "&SendWarning=$sendWarning&ItemName=$itemName&ImageNum=0" +
                 "&MinStockLevel=$minStockLevel$emailStr"
         val postBody = FormBody.Builder()
@@ -181,132 +198,48 @@ Log.d(TAG, resp)
                             numInInventory.text = "Inventory Count: $newQuantity"
 
                             //Adapter notifyDataSetChanged(): (onActivityResult when from RecyclerView click, from MainActivity* when from QR scan)
-                            val index = (rowNum.toInt() - 2).toString()
-                            intent.putExtra("index", index)
-                            intent.putExtra("newValue", newValueStr)
-                            setResult(Activity.RESULT_OK, intent)
-                            when (fromActivity) {
-                                "MainActivity1" -> Fragment0.SetAdapterFromActivity.invoke(
-                                    "changeCount",
-                                    index,
-                                    imageIndex,
-                                    partNum!!,
-                                    itemName,
-                                    minStockLevel,
-                                    newValueStr,
-                                    commentStr
-                                )
-                                "MainActivity2" -> Fragment1.SetAdapterFromActivity.invoke(
-                                    "changeCount",
-                                    index,
-                                    imageIndex,
-                                    partNum!!,
-                                    itemName,
-                                    minStockLevel,
-                                    newValueStr,
-                                    commentStr
-                                )
-                                "MainActivity3" -> Fragment2.SetAdapterFromActivity.invoke(
-                                    "changeCount",
-                                    index,
-                                    imageIndex,
-                                    partNum!!,
-                                    itemName,
-                                    minStockLevel,
-                                    newValueStr,
-                                    commentStr
-                                )
-                                "MainActivity4" -> Fragment3.SetAdapterFromActivity.invoke(
-                                    "changeCount",
-                                    index,
-                                    imageIndex,
-                                    partNum!!,
-                                    itemName,
-                                    minStockLevel,
-                                    newValueStr,
-                                    commentStr
-                                )
-                                "MainActivity5" -> Fragment4.SetAdapterFromActivity.invoke(
-                                    "changeCount",
-                                    index,
-                                    imageIndex,
-                                    partNum!!,
-                                    itemName,
-                                    minStockLevel,
-                                    newValueStr,
-                                    commentStr
-                                )
-                                "MainActivity6" -> Fragment5.SetAdapterFromActivity.invoke(
-                                    "changeCount",
-                                    index,
-                                    imageIndex,
-                                    partNum!!,
-                                    itemName,
-                                    minStockLevel,
-                                    newValueStr,
-                                    commentStr
-                                )
-                                "MainActivity7" -> Fragment6.SetAdapterFromActivity.invoke(
-                                    "changeCount",
-                                    index,
-                                    imageIndex,
-                                    partNum!!,
-                                    itemName,
-                                    minStockLevel,
-                                    newValueStr,
-                                    commentStr
-                                )
-                                "MainActivity8" -> Fragment7.SetAdapterFromActivity.invoke(
-                                    "changeCount",
-                                    index,
-                                    imageIndex,
-                                    partNum!!,
-                                    itemName,
-                                    minStockLevel,
-                                    newValueStr,
-                                    commentStr
-                                )
-                                "MainActivity9" -> Fragment8.SetAdapterFromActivity.invoke(
-                                    "changeCount",
-                                    index,
-                                    imageIndex,
-                                    partNum!!,
-                                    itemName,
-                                    minStockLevel,
-                                    newValueStr,
-                                    commentStr
-                                )
-                                "MainActivity10" -> Fragment9.SetAdapterFromActivity.invoke(
-                                    "changeCount",
-                                    index,
-                                    imageIndex,
-                                    partNum!!,
-                                    itemName,
-                                    minStockLevel,
-                                    newValueStr,
-                                    commentStr
-                                )
-                                "MainActivity11" -> Fragment10.SetAdapterFromActivity.invoke(
-                                    "changeCount",
-                                    index,
-                                    imageIndex,
-                                    partNum!!,
-                                    itemName,
-                                    minStockLevel,
-                                    newValueStr,
-                                    commentStr
-                                )
-                                "MainActivity12" -> Fragment11.SetAdapterFromActivity.invoke(
-                                    "changeCount",
-                                    index,
-                                    imageIndex,
-                                    partNum!!,
-                                    itemName,
-                                    minStockLevel,
-                                    newValueStr,
-                                    commentStr
-                                )
+//                            val index = (rowNum.toInt() - 2).toString()
+//                            intent.putExtra("index", index)
+//                            intent.putExtra("newValue", newValueStr)
+
+                            val rowNumArray = rowNumArrayStr.split("~")
+                            val sheetArray = sheetNumArrayStr.split("~")
+                            val imageNum = "null"
+                            val reason = "changeCount"
+
+                            //Adapter notifyDataSetChanged():
+
+                            for (i in sheetArray.indices){
+                                itemIndexInGlobalArray = -1
+                                val theSheet = sheetArray[i]
+                                for (j in 0 until MainActivity.globalDataArray.size) {
+                                    if (MainActivity.globalDataArray[j][7] != theSheet) {
+                                        itemIndexInGlobalArray++
+                                    } else {
+                                        break
+                                    }
+                                }
+                                itemIndexInGlobalArray = itemIndexInGlobalArray + rowNumArray[i].toInt() - 1
+
+                                val index = (rowNumArray[i].toInt() - 2).toString()
+                                when (sheetArray[i]){
+                                    "0" -> Fragment0.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
+                                    "1" -> Fragment1.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
+                                    "2" -> Fragment2.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
+                                    "3" -> Fragment3.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
+                                    "4" -> Fragment4.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
+                                    "5" -> Fragment5.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
+                                    "6" -> Fragment6.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
+                                    "7" -> Fragment7.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
+                                    "8" -> Fragment8.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
+                                    "9" -> Fragment9.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
+                                    "10" -> Fragment10.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
+                                    "11" -> Fragment11.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
+                                }
                             }
+
+
+                            setResult(Activity.RESULT_OK, intent)
                         } else {
                             Snackbar.make(view,"Unexpected error\nEnter changes manually",
                             Snackbar.LENGTH_LONG).setAction("Action", null).show()

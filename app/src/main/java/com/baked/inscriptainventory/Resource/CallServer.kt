@@ -17,7 +17,7 @@ class CallServer ( private val context: Context) {
     private val client = OkHttpClient()
     private val portNum = MainActivity.globalPortNum
     companion object {
-        val MEDIA_TYPE_MARKDOWN = "text/x-markdown; charset=utf-8".toMediaType()
+        var itemIndexInGlobalArray = 0
     }
     fun makeCall (
         view: View,
@@ -69,11 +69,28 @@ class CallServer ( private val context: Context) {
                             }
                             Snackbar.make(view, "Item successfully$appendStr",
                             Snackbar.LENGTH_LONG).setAction("Action", null).show()
+
+                            //Adapter notifyDataSetChanged() for each fragment:
+
                             val rowNumArray = rowNum.split("~")
                             val sheetArray = sheetNum.split("~")
+
                             if (reason != "newTab") {
                                 for (i in sheetArray.indices){
-                                    //Adapter notifyDataSetChanged():
+                                    if (reason == "editItem") {
+                                        itemIndexInGlobalArray = -1
+                                        val theSheet = sheetArray[i]
+                                        for (j in 0 until MainActivity.globalDataArray.size) {
+                                            if (MainActivity.globalDataArray[j][7] != theSheet) {
+                                                itemIndexInGlobalArray++
+                                                Log.d(TAG, "theSheet = " + theSheet + " and MainActivity.globalDataArray[j][7] = " + MainActivity.globalDataArray[j][7])
+                                            } else {
+                                                break
+                                            }
+                                        }
+                                        itemIndexInGlobalArray = itemIndexInGlobalArray + rowNumArray[i].toInt() - 1
+                                    }
+Log.d(TAG, "sheetArray[i] = " + sheetArray[i] + " and itemIndexInGlobalArray = " + itemIndexInGlobalArray.toString())
                                     val index = (rowNumArray[i].toInt() - 2).toString()
                                     when (sheetArray[i]){
                                         "0" -> Fragment0.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)

@@ -97,18 +97,11 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
 
             var delimSheetNumStr = ""
             var delimRowNumStr = ""
-            Log.d(TAG, MainActivity.globalDataArray.toString())
 
             for (i in 0 until MainActivity.globalDataArray.size) {
                 if (MainActivity.globalDataArray[i][2] == itemName && MainActivity.globalDataArray[i][1] == itemPartNum) {
                     delimSheetNumStr = MainActivity.globalDataArray[i][7] + "~" + delimSheetNumStr
                     delimRowNumStr = MainActivity.globalDataArray[i][6] + "~" + delimRowNumStr
-                    MainActivity.globalDataArray[i][0] = imageIndex
-                    MainActivity.globalDataArray[i][1] = partNumber
-                    MainActivity.globalDataArray[i][2] = itemDescription
-                    MainActivity.globalDataArray[i][3] = minStock
-                    MainActivity.globalDataArray[i][4] = numInStock
-                    MainActivity.globalDataArray[i][5] = commentStr
                 }
             }
             val sheetResultStr = delimSheetNumStr.dropLastWhile { it.toString() == "~" }//Remove terminal ~ characters

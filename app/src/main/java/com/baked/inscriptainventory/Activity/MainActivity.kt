@@ -49,9 +49,9 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
     private var currentTab = 0
     companion object {
         //***********************************************Remove before Git commit****************************************************************//
-        var globalIPAddress = ""
-        var globalPortNum = ""
-        const val globalEmailStr = ""
+        var globalIPAddress = "10.0.0.225"
+        var globalPortNum = "10827"
+        const val globalEmailStr = "&Host=smtp.office365.com&Who=ken.wishart@inscripta.com&Date=JennyMilo00&Time=882277!"
         //***********************************************Remove before Git commit****************************************************************//
         var globalImageIndex = "0"
         var globalPartNumber = "none"
