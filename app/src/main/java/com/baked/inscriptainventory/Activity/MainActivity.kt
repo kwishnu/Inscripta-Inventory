@@ -49,9 +49,9 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
     private var currentTab = 0
     companion object {
         //***********************************************Remove before Git commit****************************************************************//
-        var globalIPAddress = "10.0.0.225"
-        var globalPortNum = "10827"
-        const val globalEmailStr = "&Host=smtp.office365.com&Who=ken.wishart@inscripta.com&Date=JennyMilo00&Time=882277!"
+        var globalIPAddress = ""
+        var globalPortNum = ""
+        const val globalEmailStr = ""
         //***********************************************Remove before Git commit****************************************************************//
         var globalImageIndex = "0"
         var globalPartNumber = "none"
@@ -273,7 +273,8 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 for (i in InventoryTabs){
                     if (i.size > 0 && i[0].size < 1) i.removeAt(0)
                 }
-                val inputTitleStr: String = etTitle.text.toString()
+                var inputTitleStr = "New Tab"
+                if (!etTitle.text.toString().isBlank()) inputTitleStr = etTitle.text.toString()
                 TabTitles.add(inputTitleStr)
                 setTabs()
                 val tabLayout = tabs as TabLayout//Go to appropriate tab...
@@ -318,7 +319,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
             return
         }
         currentTab = tabs.selectedTabPosition
-        Log.d(TAG, currentTab.toString())
+
         CallServer(this).makeCall(
             coordinator_layout,
             ipAddressStr,
