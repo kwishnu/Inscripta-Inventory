@@ -53,7 +53,6 @@ class Fragment0(
             } else if (reason == "changeCount") {
                 itemsContainer[index.toInt()][4] = numInStock
                 MainActivity.globalDataArray[ItemActionActivity.itemIndexInGlobalArray][4] = numInStock
-                Log.d(TAG, MainActivity.globalDataArray.toString())
             } else {
                 itemsContainer[index.toInt()][0] = imageNum
                 itemsContainer[index.toInt()][1] = partNum

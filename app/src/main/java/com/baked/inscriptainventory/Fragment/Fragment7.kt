@@ -52,7 +52,7 @@ class Fragment7(
                 MainActivity.globalDataArray.add(AddItemActivity.itemIndexInGlobalArray, mutableListOf(imageNum, partNum, itemName, minStockLevel, numInStock, commentStr, "2", "7"))
             } else if (reason == "changeCount") {
                 itemsContainer[index.toInt()][4] = numInStock
-                MainActivity.globalDataArray[index.toInt()][4] = numInStock
+                MainActivity.globalDataArray[ItemActionActivity.itemIndexInGlobalArray][4] = numInStock
             } else {
                 itemsContainer[index.toInt()][0] = imageNum
                 itemsContainer[index.toInt()][1] = partNum
