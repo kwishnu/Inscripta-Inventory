@@ -22,6 +22,8 @@ class InventoryAdapter(
     private val context: Context,
     val clickListener: (Int) -> Unit,
     val imageListener: (Int) -> Unit,
+    val numberListener: (Int) -> Unit,
+    val thumbnailListener: (Int) -> Unit,
     val longClickListener: (Int, View) -> Unit,
     val images: MutableList<String>
 ):
@@ -80,6 +82,12 @@ class InventoryAdapter(
         holder.clickableImage.setOnClickListener {
             imageListener(position)
         }
+        holder.detail.setOnClickListener {
+            numberListener(position)
+        }
+        holder.clickableThumbnail.setOnClickListener {
+            thumbnailListener(position)
+        }
         holder.clickableView.setOnLongClickListener {
             val view = holder.itemView
             longClickListener(position, view)
@@ -92,6 +100,8 @@ class InventoryAdapter(
 class ViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
     val clickableView : RelativeLayout = itemView.list_text_layout
     val clickableImage : ImageView = itemView.comment_image
+//    val clickableNumber : ImageView = itemView.comment_image
+    val clickableThumbnail : ImageView = itemView.list_thumbnail
     val detail: TextView = itemView.list_detail
     val image: ImageView = itemView.list_thumbnail
 }
