@@ -28,6 +28,7 @@ private const val TAB = "6"
 private lateinit var recyclerView: RecyclerView
 private lateinit var itemsContainer: MutableList<MutableList<String>>
 
+private var nothing = ""
 
 class Fragment5(
     private val items: MutableList<MutableList<String>>,

@@ -27,6 +27,7 @@ private const val TAG = "InscriptaInventory_F6"
 private const val TAB = "7"
 private lateinit var recyclerView: RecyclerView
 private lateinit var itemsContainer: MutableList<MutableList<String>>
+private var nothing = ""
 
 
 class Fragment6(
