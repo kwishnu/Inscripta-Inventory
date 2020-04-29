@@ -275,6 +275,10 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 }
                 var inputTitleStr = "New Tab"
                 if (!etTitle.text.toString().isBlank()) inputTitleStr = etTitle.text.toString()
+                val invalidCharacters = arrayOf("*", ":", "/", "\\", "?", "[", "]", "#")
+                for (char in invalidCharacters){
+                    inputTitleStr = inputTitleStr.replace(char.toString(), "x")
+                }
                 TabTitles.add(inputTitleStr)
                 setTabs()
                 val tabLayout = tabs as TabLayout//Go to appropriate tab...
@@ -319,6 +323,16 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
             return
         }
         currentTab = tabs.selectedTabPosition
+        var index = -1
+        for (j in 0 until globalDataArray.size) {
+            if (globalDataArray[j][7].toInt() != currentTab) {
+                index++
+            } else {
+                break
+            }
+        }
+        index++
+        AddItemActivity.itemIndexInGlobalArray = index
 
         CallServer(this).makeCall(
             coordinator_layout,
