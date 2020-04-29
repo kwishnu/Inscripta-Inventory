@@ -92,7 +92,14 @@ class Fragment0(
         }
 
         fun imageClickListener(position: Int) {
-                showEditableComment(position)
+            showEditableComment(position)
+        }
+
+        fun numberClickListener(position: Int) {
+            launchRequestItemActivity(position)
+        }
+        fun thumbnailClickListener(position: Int) {
+            launchRequestItemActivity(position)
         }
 
         fun longClickListener(position: Int, view: View) {
@@ -101,6 +108,8 @@ class Fragment0(
 
         val listener = { i: Int -> fragClickListener(i) }
         val imageListener = { i: Int -> imageClickListener(i) }
+        val numberListener = { i: Int -> numberClickListener(i) }
+        val thumbnailListener = { i: Int -> thumbnailClickListener(i) }
         val longClickListener = { i: Int, view: View -> longClickListener(i, view) }
         recyclerView.adapter = activity?.applicationContext?.let {
             InventoryAdapter(
@@ -108,6 +117,8 @@ class Fragment0(
                 it,
                 listener,
                 imageListener,
+                numberListener,
+                thumbnailListener,
                 longClickListener,
                 images
             )
@@ -129,24 +140,18 @@ class Fragment0(
         intent.putExtra("Item", items[pos][2])
         intent.putExtra("MinStockLevel", items[pos][3])
         intent.putExtra("InStock", items[pos][4])
-        intent.putExtra("Sheet", "1")
-        intent.putExtra("Row", (pos + 2).toString())
-        intent.putExtra("Comment", items[pos][5])
         intent.putExtra("FromActivity", "Fragment")
 
         startActivityForResult(intent, 1)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-//        if (requestCode == 1) {
-//            if (resultCode == Activity.RESULT_OK) {
-//                val indexStr = data?.getStringExtra("index")
-//                val valueStr = data?.getStringExtra("newValue")
-//                items[indexStr!!.toInt()][4] = valueStr.toString()
-//                recyclerView.adapter?.notifyDataSetChanged()
-//            }
-//        }
+    private fun launchRequestItemActivity(pos: Int) {
+        val intent = Intent(activity, RequestItemActivity::class.java)
+        intent.putExtra("Image", items[pos][0])
+        intent.putExtra("PartNum", items[pos][1])
+        intent.putExtra("Item", items[pos][2])
+
+        startActivity(intent)
     }
 
     private fun showPopUp(pos: Int, view: View) {
