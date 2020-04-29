@@ -9,7 +9,6 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
-import android.widget.RadioButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
@@ -17,9 +16,6 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.baked.inscriptainventory.Adapter.ImageGridAdapter
 import com.baked.inscriptainventory.Resource.CallServer
 import com.baked.inscriptainventory.R
-import com.baked.inscriptainventory.Resource.ImagesArray
-import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_add_item.*
 import kotlinx.android.synthetic.main.activity_edit_item.*
 import kotlinx.android.synthetic.main.activity_edit_item.commentsImage
 import kotlinx.android.synthetic.main.activity_edit_item.content
@@ -29,8 +25,6 @@ import kotlinx.android.synthetic.main.activity_edit_item.minStockLevelET
 import kotlinx.android.synthetic.main.activity_edit_item.numInStockET
 import kotlinx.android.synthetic.main.activity_edit_item.partNumberEditText
 import kotlinx.android.synthetic.main.activity_edit_item.sheetSelectSpinner
-import okhttp3.*
-import java.io.IOException
 
 private const val TAG = "InscriptaInventory_EIA"
 private const val STOCK_0 = "0"
@@ -38,7 +32,6 @@ private lateinit var tabArray: MutableList<String>
 private lateinit var imagesArray: MutableList<String>
 
 class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
-    private val client = OkHttpClient()
     private var fromActivity = "Unknown"
     private var sharedPrefs: SharedPreferences? = null
     private val prefsFilename = "SharedPreferences"
@@ -135,6 +128,7 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
         numInStockET.setOnFocusChangeListener { v, event ->
             numInStockET.hint = if(numInStockET.hasFocus()) "" else STOCK_0
         }
+
         minStockLevelET.setOnFocusChangeListener { v, event ->
             minStockLevelET.hint = if(minStockLevelET.hasFocus()) "" else STOCK_0
         }
