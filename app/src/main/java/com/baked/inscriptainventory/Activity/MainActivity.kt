@@ -7,6 +7,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -59,8 +60,9 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
         var globalMinStockLevel = "0"
         var globalStockCount = "0"
         var globalCommentStr = "null"
-        var globalItemOnClipboard = false
+        var globalItemOnClipboard: Boolean = false
         var globalDataArray: MutableList<MutableList<String>> = ArrayList()
+        var globalSheetChangeMade: Boolean = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -105,7 +107,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
         portNumStr = sharedPrefs!!.getString(portName, String.toString()).toString()
         globalIPAddress = ipAddressStr
         globalPortNum = portNumStr
-        val urlStr = "http://$ipAddressStr:$portNumStr/index.php"
+        val urlStr = "http://$ipAddressStr:$portNumStr/index.php?IP=$ipAddressStr&PortNum=$portNumStr"
         val request = Request.Builder()
             .url(urlStr)
             .build()
@@ -279,11 +281,19 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 for (char in invalidCharacters){
                     inputTitleStr = inputTitleStr.replace(char.toString(), "x")
                 }
-                TabTitles.add(inputTitleStr)
-                setTabs()
-                val tabLayout = tabs as TabLayout//Go to appropriate tab...
-                val tab = tabLayout.getTabAt(TabTitles.size - 1)
-                tab?.select()
+
+                val r = Runnable {
+                    if (globalSheetChangeMade) {
+                        globalSheetChangeMade = false
+                        TabTitles.add(inputTitleStr)
+                        setTabs()
+                        val tabLayout = tabs as TabLayout//Go to appropriate tab...
+                        val tab = tabLayout.getTabAt(TabTitles.size - 1)
+                        tab?.select()
+                    }
+                }
+                Handler().postDelayed(r, 1000)
+
                 CallServer(this).makeCall(
                     coordinator_layout,//View
                     ipAddressStr,//IP Address
@@ -306,6 +316,53 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
         val alert = dialogBuilder.create()
         alert.setTitle("New Tab")
         alert.show()
+    }
+
+    fun deleteTab(item: MenuItem) {
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder
+            .setMessage("Remove this tab and delete sheet in InventoryXls file?")
+            .setCancelable(true)
+            .setPositiveButton("Delete", DialogInterface.OnClickListener {
+                    dialog, _ ->
+                currentTab = tabs.selectedTabPosition
+
+                val r = Runnable {
+                    if (globalSheetChangeMade) {
+                        globalSheetChangeMade = false
+                        TabTitles.removeAt(currentTab)
+                        setTabs()
+                        val goToTab = if (currentTab == 0) 0 else currentTab - 1
+                        val tabLayout = tabs as TabLayout//Go to appropriate tab...
+                        val tab = tabLayout.getTabAt(goToTab)
+                        tab?.select()
+                    }
+                }
+                Handler().postDelayed(r, 1000)
+
+                CallServer(this).makeCall(
+                    coordinator_layout,//View
+                    ipAddressStr,//IP Address
+                    "deleteTab",//Reason
+                    "none",
+                    "none",
+                    "none",
+                    currentTab.toString(),
+                    "2",
+                    "false",
+                    "none",
+                    "none",
+                    "none"
+                )
+            })
+            .setNegativeButton("Cancel", DialogInterface.OnClickListener {
+                    dialog, _ -> dialog.cancel()
+            })
+        val alert = dialogBuilder.create()
+        alert.setTitle("Delete Tab")
+        alert.show()
+        return
+
     }
 
     fun pasteItem(item: MenuItem) {
@@ -360,7 +417,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
         Reflection.unseal(base)
     }
 
-    private fun setTabs(){
+    fun setTabs(){
         val sectionsPagerAdapter =
             SectionsPagerAdapter(
                 InventoryTabs,
@@ -401,6 +458,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
         AddItemActivity.sendReceiveImages(images)
         EditItemActivity.sendReceiveImages(images)
         DeleteItemActivity.sendReceiveImages(images)
+        RequestItemActivity.sendReceiveImages(images)
 
         val sheet1 = JSONObject(respObj["2"].toString())
         var sheet2 = JSONObject(respObj["2"].toString())
