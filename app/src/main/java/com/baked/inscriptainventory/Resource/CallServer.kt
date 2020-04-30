@@ -71,6 +71,7 @@ class CallServer ( private val context: Context) {
                                 "addItem" -> " added"
                                 "editItem" -> " edited"
                                 "deleteItem" -> " deleted"
+                                "deleteTab" -> " deleted"
                                 else -> " added"
                             }
                             Snackbar.make(view, "Item successfully$appendStr",
@@ -80,7 +81,7 @@ class CallServer ( private val context: Context) {
                             val rowNumArray = rowNum.split("~")
                             val sheetArray = sheetNum.split("~")
 
-                            if (reason != "newTab") {
+                            if (reason != "newTab" && reason != "deleteTab") {
                                 for (i in sheetArray.indices){
                                     if (reason == "editItem") {
                                         itemIndexInGlobalArray = -1
@@ -110,6 +111,8 @@ class CallServer ( private val context: Context) {
                                         "11" -> Fragment11.SetAdapterFromActivity(reason, index, imageNum, safePartNum, safeName, minStockLevel, invCount, commentStr)
                                     }
                                 }
+                            } else {
+                                MainActivity.globalSheetChangeMade = true
                             }
                         } else {
                             Snackbar.make(view,"Error\nInventoryXls file may be open\nEnter changes manually",
