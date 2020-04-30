@@ -14,7 +14,9 @@ class SettingsActivity : AppCompatActivity() {
     private var sharedPrefs: SharedPreferences? = null
     private val prefsFilename = "SharedPreferences"
     private val ipAddressName = "IPAddress"
+    private val portName = "Port"
     private var ipAddressStr = ""
+    private var portNumStr = ""
     lateinit var editor: SharedPreferences.Editor
 
     @SuppressLint("CommitPrefEdits")
@@ -32,18 +34,34 @@ class SettingsActivity : AppCompatActivity() {
         }, 100)
         sharedPrefs = this.getSharedPreferences(prefsFilename, 0)
         ipAddressStr = sharedPrefs!!.getString(ipAddressName, String.toString()).toString()
+        portNumStr = sharedPrefs!!.getString(portName, String.toString()).toString()
         ip_address_edittext.setText(ipAddressStr)
+        port_num_edittext.setText(portNumStr)
 
-        clear_button.setOnClickListener {
+        ip_clear_button.setOnClickListener {
             ip_address_edittext.setText("")
         }
 
-        save_button.setOnClickListener {
+        port_clear_button.setOnClickListener {
+            port_num_edittext.setText("")
+        }
+
+        ip_save_button.setOnClickListener {
             editor = sharedPrefs!!.edit()
             editor.putString(ipAddressName, ip_address_edittext.text.toString())
             editor.apply()
 
             Snackbar.make(settings, "IP Address saved", Snackbar.LENGTH_LONG)
+                .setAction("Action", null)
+                .show()
+        }
+
+        port_save_button.setOnClickListener {
+            editor = sharedPrefs!!.edit()
+            editor.putString(portName, port_num_edittext.text.toString())
+            editor.apply()
+
+            Snackbar.make(settings, "Port Number saved", Snackbar.LENGTH_LONG)
                 .setAction("Action", null)
                 .show()
         }
