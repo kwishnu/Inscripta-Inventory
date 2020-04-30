@@ -47,7 +47,7 @@ class InventoryAdapter(
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         (holder as ViewHolder).clickableView.list_item.text = items[holder.adapterPosition][2]
-        val partNumberStr = items[holder.adapterPosition][1]
+        val partNumberStr = if ((items[holder.adapterPosition][1]).isBlank() || items[holder.adapterPosition][1] == "null") "None" else items[holder.adapterPosition][1]
         holder.clickableView.list_subtitle.text = "Part No.: $partNumberStr"
         val numInStockStr =  if (items[holder.adapterPosition][4] == "null") ("0") else (items[holder.adapterPosition][4])
         val lowQuantityAlarm = numInStockStr.toInt() <= (items[holder.adapterPosition][3]).toInt()//true if count is less than or equal to Min Stock Level
@@ -100,7 +100,6 @@ class InventoryAdapter(
 class ViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
     val clickableView : RelativeLayout = itemView.list_text_layout
     val clickableImage : ImageView = itemView.comment_image
-//    val clickableNumber : ImageView = itemView.comment_image
     val clickableThumbnail : ImageView = itemView.list_thumbnail
     val detail: TextView = itemView.list_detail
     val image: ImageView = itemView.list_thumbnail
