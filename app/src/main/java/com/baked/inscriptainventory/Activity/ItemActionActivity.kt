@@ -83,7 +83,7 @@ class ItemActionActivity : AppCompatActivity(){
         val inStock = intent.getStringExtra("InStock")
         fromActivity = intent.getStringExtra("FromActivity")!!.toString()
 
-        supportActionBar!!.title = if (itemPartNum == "None") "" else getString(R.string.detail_title) + " " + itemPartNum
+        supportActionBar!!.title = if (itemPartNum == "None" || itemPartNum == "null") "" else getString(R.string.detail_title) + " " + itemPartNum
         inventoryItemName.text = itemName
         val itemImageStr = ImagesArray().IMAGE_URI[(imageIndex).toInt()]
         val uri = Uri.parse("android.resource://com.baked.inscriptainventory/drawable/$itemImageStr")
@@ -132,8 +132,6 @@ class ItemActionActivity : AppCompatActivity(){
                 }
                 val sheetResultStr = delimSheetNumStr.dropLastWhile { it.toString() == "~" }//Remove terminal ~ characters
                 val rowResultStr = delimRowNumStr.dropLastWhile { it.toString() == "~" }
-                Log.d(TAG, MainActivity.globalDataArray.toString())
-                Log.d(TAG, sheetResultStr)
 
                 callServer(
                     constraintLayout,
@@ -194,17 +192,11 @@ Log.d(TAG, resp)
                             Snackbar.LENGTH_LONG).setAction("Action", null).show()
                             numInInventory.text = "Inventory Count: $newQuantity"
 
-                            //Adapter notifyDataSetChanged(): (onActivityResult when from RecyclerView click, from MainActivity* when from QR scan)
-//                            val index = (rowNum.toInt() - 2).toString()
-//                            intent.putExtra("index", index)
-//                            intent.putExtra("newValue", newValueStr)
-
+//                            Adapter notifyDataSetChanged(): (onActivityResult when from RecyclerView click, from MainActivity* when from QR scan)
                             val rowNumArray = rowNumArrayStr.split("~")
                             val sheetArray = sheetNumArrayStr.split("~")
                             val imageNum = "null"
                             val reason = "changeCount"
-
-                            //Adapter notifyDataSetChanged():
 
                             for (i in sheetArray.indices){
                                 itemIndexInGlobalArray = -1
@@ -234,7 +226,6 @@ Log.d(TAG, resp)
                                     "11" -> Fragment11.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
                                 }
                             }
-
 
                             setResult(Activity.RESULT_OK, intent)
                         } else {
