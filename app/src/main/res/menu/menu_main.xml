@@ -10,6 +10,13 @@
         android:onClick="addTab"
         />
     <item
+        android:id="@+id/delete_tab"
+        android:orderInCategory="100"
+        android:title="@string/remove_tab"
+        app:showAsAction="never"
+        android:onClick="deleteTab"
+        />
+    <item
         android:id="@+id/paste_item"
         android:orderInCategory="100"
         android:title="@string/paste_item"
