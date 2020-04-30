@@ -1,23 +1,13 @@
 package com.baked.inscriptainventory.Activity
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
-import android.content.SharedPreferences
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.ViewTreeObserver
-import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.baked.inscriptainventory.*
-import com.baked.inscriptainventory.Fragment.*
-import com.baked.inscriptainventory.Resource.ImagesArray
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.request_item_activity.*
@@ -30,11 +20,7 @@ class RequestItemActivity : AppCompatActivity(){
     private val client = OkHttpClient()
     private var ipAddressStr = ""
     private var imageIndex = ""
-    private var commentStrStr = ""
-    private var shouldClose = 2
-    private var seenActivity = false
-    private var newQuantity = 0
-    private var newValueStr = ""
+    private var commentStr = ""
     companion object {
         fun sendReceiveImages(imagesSent: MutableList<String>) {
             imagesArray = imagesSent
@@ -62,6 +48,7 @@ class RequestItemActivity : AppCompatActivity(){
         supportActionBar!!.title = "Send Email Request"
         inventoryItemName.text = "Item Name:\n    $itemName"
         inventoryItemNumber.text = "Part Number:\n    $itemPartNum"
+
         val path = imagesArray[imageIndex.toInt()]
         Picasso.get()
             .load(path)
@@ -69,31 +56,24 @@ class RequestItemActivity : AppCompatActivity(){
             .resize(50, 0)
             .into(imageView)
 
-
         submitButton.setOnClickListener {
             val quantityStr = if (numberToRequestTxt.text.isNullOrBlank()) "(Number not specified)" else numberToRequestTxt.text.toString()
+            val sender = if (nameTxt.text.isNullOrBlank()) "(Name not given)" else nameTxt.text.toString()
+            commentStr = if (additionalCommentTxt.text.isNullOrBlank()) "(No comments)" else additionalCommentTxt.text.toString()
 
-            if (itemName.isNullOrBlank()){
-                val dialogBuilder = AlertDialog.Builder(this)
-                dialogBuilder
-                    .setMessage("Number exceeds stated number in stock. Please adjust accordingly")
-                    .setPositiveButton("OK", DialogInterface.OnClickListener {
-                            dialog, _ -> dialog.cancel()
-                    })
+            submitButton.isEnabled = false
+            submitButton.setBackgroundColor(ContextCompat.getColor(this,
+                R.color.disabledGray
+            ))
 
-                val alert = dialogBuilder.create()
-                alert.setTitle("Adjust Quantities")
-                alert.show()
-            } else {
-
-                callServer(
-                    content,
-                    itemName,
-                    itemPartNum,
-                    quantityStr,
-                    commentStrStr
-                )
-            }
+            callServer(
+                content,
+                itemName!!,
+                itemPartNum,
+                quantityStr,
+                sender,
+                commentStr
+            )
         }
     }
 
@@ -102,13 +82,13 @@ class RequestItemActivity : AppCompatActivity(){
     itemName: String,
     partNum: String?,
     numRequested: String,
+    senderStr: String,
     commentStr: String
     ) {
         val portNum = MainActivity.globalPortNum;
         val emailStr = MainActivity.globalEmailStr;
-
         val urlStr = "http://$ipAddressStr:$portNum/index.php?SendEmailRequest=Send&ItemName=$itemName&PartNumber=$partNum" +
-                "&NumRequested=$numRequested$emailStr"
+                "&NumRequested=$numRequested&Sender=$senderStr$emailStr"
         val postBody = FormBody.Builder()
             .add("CommentStr", commentStr)
             .build()
@@ -116,6 +96,7 @@ class RequestItemActivity : AppCompatActivity(){
             .post(postBody)
             .url(urlStr)
             .build()
+
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Snackbar.make(view, "No server response: Email not sent",
