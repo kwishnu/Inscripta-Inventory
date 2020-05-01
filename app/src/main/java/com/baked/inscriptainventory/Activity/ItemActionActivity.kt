@@ -19,10 +19,12 @@ import com.baked.inscriptainventory.*
 import com.baked.inscriptainventory.Fragment.*
 import com.baked.inscriptainventory.Resource.ImagesArray
 import com.google.android.material.snackbar.Snackbar
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_action_activity.*
 import okhttp3.*
 import java.io.IOException
 private const val TAG = "InscriptaInventory_IAA"
+private lateinit var imagesArray: MutableList<String>
 
 class ItemActionActivity : AppCompatActivity(){
     private val client = OkHttpClient()
@@ -38,6 +40,9 @@ class ItemActionActivity : AppCompatActivity(){
     private val prefsFilename = "SharedPreferences"
     private val ipAddressName = "IPAddress"
     companion object {
+        fun sendReceiveImages(imagesSent: MutableList<String>) {
+            imagesArray = imagesSent
+        }
         var itemIndexInGlobalArray = -1
     }
 
@@ -85,14 +90,17 @@ class ItemActionActivity : AppCompatActivity(){
 
         supportActionBar!!.title = if (itemPartNum == "None" || itemPartNum == "null") "" else getString(R.string.detail_title) + " " + itemPartNum
         inventoryItemName.text = itemName
-        val itemImageStr = ImagesArray().IMAGE_URI[(imageIndex).toInt()]
-        val uri = Uri.parse("android.resource://com.baked.inscriptainventory/drawable/$itemImageStr")
         val minStockLevelNumber = minStockLevel?.toInt()
 
         //Set TextViews and ImageView:
         numInInventory.text = "Inventory Count: $inStock"
         minStockLevelNum.text = "Min. Stock Level: $minStockLevel"
-        imageView.setImageURI(uri)
+        val path = imagesArray[imageIndex.toInt()]
+        Picasso.get()
+            .load(path)
+            .centerCrop()
+            .resize(50, 0)
+            .into(imageView)
 
         submitButton.setOnClickListener {
             val quantityStr = if (numberToSubmitTxt.text.isNullOrBlank()) "1" else numberToSubmitTxt.text.toString()
