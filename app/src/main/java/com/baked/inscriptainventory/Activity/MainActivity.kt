@@ -320,12 +320,12 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
 
     fun deleteTab(item: MenuItem) {
         val dialogBuilder = AlertDialog.Builder(this)
+        currentTab = tabs.selectedTabPosition
         dialogBuilder
-            .setMessage("Remove this tab and delete sheet in InventoryXls file?")
+            .setMessage("Remove this tab and delete \"" + TabTitles[currentTab].toString() + "\" sheet in InventoryXls file?")
             .setCancelable(true)
             .setPositiveButton("Delete", DialogInterface.OnClickListener {
                     dialog, _ ->
-                currentTab = tabs.selectedTabPosition
 
                 val r = Runnable {
                     if (globalSheetChangeMade) {
@@ -335,6 +335,11 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                         val goToTab = if (currentTab == 0) 0 else currentTab - 1
                         val tabLayout = tabs as TabLayout//Go to appropriate tab...
                         val tab = tabLayout.getTabAt(goToTab)
+//                        if (TabTitles.size > 3) {
+//                            tabs.tabMode = TabLayout.MODE_SCROLLABLE
+//                        }else{
+//                            tabs.tabMode = TabLayout.MODE_FIXED
+//                        }
                         tab?.select()
                     }
                 }
@@ -459,6 +464,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
         EditItemActivity.sendReceiveImages(images)
         DeleteItemActivity.sendReceiveImages(images)
         RequestItemActivity.sendReceiveImages(images)
+        ItemActionActivity.sendReceiveImages(images)
 
         val sheet1 = JSONObject(respObj["2"].toString())
         var sheet2 = JSONObject(respObj["2"].toString())
