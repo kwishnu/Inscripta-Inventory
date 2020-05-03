@@ -43,11 +43,14 @@ class RequestItemActivity : AppCompatActivity(){
 
         val itemName = intent.getStringExtra("Item")
         imageIndex = intent?.getStringExtra("Image").toString()
-        val itemPartNum = intent.getStringExtra("PartNum")
+        imageIndex = if (imageIndex.isEmpty() || imageIndex == "null") "0" else imageIndex
+
+        var itemPartNum = intent.getStringExtra("PartNum")
+        itemPartNum = if (itemPartNum!!.isEmpty() || itemPartNum == "null") "None" else itemPartNum
 
         supportActionBar!!.title = "Send Email Request"
         inventoryItemName.text = "Item Name:\n    $itemName"
-        inventoryItemNumber.text = "Part Number:\n    $itemPartNum"
+        inventoryItemNumber.text = "Catalog Number:\n    $itemPartNum"
 
         val path = imagesArray[imageIndex.toInt()]
         Picasso.get()
