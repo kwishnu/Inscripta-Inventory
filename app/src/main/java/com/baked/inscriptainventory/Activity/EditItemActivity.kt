@@ -63,12 +63,19 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
         sheetSelectSpinner.isEnabled = false;
         sheetSelectSpinner.isClickable = false
         sheetSelectSpinner!!.adapter = aa
+        var itemPartNum = ""
+        var minStockLevel = ""
+        var inStock = ""
 
         val itemName = intent.getStringExtra("Item")
         imageIndex = intent.getStringExtra("Image")!!.toString()
-        val itemPartNum = intent.getStringExtra("PartNum")
-        val minStockLevel = intent.getStringExtra("MinStockLevel")
-        val inStock = intent.getStringExtra("InStock")
+        imageIndex = if (imageIndex.isEmpty() || imageIndex == "null") "0" else imageIndex
+        itemPartNum = intent.getStringExtra("PartNum")!!.toString()
+        itemPartNum = if (itemPartNum.isEmpty() || itemPartNum == "null") "" else itemPartNum
+        minStockLevel = intent.getStringExtra("MinStockLevel")!!.toString()
+        minStockLevel = if (minStockLevel.isEmpty() || minStockLevel == "null") "" else minStockLevel
+        inStock = intent.getStringExtra("InStock")!!.toString()
+        inStock = if (inStock.isEmpty() || inStock == "null") "" else inStock
         val sheetNum = intent.getStringExtra("Sheet")
         commentStr = intent.getStringExtra("Comment")!!.toString()
         fromActivity = intent.getStringExtra("FromActivity")!!.toString()
@@ -92,14 +99,13 @@ class EditItemActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
             var delimRowNumStr = ""
 
             for (i in 0 until MainActivity.globalDataArray.size) {
-                if (MainActivity.globalDataArray[i][2] == itemName && MainActivity.globalDataArray[i][1] == itemPartNum) {
+                if (MainActivity.globalDataArray[i][2] == itemName && (MainActivity.globalDataArray[i][1] == itemPartNum || partNumber == "")) {
                     delimSheetNumStr = MainActivity.globalDataArray[i][7] + "~" + delimSheetNumStr
                     delimRowNumStr = MainActivity.globalDataArray[i][6] + "~" + delimRowNumStr
                 }
             }
             val sheetResultStr = delimSheetNumStr.dropLastWhile { it.toString() == "~" }//Remove terminal ~ characters
             val rowResultStr = delimRowNumStr.dropLastWhile { it.toString() == "~" }
-            Log.d(TAG, sheetResultStr)
 
             CallServer(this).makeCall(
                 content,//View
