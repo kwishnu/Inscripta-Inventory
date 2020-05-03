@@ -83,14 +83,17 @@ class ItemActionActivity : AppCompatActivity(){
         radio0.isSelected = true
         val itemName = intent.getStringExtra("Item")
         imageIndex = intent?.getStringExtra("Image").toString()
+        imageIndex = if (imageIndex.isEmpty() || imageIndex == "null") "0" else imageIndex
         val itemPartNum = intent.getStringExtra("PartNum")
-        val minStockLevel = intent.getStringExtra("MinStockLevel")
-        val inStock = intent.getStringExtra("InStock")
+        var minStockLevel = intent.getStringExtra("MinStockLevel")
+        var inStock = intent.getStringExtra("InStock")
+        minStockLevel = if (minStockLevel!!.isEmpty() || minStockLevel == "null") "0" else minStockLevel
+        inStock = if (inStock!!.isEmpty() || inStock == "null") "0" else inStock
         fromActivity = intent.getStringExtra("FromActivity")!!.toString()
 
         supportActionBar!!.title = if (itemPartNum == "None" || itemPartNum == "null") "" else getString(R.string.detail_title) + " " + itemPartNum
         inventoryItemName.text = itemName
-        val minStockLevelNumber = minStockLevel?.toInt()
+        val minStockLevelNumber = minStockLevel.toInt()
 
         //Set TextViews and ImageView:
         numInInventory.text = "Inventory Count: $inStock"
