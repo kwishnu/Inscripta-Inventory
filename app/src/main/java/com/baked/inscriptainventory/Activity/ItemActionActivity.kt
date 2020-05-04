@@ -36,8 +36,9 @@ class ItemActionActivity : AppCompatActivity(){
     private var newQuantity = 0
     private var newValueStr = ""
     private var fromActivity = "Unknown"
-    private var sharedPrefs: SharedPreferences? = null//getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE)
+    private var sharedPrefs: SharedPreferences? = null
     private val prefsFilename = "SharedPreferences"
+    private val initialStateName = "InitialState"
     private val ipAddressName = "IPAddress"
     companion object {
         fun sendReceiveImages(imagesSent: MutableList<String>) {
@@ -172,77 +173,141 @@ class ItemActionActivity : AppCompatActivity(){
         val portNum = MainActivity.globalPortNum;
         val emailStr = MainActivity.globalEmailStr;
 
-        val urlStr = "http://$ipAddressStr:$portNum/index.php?Reason=changeCount&InvCount=$invCount" +
-                "&PartNumber=$partNum&Sheet=$sheetNumArrayStr&RowNum=$rowNumArrayStr" +
-                "&SendWarning=$sendWarning&ItemName=$itemName&ImageNum=0" +
-                "&MinStockLevel=$minStockLevel$emailStr"
-        val postBody = FormBody.Builder()
-            .add("CommentStr", commentStr)
-            .build()
+        sharedPrefs = this.getSharedPreferences(prefsFilename, 0)
+        val editor = sharedPrefs!!.edit()
+
+        val stateStr = sharedPrefs!!.getString(initialStateName, String.toString()).toString()
+        val urlStr = "http://$ipAddressStr:$portNum/index.php?IP=$ipAddressStr&PortNum=$portNum"
         val request = Request.Builder()
-            .post(postBody)
             .url(urlStr)
             .build()
         client.newCall(request).enqueue(object : Callback {
+
             override fun onFailure(call: Call, e: IOException) {
-                Snackbar.make(view, "No server response: enter changes manually",
-                Snackbar.LENGTH_LONG).setAction("Action", null).show()
-                e.printStackTrace()
+                Snackbar.make(view, "No server response", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show()
             }
-            @SuppressLint("SetTextI18n")
+
             override fun onResponse(call: Call, response: Response){
                 response.use {
                     if (!response.isSuccessful) throw IOException("Unexpected code $response")
                     val resp = response.body!!.string()
-                    val successful = resp.indexOf("Success") > -1 || resp.indexOf("SERVER") > -1
-Log.d(TAG, resp)
                     this@ItemActionActivity.runOnUiThread(Runnable {
-                        val intent = Intent()
-                        if (successful) {
-                            Snackbar.make(view,"Success\nInventory adjustment made",
-                            Snackbar.LENGTH_LONG).setAction("Action", null).show()
-                            numInInventory.text = "Inventory Count: $newQuantity"
+                        if (resp == stateStr){
+                            val urlStr2 = "http://$ipAddressStr:$portNum/index.php?Reason=changeCount&InvCount=$invCount" +
+                                    "&PartNumber=$partNum&Sheet=$sheetNumArrayStr&RowNum=$rowNumArrayStr" +
+                                    "&SendWarning=$sendWarning&ItemName=$itemName&ImageNum=0" +
+                                    "&MinStockLevel=$minStockLevel$emailStr"
+                            val postBody = FormBody.Builder()
+                                .add("CommentStr", commentStr)
+                                .build()
+                            val request2 = Request.Builder()
+                                .post(postBody)
+                                .url(urlStr2)
+                                .build()
+                            client.newCall(request2).enqueue(object : Callback {
+                                override fun onFailure(call: Call, e: IOException) {
+                                    Snackbar.make(view, "No server response: enter changes manually",
+                                        Snackbar.LENGTH_LONG).setAction("Action", null).show()
+                                    e.printStackTrace()
+                                }
+                                @SuppressLint("SetTextI18n")
+                                override fun onResponse(call: Call, response: Response){
+                                    response.use {
+                                        if (!response.isSuccessful) throw IOException("Unexpected code $response")
+                                        val resp2 = response.body!!.string()
+                                        val successful = resp2.indexOf("Success") > -1 || resp2.indexOf("SERVER") > -1
+                                        Log.d(TAG, resp2)
+                                        this@ItemActionActivity.runOnUiThread(Runnable {
+                                            val intent = Intent()
+                                            if (successful) {
+                                                Snackbar.make(view,"Success\nInventory adjustment made",
+                                                    Snackbar.LENGTH_LONG).setAction("Action", null).show()
+                                                numInInventory.text = "Inventory Count: $newQuantity"
 
 //                            Adapter notifyDataSetChanged(): (onActivityResult when from RecyclerView click, from MainActivity* when from QR scan)
-                            val rowNumArray = rowNumArrayStr.split("~")
-                            val sheetArray = sheetNumArrayStr.split("~")
-                            val imageNum = "null"
-                            val reason = "changeCount"
+                                                val rowNumArray = rowNumArrayStr.split("~")
+                                                val sheetArray = sheetNumArrayStr.split("~")
+                                                val imageNum = "null"
+                                                val reason = "changeCount"
 
-                            for (i in sheetArray.indices){
-                                itemIndexInGlobalArray = -1
-                                val theSheet = sheetArray[i]
-                                for (j in 0 until MainActivity.globalDataArray.size) {
-                                    if (MainActivity.globalDataArray[j][7] != theSheet) {
-                                        itemIndexInGlobalArray++
-                                    } else {
-                                        break
+                                                for (i in sheetArray.indices){
+                                                    itemIndexInGlobalArray = -1
+                                                    val theSheet = sheetArray[i]
+                                                    for (j in 0 until MainActivity.globalDataArray.size) {
+                                                        if (MainActivity.globalDataArray[j][7] != theSheet) {
+                                                            itemIndexInGlobalArray++
+                                                        } else {
+                                                            break
+                                                        }
+                                                    }
+                                                    itemIndexInGlobalArray = itemIndexInGlobalArray + rowNumArray[i].toInt() - 1
+
+                                                    val index = (rowNumArray[i].toInt() - 2).toString()
+                                                    when (sheetArray[i]){
+                                                        "0" -> Fragment0.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
+                                                        "1" -> Fragment1.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
+                                                        "2" -> Fragment2.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
+                                                        "3" -> Fragment3.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
+                                                        "4" -> Fragment4.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
+                                                        "5" -> Fragment5.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
+                                                        "6" -> Fragment6.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
+                                                        "7" -> Fragment7.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
+                                                        "8" -> Fragment8.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
+                                                        "9" -> Fragment9.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
+                                                        "10" -> Fragment10.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
+                                                        "11" -> Fragment11.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
+                                                    }
+                                                }
+                                                client.newCall(request).enqueue(object : Callback {
+                                                    override fun onFailure(call: Call, e: IOException) {
+                                                        Snackbar.make(view, "No server response", Snackbar.LENGTH_LONG)
+                                                            .setAction("Action", null).show()
+                                                    }
+
+                                                    override fun onResponse(call: Call, response: Response){
+                                                        response.use {
+                                                            if (!response.isSuccessful) throw IOException("Unexpected code $response")
+                                                            val resp3 = response.body!!.string()
+                                                            this@ItemActionActivity.runOnUiThread(Runnable {
+
+
+                                                                editor.putString(initialStateName, resp3)
+                                                                editor.apply()
+
+
+                                                            })
+
+                                                        }
+                                                    }
+                                                })
+
+                                                setResult(Activity.RESULT_OK, intent)
+                                            } else {
+                                                Snackbar.make(view,"Unexpected error\nEnter changes manually",
+                                                    Snackbar.LENGTH_LONG).setAction("Action", null).show()
+                                                setResult(Activity.RESULT_CANCELED, intent)
+                                            }
+                                        })
                                     }
                                 }
-                                itemIndexInGlobalArray = itemIndexInGlobalArray + rowNumArray[i].toInt() - 1
-
-                                val index = (rowNumArray[i].toInt() - 2).toString()
-                                when (sheetArray[i]){
-                                    "0" -> Fragment0.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
-                                    "1" -> Fragment1.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
-                                    "2" -> Fragment2.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
-                                    "3" -> Fragment3.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
-                                    "4" -> Fragment4.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
-                                    "5" -> Fragment5.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
-                                    "6" -> Fragment6.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
-                                    "7" -> Fragment7.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
-                                    "8" -> Fragment8.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
-                                    "9" -> Fragment9.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
-                                    "10" -> Fragment10.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
-                                    "11" -> Fragment11.SetAdapterFromActivity(reason, index, imageNum, partNum!!, itemName, minStockLevel, invCount, commentStr)
-                                }
-                            }
-
-                            setResult(Activity.RESULT_OK, intent)
+                            })
                         } else {
-                            Snackbar.make(view,"Unexpected error\nEnter changes manually",
-                            Snackbar.LENGTH_LONG).setAction("Action", null).show()
-                            setResult(Activity.RESULT_CANCELED, intent)
+                            val dialogBuilder = AlertDialog.Builder(this@ItemActionActivity)
+                            dialogBuilder
+                                .setMessage("InventoryXls file has been edited and needs to be refreshed. Close to restart?")
+                                .setCancelable(true)
+                                .setPositiveButton("Close App", DialogInterface.OnClickListener {
+                                        dialog, _ ->
+                                    closeApp()
+                                })
+                                .setNegativeButton("Cancel", DialogInterface.OnClickListener {
+                                        dialog, _ -> dialog.cancel()
+                                })
+
+                            val alert = dialogBuilder.create()
+                            alert.setTitle("Server File Changed")
+                            alert.show()
                         }
                     })
                 }
@@ -257,6 +322,10 @@ Log.d(TAG, resp)
     override fun onSupportNavigateUp(): Boolean {
         startMainActivity()
         return true
+    }
+
+    fun closeApp() {
+        android.os.Process.killProcess(android.os.Process.myPid())
     }
 }
 
