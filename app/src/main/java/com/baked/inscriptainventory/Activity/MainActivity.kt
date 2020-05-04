@@ -51,7 +51,6 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
     companion object {
         //***********************************************Remove before Git commit****************************************************************//
         var globalIPAddress = ""
-        var globalPortNum = ""
         const val globalEmailStr = ""
         //***********************************************Remove before Git commit****************************************************************//
         var globalImageIndex = "0"
@@ -335,11 +334,6 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                         val goToTab = if (currentTab == 0) 0 else currentTab - 1
                         val tabLayout = tabs as TabLayout//Go to appropriate tab...
                         val tab = tabLayout.getTabAt(goToTab)
-//                        if (TabTitles.size > 3) {
-//                            tabs.tabMode = TabLayout.MODE_SCROLLABLE
-//                        }else{
-//                            tabs.tabMode = TabLayout.MODE_FIXED
-//                        }
                         tab?.select()
                     }
                 }
@@ -438,6 +432,11 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
 
     //Parse Excel Json object returned from server:
     private fun parseJsonStr(responseStr: String) {
+
+        val editor = sharedPrefs!!.edit()
+        editor.putString(initialStateName, responseStr)
+        editor.apply()
+
         val respObj = JSONObject(responseStr)
 
         //Tab titles:
