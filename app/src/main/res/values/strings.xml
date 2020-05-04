@@ -5,14 +5,14 @@
     <string name="tab_text_2">Internal Reagents</string>
     <string name="tab_text_3">Purchased Parts</string>
     <string name="thumbnail">thumbnail</string>
-    <string name="detail_title">Part No.</string>
+    <string name="detail_title">Cat No.</string>
     <string name="_1">1</string>
     <string name="remove_from_inventory">Remove</string>
     <string name="add_to_inventory">Add</string>
     <string name="submit">SUBMIT</string>
     <string name="sent">SENT</string>
     <string name="item_image">item_image</string>
-    <string name="save_ip">Save IP</string>
+    <string name="save">Save</string>
     <string name="settings">Settings</string>
     <string name="clear">Clear</string>
     <string name="exit_to_restart">Exit to Restart</string>
@@ -31,7 +31,7 @@
     <string name="edit_item">Edit Item</string>
     <string name="submit_edit">Submit Edit</string>
     <string name="delete_item">Delete Item</string>
-    <string name="part_number">Part Number:</string>
+    <string name="part_number">Catalog Number:</string>
     <string name="part_number2">#######</string>
     <string name="add_tab">Add Tab</string>
     <string name="tab_title">Tab title</string>
@@ -41,4 +41,14 @@
     <string name="paste_item">Paste Item</string>
     <string name="copy_item">Copy Item</string>
     <string name="ip_address">IP Address</string>
+    <string name="port">Port</string>
+    <string name="send_request">Send Request</string>
+    <string name="number_to_order">Number to Order:</string>
+    <string name="additional_comment_optional">Additional Comment (optional):</string>
+    <string name="hash_symbol">#</string>
+    <string name="your_name">Your Name:</string>
+    <string name="name">Name</string>
+    <string name="remove_tab">Remove Tab</string>
+    <string name="ip_address_lbl">IP Address:</string>
+    <string name="port_address_lbl">Port Number:</string>
 </resources>
