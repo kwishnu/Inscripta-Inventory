@@ -2,22 +2,36 @@ package com.baked.inscriptainventory.Activity
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.SearchManager
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
+import android.database.Cursor
+import android.database.MatrixCursor
 import android.os.Bundle
 import android.os.Handler
+import android.provider.BaseColumns
 import android.util.Log
 import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.Toolbar
+import androidx.cursoradapter.widget.CursorAdapter
+import androidx.cursoradapter.widget.SimpleCursorAdapter
+import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.baked.inscriptainventory.Adapter.SectionsPagerAdapter
+import com.baked.inscriptainventory.Fragment.Fragment0
 import com.baked.inscriptainventory.R
 import com.baked.inscriptainventory.Resource.CallServer
+import com.google.android.material.internal.ContextUtils.getActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.zxing.integration.android.IntentIntegrator
@@ -51,6 +65,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
     companion object {
         //***********************************************Remove before Git commit****************************************************************//
         var globalIPAddress = ""
+        var globalPortNum = ""
         const val globalEmailStr = ""
         //***********************************************Remove before Git commit****************************************************************//
         var globalImageIndex = "0"
@@ -66,8 +81,9 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val toolbar = toolbar
-        setSupportActionBar(toolbar)
+        setContentView(R.layout.activity_main)
+        val tb = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(tb)
         sharedPrefs = this.getSharedPreferences(prefsFilename, 0)
         val editor = sharedPrefs!!.edit()
 
@@ -83,7 +99,6 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
             editor.putBoolean("StartedAppOnce", true)
             editor.apply()
         }
-        setContentView(R.layout.activity_main)
 
         callServer()//Load array with Excel data
 
@@ -233,9 +248,63 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.menu_main, menu)
-        return true
+        menuInflater.inflate(R.menu.menu_main, menu)
+
+
+        val searchItem = menu.findItem(R.id.action_search)
+        val searchView = searchItem?.actionView as SearchView
+
+        searchView.queryHint = getString(R.string.search)
+        searchView.findViewById<AutoCompleteTextView>(R.id.search_src_text).threshold = 1
+
+        val from = arrayOf(SearchManager.SUGGEST_COLUMN_TEXT_1)
+        val to = intArrayOf(R.id.item_label)
+        val cursorAdapter = SimpleCursorAdapter(this, R.layout.search_item, null, from, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER)
+        val suggestions = listOf("Apple", "Blueberry", "Carrot", "Daikon")
+
+        searchView.suggestionsAdapter = cursorAdapter
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                hideKeyboard(coordinator_layout)
+                return false
+            }
+
+            override fun onQueryTextChange(query: String?): Boolean {
+                val cursor = MatrixCursor(arrayOf(BaseColumns._ID, SearchManager.SUGGEST_COLUMN_TEXT_1))
+                query?.let {
+                    suggestions.forEachIndexed { index, suggestion ->
+                        if (suggestion.contains(query, true))
+                            cursor.addRow(arrayOf(index, suggestion))
+                    }
+                }
+
+                cursorAdapter.changeCursor(cursor)
+                return true
+            }
+        })
+
+        searchView.setOnSuggestionListener(object: SearchView.OnSuggestionListener {
+            override fun onSuggestionSelect(position: Int): Boolean {
+                return false
+            }
+
+            override fun onSuggestionClick(position: Int): Boolean {
+                hideKeyboard(coordinator_layout)
+                val cursor = searchView.suggestionsAdapter.getItem(position) as Cursor
+                val selection = cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1))
+                searchView.setQuery(selection, false)
+
+                Fragment0.SetAdapterFromActivity.scrollToPosition(8)
+
+                // Do something with selection
+                return true
+            }
+
+        })
+
+//        super.onCreateOptionsMenu(menu, inflater)
+        return true//super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -701,4 +770,10 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
             //.substring(2000))
 //        Log.d(TAG, InventoryTabs.toString())
     }
+
+    fun hideKeyboard(view: View) {
+        val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
 }

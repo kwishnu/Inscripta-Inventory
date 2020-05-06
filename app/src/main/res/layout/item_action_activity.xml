@@ -50,13 +50,14 @@
     <ImageView
         android:id="@+id/imageView"
         android:contentDescription="@string/item_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toTopOf="@+id/numberToSubmitTxt"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewContainer" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewContainer"
+        app:layout_constraintDimensionRatio="1:1" />
 
     <EditText
         android:id="@+id/numberToSubmitTxt"

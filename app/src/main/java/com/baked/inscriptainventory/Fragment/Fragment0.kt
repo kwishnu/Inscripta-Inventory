@@ -70,6 +70,11 @@ class Fragment0(
             }
             recyclerView.adapter?.notifyDataSetChanged()
         }
+
+        fun scrollToPosition(line: Int){
+
+            recyclerView.scrollToPosition(line)
+        }
     }
 
     init {
