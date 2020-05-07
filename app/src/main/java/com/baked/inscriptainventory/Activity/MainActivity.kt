@@ -14,7 +14,6 @@ import android.os.Handler
 import android.provider.BaseColumns
 import android.util.Log
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -25,13 +24,11 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.cursoradapter.widget.CursorAdapter
 import androidx.cursoradapter.widget.SimpleCursorAdapter
-import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.baked.inscriptainventory.Adapter.SectionsPagerAdapter
-import com.baked.inscriptainventory.Fragment.Fragment0
+import com.baked.inscriptainventory.Fragment.*
 import com.baked.inscriptainventory.R
 import com.baked.inscriptainventory.Resource.CallServer
-import com.google.android.material.internal.ContextUtils.getActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.zxing.integration.android.IntentIntegrator
@@ -45,6 +42,7 @@ import java.io.IOException
 
 private var TabTitles: MutableList<String> = ArrayList()
 private var FragmentImages: MutableList<String> = ArrayList()
+private var itemsAndPartNums: MutableList<String> = ArrayList()
 private const val TAG = "InscriptaInventory_MA"
 
 class MainActivity(private var InventoryItems: MutableList<MutableList<String>> = ArrayList(),
@@ -250,7 +248,6 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
 
-
         val searchItem = menu.findItem(R.id.action_search)
         val searchView = searchItem?.actionView as SearchView
 
@@ -260,7 +257,6 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
         val from = arrayOf(SearchManager.SUGGEST_COLUMN_TEXT_1)
         val to = intArrayOf(R.id.item_label)
         val cursorAdapter = SimpleCursorAdapter(this, R.layout.search_item, null, from, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER)
-        val suggestions = listOf("Apple", "Blueberry", "Carrot", "Daikon")
 
         searchView.suggestionsAdapter = cursorAdapter
 
@@ -273,7 +269,7 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
             override fun onQueryTextChange(query: String?): Boolean {
                 val cursor = MatrixCursor(arrayOf(BaseColumns._ID, SearchManager.SUGGEST_COLUMN_TEXT_1))
                 query?.let {
-                    suggestions.forEachIndexed { index, suggestion ->
+                    itemsAndPartNums.forEachIndexed { index, suggestion ->
                         if (suggestion.contains(query, true))
                             cursor.addRow(arrayOf(index, suggestion))
                     }
@@ -295,16 +291,48 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val selection = cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1))
                 searchView.setQuery(selection, false)
 
-                Fragment0.SetAdapterFromActivity.scrollToPosition(8)
+                val indexGiven = searchView.suggestionsAdapter.getItemId(0).toInt()
+                val indexToUse = if (indexGiven % 2 == 0) indexGiven/2 else (indexGiven - 1)/2
+                val rowForScroll = (globalDataArray[indexToUse][6].toInt()) - 2
+                val tabIndex = globalDataArray[indexToUse][7].toInt()
+                val tabLayout = tabs as TabLayout//Go to appropriate tab...
+                val tab = tabLayout.getTabAt(tabIndex)
+                tab?.select()
 
-                // Do something with selection
+                val r = Runnable {
+                    when (tabIndex) {
+                        0 -> Fragment0.SetAdapterFromActivity.scrollToPosition(rowForScroll)
+                        1 -> Fragment1.SetAdapterFromActivity.scrollToPosition(rowForScroll)
+                        2 -> Fragment2.SetAdapterFromActivity.scrollToPosition(rowForScroll)
+                        3 -> Fragment3.SetAdapterFromActivity.scrollToPosition(rowForScroll)
+                        4 -> Fragment4.SetAdapterFromActivity.scrollToPosition(rowForScroll)
+                        5 -> Fragment5.SetAdapterFromActivity.scrollToPosition(rowForScroll)
+                        6 -> Fragment6.SetAdapterFromActivity.scrollToPosition(rowForScroll)
+                        7 -> Fragment7.SetAdapterFromActivity.scrollToPosition(rowForScroll)
+                        8 -> Fragment8.SetAdapterFromActivity.scrollToPosition(rowForScroll)
+                        9 -> Fragment9.SetAdapterFromActivity.scrollToPosition(rowForScroll)
+                        10 -> Fragment10.SetAdapterFromActivity.scrollToPosition(rowForScroll)
+                        11 -> Fragment11.SetAdapterFromActivity.scrollToPosition(rowForScroll)
+                        12 -> Fragment12.SetAdapterFromActivity.scrollToPosition(rowForScroll)
+                        13 -> Fragment13.SetAdapterFromActivity.scrollToPosition(rowForScroll)
+                        14 -> Fragment14.SetAdapterFromActivity.scrollToPosition(rowForScroll)
+                        15 -> Fragment15.SetAdapterFromActivity.scrollToPosition(rowForScroll)
+                        16 -> Fragment16.SetAdapterFromActivity.scrollToPosition(rowForScroll)
+                        17 -> Fragment17.SetAdapterFromActivity.scrollToPosition(rowForScroll)
+                        18 -> Fragment18.SetAdapterFromActivity.scrollToPosition(rowForScroll)
+                        19 -> Fragment19.SetAdapterFromActivity.scrollToPosition(rowForScroll)
+                        20 -> Fragment20.SetAdapterFromActivity.scrollToPosition(rowForScroll)
+                        21 -> Fragment21.SetAdapterFromActivity.scrollToPosition(rowForScroll)
+                        22 -> Fragment22.SetAdapterFromActivity.scrollToPosition(rowForScroll)
+                        23 -> Fragment23.SetAdapterFromActivity.scrollToPosition(rowForScroll)
+                        24 -> Fragment24.SetAdapterFromActivity.scrollToPosition(rowForScroll)
+                    }
+                }
+                Handler().postDelayed(r, 300)
                 return true
             }
-
         })
-
-//        super.onCreateOptionsMenu(menu, inflater)
-        return true//super.onCreateOptionsMenu(menu)
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -575,6 +603,8 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
             val str7 = i.toString()//Row in Excel sheet
             InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
             globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "0"))
+            itemsAndPartNums.add(str2)
+            itemsAndPartNums.add(str3)
         }
         var arrayCopy = InventoryItems.toTypedArray()
         InventoryTabs.add(arrayCopy.toMutableList())
@@ -591,6 +621,8 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str7 = i.toString()
                 InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
                 globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "1"))
+                itemsAndPartNums.add(str2)
+                itemsAndPartNums.add(str3)
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -608,6 +640,8 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str7 = i.toString()
                 InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
                 globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "2"))
+                itemsAndPartNums.add(str2)
+                itemsAndPartNums.add(str3)
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -625,6 +659,8 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str7 = i.toString()
                 InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
                 globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "3"))
+                itemsAndPartNums.add(str2)
+                itemsAndPartNums.add(str3)
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -642,6 +678,8 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str7 = i.toString()
                 InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
                 globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "4"))
+                itemsAndPartNums.add(str2)
+                itemsAndPartNums.add(str3)
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -659,6 +697,8 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str7 = i.toString()
                 InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
                 globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "5"))
+                itemsAndPartNums.add(str2)
+                itemsAndPartNums.add(str3)
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -676,6 +716,8 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str7 = i.toString()
                 InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
                 globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "6"))
+                itemsAndPartNums.add(str2)
+                itemsAndPartNums.add(str3)
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -693,6 +735,8 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str7 = i.toString()
                 InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
                 globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "7"))
+                itemsAndPartNums.add(str2)
+                itemsAndPartNums.add(str3)
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -710,6 +754,8 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str7 = i.toString()
                 InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
                 globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "8"))
+                itemsAndPartNums.add(str2)
+                itemsAndPartNums.add(str3)
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -727,6 +773,8 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str7 = i.toString()
                 InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
                 globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "9"))
+                itemsAndPartNums.add(str2)
+                itemsAndPartNums.add(str3)
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -744,6 +792,8 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str7 = i.toString()
                 InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
                 globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "10"))
+                itemsAndPartNums.add(str2)
+                itemsAndPartNums.add(str3)
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
@@ -761,14 +811,263 @@ class MainActivity(private var InventoryItems: MutableList<MutableList<String>> 
                 val str7 = i.toString()
                 InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
                 globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "11"))
+                itemsAndPartNums.add(str2)
+                itemsAndPartNums.add(str3)
             }
             arrayCopy = InventoryItems.toTypedArray()
             InventoryTabs.add(arrayCopy.toMutableList())
             InventoryItems.clear()
         }
-//        Log.d(TAG, globalDataArray.toString())
-            //.substring(2000))
-//        Log.d(TAG, InventoryTabs.toString())
+
+
+        if (respObj.length() > 14) {
+            for (i in 2 until sheet12.length() + 1) {
+                val str1 = JSONObject(sheet12[i.toString()].toString())["A"].toString()
+                val str2 = JSONObject(sheet12[i.toString()].toString())["B"].toString()
+                val str3 = JSONObject(sheet12[i.toString()].toString())["C"].toString()
+                val str4 = JSONObject(sheet12[i.toString()].toString())["D"].toString()
+                val str5 = JSONObject(sheet12[i.toString()].toString())["E"].toString()
+                val str6 = JSONObject(sheet12[i.toString()].toString())["F"].toString()
+                val str7 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
+                globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "12"))
+                itemsAndPartNums.add(str2)
+                itemsAndPartNums.add(str3)
+            }
+            arrayCopy = InventoryItems.toTypedArray()
+            InventoryTabs.add(arrayCopy.toMutableList())
+            InventoryItems.clear()
+        }
+
+        if (respObj.length() > 15) {
+            for (i in 2 until sheet12.length() + 1) {
+                val str1 = JSONObject(sheet12[i.toString()].toString())["A"].toString()
+                val str2 = JSONObject(sheet12[i.toString()].toString())["B"].toString()
+                val str3 = JSONObject(sheet12[i.toString()].toString())["C"].toString()
+                val str4 = JSONObject(sheet12[i.toString()].toString())["D"].toString()
+                val str5 = JSONObject(sheet12[i.toString()].toString())["E"].toString()
+                val str6 = JSONObject(sheet12[i.toString()].toString())["F"].toString()
+                val str7 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
+                globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "13"))
+                itemsAndPartNums.add(str2)
+                itemsAndPartNums.add(str3)
+            }
+            arrayCopy = InventoryItems.toTypedArray()
+            InventoryTabs.add(arrayCopy.toMutableList())
+            InventoryItems.clear()
+        }
+
+        if (respObj.length() > 16) {
+            for (i in 2 until sheet12.length() + 1) {
+                val str1 = JSONObject(sheet12[i.toString()].toString())["A"].toString()
+                val str2 = JSONObject(sheet12[i.toString()].toString())["B"].toString()
+                val str3 = JSONObject(sheet12[i.toString()].toString())["C"].toString()
+                val str4 = JSONObject(sheet12[i.toString()].toString())["D"].toString()
+                val str5 = JSONObject(sheet12[i.toString()].toString())["E"].toString()
+                val str6 = JSONObject(sheet12[i.toString()].toString())["F"].toString()
+                val str7 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
+                globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "14"))
+                itemsAndPartNums.add(str2)
+                itemsAndPartNums.add(str3)
+            }
+            arrayCopy = InventoryItems.toTypedArray()
+            InventoryTabs.add(arrayCopy.toMutableList())
+            InventoryItems.clear()
+        }
+
+        if (respObj.length() > 17) {
+            for (i in 2 until sheet12.length() + 1) {
+                val str1 = JSONObject(sheet12[i.toString()].toString())["A"].toString()
+                val str2 = JSONObject(sheet12[i.toString()].toString())["B"].toString()
+                val str3 = JSONObject(sheet12[i.toString()].toString())["C"].toString()
+                val str4 = JSONObject(sheet12[i.toString()].toString())["D"].toString()
+                val str5 = JSONObject(sheet12[i.toString()].toString())["E"].toString()
+                val str6 = JSONObject(sheet12[i.toString()].toString())["F"].toString()
+                val str7 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
+                globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "15"))
+                itemsAndPartNums.add(str2)
+                itemsAndPartNums.add(str3)
+            }
+            arrayCopy = InventoryItems.toTypedArray()
+            InventoryTabs.add(arrayCopy.toMutableList())
+            InventoryItems.clear()
+        }
+
+        if (respObj.length() > 18) {
+            for (i in 2 until sheet12.length() + 1) {
+                val str1 = JSONObject(sheet12[i.toString()].toString())["A"].toString()
+                val str2 = JSONObject(sheet12[i.toString()].toString())["B"].toString()
+                val str3 = JSONObject(sheet12[i.toString()].toString())["C"].toString()
+                val str4 = JSONObject(sheet12[i.toString()].toString())["D"].toString()
+                val str5 = JSONObject(sheet12[i.toString()].toString())["E"].toString()
+                val str6 = JSONObject(sheet12[i.toString()].toString())["F"].toString()
+                val str7 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
+                globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "16"))
+                itemsAndPartNums.add(str2)
+                itemsAndPartNums.add(str3)
+            }
+            arrayCopy = InventoryItems.toTypedArray()
+            InventoryTabs.add(arrayCopy.toMutableList())
+            InventoryItems.clear()
+        }
+
+        if (respObj.length() > 19) {
+            for (i in 2 until sheet12.length() + 1) {
+                val str1 = JSONObject(sheet12[i.toString()].toString())["A"].toString()
+                val str2 = JSONObject(sheet12[i.toString()].toString())["B"].toString()
+                val str3 = JSONObject(sheet12[i.toString()].toString())["C"].toString()
+                val str4 = JSONObject(sheet12[i.toString()].toString())["D"].toString()
+                val str5 = JSONObject(sheet12[i.toString()].toString())["E"].toString()
+                val str6 = JSONObject(sheet12[i.toString()].toString())["F"].toString()
+                val str7 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
+                globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "17"))
+                itemsAndPartNums.add(str2)
+                itemsAndPartNums.add(str3)
+            }
+            arrayCopy = InventoryItems.toTypedArray()
+            InventoryTabs.add(arrayCopy.toMutableList())
+            InventoryItems.clear()
+        }
+
+        if (respObj.length() > 20) {
+            for (i in 2 until sheet12.length() + 1) {
+                val str1 = JSONObject(sheet12[i.toString()].toString())["A"].toString()
+                val str2 = JSONObject(sheet12[i.toString()].toString())["B"].toString()
+                val str3 = JSONObject(sheet12[i.toString()].toString())["C"].toString()
+                val str4 = JSONObject(sheet12[i.toString()].toString())["D"].toString()
+                val str5 = JSONObject(sheet12[i.toString()].toString())["E"].toString()
+                val str6 = JSONObject(sheet12[i.toString()].toString())["F"].toString()
+                val str7 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
+                globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "18"))
+                itemsAndPartNums.add(str2)
+                itemsAndPartNums.add(str3)
+            }
+            arrayCopy = InventoryItems.toTypedArray()
+            InventoryTabs.add(arrayCopy.toMutableList())
+            InventoryItems.clear()
+        }
+
+        if (respObj.length() > 21) {
+            for (i in 2 until sheet12.length() + 1) {
+                val str1 = JSONObject(sheet12[i.toString()].toString())["A"].toString()
+                val str2 = JSONObject(sheet12[i.toString()].toString())["B"].toString()
+                val str3 = JSONObject(sheet12[i.toString()].toString())["C"].toString()
+                val str4 = JSONObject(sheet12[i.toString()].toString())["D"].toString()
+                val str5 = JSONObject(sheet12[i.toString()].toString())["E"].toString()
+                val str6 = JSONObject(sheet12[i.toString()].toString())["F"].toString()
+                val str7 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
+                globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "19"))
+                itemsAndPartNums.add(str2)
+                itemsAndPartNums.add(str3)
+            }
+            arrayCopy = InventoryItems.toTypedArray()
+            InventoryTabs.add(arrayCopy.toMutableList())
+            InventoryItems.clear()
+        }
+
+        if (respObj.length() > 22) {
+            for (i in 2 until sheet12.length() + 1) {
+                val str1 = JSONObject(sheet12[i.toString()].toString())["A"].toString()
+                val str2 = JSONObject(sheet12[i.toString()].toString())["B"].toString()
+                val str3 = JSONObject(sheet12[i.toString()].toString())["C"].toString()
+                val str4 = JSONObject(sheet12[i.toString()].toString())["D"].toString()
+                val str5 = JSONObject(sheet12[i.toString()].toString())["E"].toString()
+                val str6 = JSONObject(sheet12[i.toString()].toString())["F"].toString()
+                val str7 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
+                globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "20"))
+                itemsAndPartNums.add(str2)
+                itemsAndPartNums.add(str3)
+            }
+            arrayCopy = InventoryItems.toTypedArray()
+            InventoryTabs.add(arrayCopy.toMutableList())
+            InventoryItems.clear()
+        }
+
+        if (respObj.length() > 23) {
+            for (i in 2 until sheet12.length() + 1) {
+                val str1 = JSONObject(sheet12[i.toString()].toString())["A"].toString()
+                val str2 = JSONObject(sheet12[i.toString()].toString())["B"].toString()
+                val str3 = JSONObject(sheet12[i.toString()].toString())["C"].toString()
+                val str4 = JSONObject(sheet12[i.toString()].toString())["D"].toString()
+                val str5 = JSONObject(sheet12[i.toString()].toString())["E"].toString()
+                val str6 = JSONObject(sheet12[i.toString()].toString())["F"].toString()
+                val str7 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
+                globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "21"))
+                itemsAndPartNums.add(str2)
+                itemsAndPartNums.add(str3)
+            }
+            arrayCopy = InventoryItems.toTypedArray()
+            InventoryTabs.add(arrayCopy.toMutableList())
+            InventoryItems.clear()
+        }
+
+        if (respObj.length() > 24) {
+            for (i in 2 until sheet12.length() + 1) {
+                val str1 = JSONObject(sheet12[i.toString()].toString())["A"].toString()
+                val str2 = JSONObject(sheet12[i.toString()].toString())["B"].toString()
+                val str3 = JSONObject(sheet12[i.toString()].toString())["C"].toString()
+                val str4 = JSONObject(sheet12[i.toString()].toString())["D"].toString()
+                val str5 = JSONObject(sheet12[i.toString()].toString())["E"].toString()
+                val str6 = JSONObject(sheet12[i.toString()].toString())["F"].toString()
+                val str7 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
+                globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "22"))
+                itemsAndPartNums.add(str2)
+                itemsAndPartNums.add(str3)
+            }
+            arrayCopy = InventoryItems.toTypedArray()
+            InventoryTabs.add(arrayCopy.toMutableList())
+            InventoryItems.clear()
+        }
+
+        if (respObj.length() > 25) {
+            for (i in 2 until sheet12.length() + 1) {
+                val str1 = JSONObject(sheet12[i.toString()].toString())["A"].toString()
+                val str2 = JSONObject(sheet12[i.toString()].toString())["B"].toString()
+                val str3 = JSONObject(sheet12[i.toString()].toString())["C"].toString()
+                val str4 = JSONObject(sheet12[i.toString()].toString())["D"].toString()
+                val str5 = JSONObject(sheet12[i.toString()].toString())["E"].toString()
+                val str6 = JSONObject(sheet12[i.toString()].toString())["F"].toString()
+                val str7 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
+                globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "23"))
+                itemsAndPartNums.add(str2)
+                itemsAndPartNums.add(str3)
+            }
+            arrayCopy = InventoryItems.toTypedArray()
+            InventoryTabs.add(arrayCopy.toMutableList())
+            InventoryItems.clear()
+        }
+
+        if (respObj.length() > 26) {
+            for (i in 2 until sheet12.length() + 1) {
+                val str1 = JSONObject(sheet12[i.toString()].toString())["A"].toString()
+                val str2 = JSONObject(sheet12[i.toString()].toString())["B"].toString()
+                val str3 = JSONObject(sheet12[i.toString()].toString())["C"].toString()
+                val str4 = JSONObject(sheet12[i.toString()].toString())["D"].toString()
+                val str5 = JSONObject(sheet12[i.toString()].toString())["E"].toString()
+                val str6 = JSONObject(sheet12[i.toString()].toString())["F"].toString()
+                val str7 = i.toString()
+                InventoryItems.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7))
+                globalDataArray.add(mutableListOf(str1, str2, str3, str4, str5, str6, str7, "24"))
+                itemsAndPartNums.add(str2)
+                itemsAndPartNums.add(str3)
+            }
+            arrayCopy = InventoryItems.toTypedArray()
+            InventoryTabs.add(arrayCopy.toMutableList())
+            InventoryItems.clear()
+        }
+
+
     }
 
     fun hideKeyboard(view: View) {
