@@ -72,8 +72,8 @@ class Fragment0(
         }
 
         fun scrollToPosition(line: Int){
-
-            recyclerView.scrollToPosition(line)
+//            recyclerView.scrollToPosition(line)
+            (recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(line, 0)
         }
     }
 

@@ -70,6 +70,10 @@ class Fragment17(
             }
             recyclerView.adapter?.notifyDataSetChanged()
         }
+
+        fun scrollToPosition(line: Int){
+            (recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(line, 0)
+        }
     }
 
     init {
